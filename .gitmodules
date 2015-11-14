@@ -1,0 +1,3 @@
+[submodule "libs/spirit"]
+	path = libs/spirit
+	url = https://github.com/djowel/spirit_x3.git
