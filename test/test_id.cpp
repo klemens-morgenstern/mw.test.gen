@@ -64,7 +64,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == (beg + 5));
-	BOOST_CHECK(parsed == "dings");
+	BOOST_CHECK(parsed == "dingz");
 
 	s = "part1 _ part2";
 	p();
