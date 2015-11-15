@@ -26,7 +26,7 @@ x3::rule<class test_group> const test_group("test_group");
 auto const test_group_def =
 		"test" >> string("group") >>
 		 -id >> "=" >> "{" >>
-		((id >> -templ_param) % ',') >>
+		((id >> -tpl_par_list) % ',') >>
 		"}";
 
 BOOST_SPIRIT_DEFINE(test_group);
