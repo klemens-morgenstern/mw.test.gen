@@ -1,0 +1,17 @@
+project test :
+	source-location .	
+	: requirements
+	<include>../libs/spirit/include
+	<include>$(boost-inc)
+	<include>../include
+	<toolset>gcc:<cxxflags>-std=gnu++1y
+	<linkflags>-LF:/boost/lib
+	<link>shared
+	;
+	
+test-suite mw.test.test
+     : 
+    [ run test_id.cpp  ]
+     ; 	
+		
+		

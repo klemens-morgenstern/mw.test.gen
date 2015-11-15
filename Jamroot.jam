@@ -3,7 +3,7 @@ import modules ;
 
 local boost-inc = [ modules.peek user-config : boost-include ] ;
 
-project mw.test.c++ :
+project mw.test :
 	source-location src	
 	: requirements
 	<include>./libs/spirit/include
@@ -17,6 +17,8 @@ project mw.test.c++ :
 #	<linkflags>-lboost_locale-mgw-mt-1_59
 	<link>shared
 	;
+	
+build-project test ;	
 	
 exe tg : main.cpp ;
 
