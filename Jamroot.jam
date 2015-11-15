@@ -20,6 +20,6 @@ project mw.test.c++ :
 	
 exe tg : main.cpp ;
 
-install test : tg ;
+install bin : tg ;
 		
 		

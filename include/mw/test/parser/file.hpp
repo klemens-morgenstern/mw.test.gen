@@ -36,7 +36,12 @@ x3::rule<class tests_file> const tests_file("tests_file");
 auto const tests_file_def =
 		string("tests") >> "file" >> filename >> ";";
 
-BOOST_SPIRIT_DEFINE(filename, file, tests_file);
+x3::rule<class include> const include("include");
+
+auto const include_def = "include" >> filename >> ";";
+
+
+BOOST_SPIRIT_DEFINE(filename, file, tests_file, include);
 
 
 
