@@ -29,7 +29,9 @@ auto const id_def =
 
 BOOST_SPIRIT_DEFINE(id);
 
-}}}
+}
+}
+}
 
 
 #endif /* MW_TEST_PARSER_ID_HPP_ */
