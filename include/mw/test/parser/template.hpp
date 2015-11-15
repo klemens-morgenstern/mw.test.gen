@@ -45,17 +45,14 @@ auto const quote_par_def =
 		;
 
 auto const tpl_par_def =
-		  +(
+		 + (!(char_("[](){},") | string("...")) >> (+char_ >> quote_par))
+		 >> *(
 		  tpl_square_par
 		| tpl_round_par
 		| tpl_curly_par
-		| quote_par
-		| no_skip[+(!(char_(",")) >> char_)]);
+		| no_skip[+(!(char_(",") | string("...")) >> char_)]);
 
-x3::rule<class object_content> const object_content("object_content");
 
-auto const object_content_def =
-		eps;// =
 
 
 
@@ -64,9 +61,20 @@ x3::rule<class template_decl> const template_decl("template_params");
 auto const template_decl_def =
 		'<' >> (id % ',') >> '>';
 
-x3::rule<class templ_param> const templ_param("templ_param");
 
-auto const templ_param_def = '<' >> tpl_par % ',' >> '>'	;
+
+x3::rule<class tuple> const tuple("tuple");
+auto const tuple_def = "(" >> (tpl_par % ',') >> ')';
+
+x3::rule<class range> const range("range");
+auto const range_def = '[' >> (tpl_par | tuple) >> "..." >> (tpl_par | tuple) >> ']';
+
+x3::rule<class par_list> const par_list("par_list");
+auto const par_list_def = "[" >> (tpl_par % ",") >> "]";
+
+x3::rule<class tpl_par_list> const tpl_par_list("tpl_par_list");
+auto const tpl_par_list_def = '<' >> (tpl_par | par_list_def | range )% ',' >> '>'	;
+
 
 }
 }
