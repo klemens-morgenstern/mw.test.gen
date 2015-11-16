@@ -10,6 +10,7 @@
 #define MW_TEST_PARSER_FILE_HPP_
 
 #include <mw/test/parser/config.hpp>
+#include <mw/test/parser/comment.hpp>
 
 
 namespace mw
@@ -19,24 +20,36 @@ namespace test
 namespace parser
 {
 
-x3::rule<class filename> const filename("filename");
+x3::rule<class filename, std::string> const filename("filename");
 
 auto const filename_def =
-		+(char_("_") | char_("A", "Z") | char_("a", "z") | char_("0", "9") |
-		  char_(".") | char_("-") | char_("$"));
+		no_skip[
+		+(char_("_$") | char_("A", "Z") | char_("a", "z") | char_("0", "9")
+		//workaround
+		| char_("AZaz09") | char_(".-")
+		)];
 
 
-x3::rule<class file> const file("file");
+auto file_lambda = [](auto& ctx)
+		{
+	std::cout << "Thingy129: " << _val(ctx) << std::endl;
+	_val(ctx) = _attr(ctx);
+		};
 
-auto const file_def = "file" >> filename >> ";";
+
+x3::rule<class file, std::string> const file("file");
+
+auto const file_def =
+		"file" >>
+		filename[file_lambda] >> ";" ;
 
 
-x3::rule<class tests_file> const tests_file("tests_file");
+x3::rule<class tests_file, std::string> const tests_file("tests_file");
 
 auto const tests_file_def =
 		string("tests") >> "file" >> filename >> ";";
 
-x3::rule<class include> const include("include");
+x3::rule<class include, std::string> const include("include");
 
 auto const include_def = "include" >> filename >> ";";
 

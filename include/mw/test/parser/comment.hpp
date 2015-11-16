@@ -21,13 +21,13 @@ namespace parser
 x3::rule<class line_comment> const line_comment("line_comment");
 
 auto const line_comment_def =
-		"//" >> !char_("/") >> *!char_("") >> eol;
+		no_skip["//" >> !char_("/") >> *(!eol >> char_) >> eol];
 
 
 x3::rule<class block_comment> const block_comment("block_comment");
 
 auto const block_comment_def =
-		("/*" >> -(char_("*") >>*!string("*/")) >> "*/") ;
+		no_skip["/*" >> !char_("*") >>*(!string("*/") >> char_) >> "*/"] ;
 
 x3::rule<class comment> const comment("comment");
 
@@ -54,6 +54,12 @@ auto const comment_doc_def = line_comment_doc | block_comment_doc;
 
 BOOST_SPIRIT_DEFINE(line_comment, 	  block_comment, 	 comment);
 BOOST_SPIRIT_DEFINE(line_comment_doc, block_comment_doc, comment_doc);
+
+x3::rule<class skip> const skip("skip");
+
+auto const skip_def = eol | space | comment | comment_doc;
+
+BOOST_SPIRIT_DEFINE(skip);
 
 }
 }

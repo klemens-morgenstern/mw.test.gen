@@ -12,6 +12,9 @@ project test :
 test-suite mw.test.test
      : 
     [ run test_id.cpp  ]
+	[ run test_comment.cpp ]    
+#	[ run test_file.cpp ]   
+	 
      ; 	
 		
 		

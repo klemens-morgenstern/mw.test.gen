@@ -26,6 +26,8 @@ using x3::eol;
 using x3::eps;
 using x3::no_skip;
 using x3::space;
+using x3::_val;
+using x3::_attr;
 
 }
 }
