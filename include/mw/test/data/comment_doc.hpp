@@ -15,7 +15,7 @@ namespace mw
 {
 namespace test
 {
-namespace listener
+namespace data
 {
 
 struct comment

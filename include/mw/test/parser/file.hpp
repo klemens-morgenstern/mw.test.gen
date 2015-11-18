@@ -24,9 +24,7 @@ x3::rule<class filename, std::string> const filename("filename");
 
 auto const filename_def =
 		no_skip[
-		+(char_("_$") | char_("A", "Z") | char_("a", "z") | char_("0", "9")
-		//workaround
-		| char_("AZaz09") | char_(".-")
+		+(char_("-._$A-Za-z0-9")
 		)];
 
 
