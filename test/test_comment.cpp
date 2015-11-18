@@ -23,6 +23,7 @@ int test_main (int, char**)
 	bool res;
 	using namespace mw::test::parser;
 
+	using c = mw::test::listener::comment;
 
 	std::string parsed;
 
@@ -40,6 +41,7 @@ int test_main (int, char**)
 
 	p(comment);
 
+	BOOST_CHECK(c::get().empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -47,6 +49,7 @@ int test_main (int, char**)
 
 	p(comment);
 
+	BOOST_CHECK(c::get().empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -54,8 +57,24 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(!res);
-	BOOST_CHECK(itr == beg);
+
+	BOOST_CHECK(!c::get().empty());
+	BOOST_CHECK( c::get().before == " some comment ä12893");
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
+	c::get().clear();
+
+	s = "///< some comment ä12893\n";
+
+	p(comment);
+
+	BOOST_CHECK(!c::get().empty());
+	BOOST_CHECK( c::get().behind == " some comment ä12893");
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
+	c::get().clear();
 
 
 	// block comment
@@ -63,6 +82,8 @@ int test_main (int, char**)
 
 	p(comment);
 
+
+	BOOST_CHECK(c::get().empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -70,6 +91,7 @@ int test_main (int, char**)
 
 	p(comment);
 
+	BOOST_CHECK(c::get().empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -77,8 +99,26 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(!res);
-	BOOST_CHECK(itr == beg);
+	std::cerr << c::get().before << std::endl;
+	std::cerr << (itr-beg) << std::endl;
+
+
+	BOOST_CHECK(!c::get().empty());
+	BOOST_CHECK( c::get().before == " some comment ä12893\n ");
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
+	c::get().clear();
+	s = "/**< some comment ä12893\n */";
+
+	p(comment);
+
+	std::cerr << c::get().before << std::endl;
+
+	BOOST_CHECK(!c::get().empty());
+	BOOST_CHECK( c::get().behind == " some comment ä12893\n ");
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
 
 	return 0;
 }

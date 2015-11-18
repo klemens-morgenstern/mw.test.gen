@@ -24,21 +24,7 @@ x3::rule<class id, std::string> const id("id");
 
 auto const id_def =
 		no_skip[
-			(
-				char_('_') |
-				char_('A', 'Z') |
-				char_('a', 'z')
-				//workaround
-				| char_("AZaz")
-		 	 ) >>
-			*(
-				char_('_') |
-				char_('A', 'Z') |
-				char_('a', 'z') |
-				char_('0', '9')
-				//workaround for current x3 spirit version
-				| char_("AZaz09")
-			 )
+			char_("_A-Za-z") >> *char_("_A-Za-z0-9")
 		];
 
 
