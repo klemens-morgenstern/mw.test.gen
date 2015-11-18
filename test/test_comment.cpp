@@ -23,7 +23,9 @@ int test_main (int, char**)
 	bool res;
 	using namespace mw::test::parser;
 
-	using c = mw::test::data::comment;
+	using entity = mw::test::data::entity;
+	entity pre; //means a pre-doc
+	entity post;//menas a post-doc
 
 	std::string parsed;
 
@@ -33,7 +35,11 @@ int test_main (int, char**)
 			beg = s.begin();
 			itr = s.begin();
 			end = s.end();
+			pre. doc.clear();
+			post.doc.clear();
+			entity::set_entity(post);
 			res = x3::parse(itr, end, rule, parsed);
+			entity::set_entity(pre);
 		};
 
 	// line comment
@@ -41,7 +47,8 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(c::get().empty());
+	BOOST_CHECK(pre. doc.empty());
+	BOOST_CHECK(post.doc.empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -49,7 +56,8 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(c::get().empty());
+	BOOST_CHECK(pre. doc.empty());
+	BOOST_CHECK(post.doc.empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -57,24 +65,25 @@ int test_main (int, char**)
 
 	p(comment);
 
+	BOOST_CHECK(!pre.doc.empty());
+	BOOST_CHECK(post.doc.empty());
 
-	BOOST_CHECK(!c::get().empty());
-	BOOST_CHECK( c::get().before == " some comment ä12893");
+	BOOST_CHECK( pre.doc == " some comment ä12893");
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
-	c::get().clear();
 
 	s = "///< some comment ä12893\n";
 
 	p(comment);
 
-	BOOST_CHECK(!c::get().empty());
-	BOOST_CHECK( c::get().behind == " some comment ä12893");
+	BOOST_CHECK(pre. doc.empty());
+	BOOST_CHECK(!post.doc.empty());
+
+	BOOST_CHECK(post.doc == " some comment ä12893");
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
-	c::get().clear();
 
 
 	// block comment
@@ -82,8 +91,8 @@ int test_main (int, char**)
 
 	p(comment);
 
-
-	BOOST_CHECK(c::get().empty());
+	BOOST_CHECK(pre. doc.empty());
+	BOOST_CHECK(post.doc.empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -91,7 +100,8 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(c::get().empty());
+	BOOST_CHECK(pre. doc.empty());
+	BOOST_CHECK(post.doc.empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -99,24 +109,23 @@ int test_main (int, char**)
 
 	p(comment);
 
-
-	BOOST_CHECK(!c::get().empty());
-	BOOST_CHECK( c::get().before == " some comment ä12893\n ");
+	BOOST_CHECK(!pre.doc.empty());
+	BOOST_CHECK(post.doc.empty());
+	BOOST_CHECK(pre.doc == " some comment ä12893\n ");
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
-	c::get().clear();
 	s = "/**< some comment ä12893\n */";
 
 	p(comment);
 
-	BOOST_CHECK(!c::get().empty());
-	BOOST_CHECK( c::get().behind == " some comment ä12893\n ");
+	BOOST_CHECK(pre. doc.empty());
+	BOOST_CHECK(!post.doc.empty());
+	BOOST_CHECK(post.doc == " some comment ä12893\n ");
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
 	//ok, so comments work. now , does it work when implemented via the skipper
-	c::get().clear();
 
 	s = "//stuff \n x /** documentation */ z";
 
@@ -124,11 +133,19 @@ int test_main (int, char**)
 	beg = s.begin();
 	itr = s.begin();
 	end = s.end();
+	pre. doc.clear();
+	post.doc.clear();
+	entity::set_entity(post);
+
 	res = x3::phrase_parse(itr, end, char_('x') >> char_('z') , skipper, parsed);
 
+	entity::set_entity(pre);
+
+	BOOST_CHECK(!pre.doc.empty());
+	BOOST_CHECK(post.doc.empty());
+
 	BOOST_CHECK(parsed == "xz");
-	BOOST_CHECK(!c::get().empty());
-	BOOST_CHECK( c::get().before == " documentation ");
+	BOOST_CHECK(pre.doc == " documentation ");
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 

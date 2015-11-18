@@ -7,7 +7,7 @@
  */
 
 #include <mw/test/data/entity.hpp>
-
+#include <iostream>
 namespace mw
 {
 namespace test
@@ -33,7 +33,6 @@ void entity::add_pre(const std::string& data)
 {
 	doc_buf += data;
 }
-
 
 }
 }

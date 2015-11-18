@@ -58,7 +58,7 @@ BOOST_SPIRIT_DEFINE(line_comment, block_comment, comment);
 
 x3::rule<class skipper> const skipper("skipper");
 
-auto const skipper_def = eol | space | comment ;
+auto const skipper_def = comment | eol | space;
 
 BOOST_SPIRIT_DEFINE(skipper);
 
