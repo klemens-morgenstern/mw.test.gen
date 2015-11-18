@@ -23,7 +23,7 @@ int test_main (int, char**)
 	bool res;
 	using namespace mw::test::parser;
 
-	using c = mw::test::listener::comment;
+	using c = mw::test::data::comment;
 
 	std::string parsed;
 
@@ -99,9 +99,6 @@ int test_main (int, char**)
 
 	p(comment);
 
-	std::cerr << c::get().before << std::endl;
-	std::cerr << (itr-beg) << std::endl;
-
 
 	BOOST_CHECK(!c::get().empty());
 	BOOST_CHECK( c::get().before == " some comment ä12893\n ");
@@ -113,10 +110,25 @@ int test_main (int, char**)
 
 	p(comment);
 
-	std::cerr << c::get().before << std::endl;
-
 	BOOST_CHECK(!c::get().empty());
 	BOOST_CHECK( c::get().behind == " some comment ä12893\n ");
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
+	//ok, so comments work. now , does it work when implemented via the skipper
+	c::get().clear();
+
+	s = "//stuff \n x /** documentation */ z";
+
+	parsed.clear();
+	beg = s.begin();
+	itr = s.begin();
+	end = s.end();
+	res = x3::phrase_parse(itr, end, char_('x') >> char_('z') , skipper, parsed);
+
+	BOOST_CHECK(parsed == "xz");
+	BOOST_CHECK(!c::get().empty());
+	BOOST_CHECK( c::get().before == " documentation ");
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
