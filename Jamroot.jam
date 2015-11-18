@@ -18,7 +18,7 @@ project mw.test.gen :
 	<link>shared
 	;
 	
-lib mw.test : mw/test/data/comment_doc.cpp ;	
+lib mw.test : mw/test/data/entity.cpp ;	
 	
 build-project test ;	
 	

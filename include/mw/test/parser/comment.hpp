@@ -10,7 +10,7 @@
 #define MW_TEST_COMMENT_HPP_
 
 #include <mw/test/parser/config.hpp>
-#include <mw/test/data/comment_doc.hpp>
+#include <mw/test/data/entity.hpp>
 #include <iostream>
 
 namespace mw
@@ -20,8 +20,8 @@ namespace test
 namespace parser
 {
 
-auto comment_behind = [](auto &ctx) {data::comment::get().add_behind(_attr(ctx)); };
-auto comment_before = [](auto &ctx) {data::comment::get().add_before(_attr(ctx)); };
+auto comment_behind = [](auto &ctx) {data::entity::add_post(_attr(ctx)); };
+auto comment_before = [](auto &ctx) {data::entity::add_pre(_attr(ctx)); };
 
 
 
