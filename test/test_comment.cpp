@@ -23,10 +23,6 @@ int test_main (int, char**)
 	bool res;
 	using namespace mw::test::parser;
 
-	using entity = mw::test::data::entity;
-	entity pre; //means a pre-doc
-	entity post;//menas a post-doc
-
 	std::string parsed;
 
 	auto p = [&](auto rule)
@@ -35,11 +31,8 @@ int test_main (int, char**)
 			beg = s.begin();
 			itr = s.begin();
 			end = s.end();
-			pre. doc.clear();
-			post.doc.clear();
-			entity::set_entity(post);
+
 			res = x3::parse(itr, end, rule, parsed);
-			entity::set_entity(pre);
 		};
 
 	// line comment
@@ -47,8 +40,7 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(pre. doc.empty());
-	BOOST_CHECK(post.doc.empty());
+	BOOST_CHECK(parsed.empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -56,34 +48,9 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(pre. doc.empty());
-	BOOST_CHECK(post.doc.empty());
+	BOOST_CHECK(parsed.empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
-
-	s = "/// some comment ä12893\n";
-
-	p(comment);
-
-	BOOST_CHECK(!pre.doc.empty());
-	BOOST_CHECK(post.doc.empty());
-
-	BOOST_CHECK( pre.doc == " some comment ä12893");
-	BOOST_CHECK(res);
-	BOOST_CHECK(itr == end);
-
-
-	s = "///< some comment ä12893\n";
-
-	p(comment);
-
-	BOOST_CHECK(pre. doc.empty());
-	BOOST_CHECK(!post.doc.empty());
-
-	BOOST_CHECK(post.doc == " some comment ä12893");
-	BOOST_CHECK(res);
-	BOOST_CHECK(itr == end);
-
 
 
 	// block comment
@@ -91,8 +58,7 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(pre. doc.empty());
-	BOOST_CHECK(post.doc.empty());
+	BOOST_CHECK(parsed.empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -100,28 +66,7 @@ int test_main (int, char**)
 
 	p(comment);
 
-	BOOST_CHECK(pre. doc.empty());
-	BOOST_CHECK(post.doc.empty());
-	BOOST_CHECK(res);
-	BOOST_CHECK(itr == end);
-
-	s = "/** some comment ä12893\n */";
-
-	p(comment);
-
-	BOOST_CHECK(!pre.doc.empty());
-	BOOST_CHECK(post.doc.empty());
-	BOOST_CHECK(pre.doc == " some comment ä12893\n ");
-	BOOST_CHECK(res);
-	BOOST_CHECK(itr == end);
-
-	s = "/**< some comment ä12893\n */";
-
-	p(comment);
-
-	BOOST_CHECK(pre. doc.empty());
-	BOOST_CHECK(!post.doc.empty());
-	BOOST_CHECK(post.doc == " some comment ä12893\n ");
+	BOOST_CHECK(parsed.empty());
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 
@@ -133,21 +78,92 @@ int test_main (int, char**)
 	beg = s.begin();
 	itr = s.begin();
 	end = s.end();
-	pre. doc.clear();
-	post.doc.clear();
-	entity::set_entity(post);
+
 
 	res = x3::phrase_parse(itr, end, char_('x') >> char_('z') , skipper, parsed);
 
-	entity::set_entity(pre);
-
-	BOOST_CHECK(!pre.doc.empty());
-	BOOST_CHECK(post.doc.empty());
-
 	BOOST_CHECK(parsed == "xz");
-	BOOST_CHECK(pre.doc == " documentation ");
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
+
+
+	/************ Now test documentation rules *****************/
+
+	mw::test::data::doc d;
+
+	auto p2 = [&](auto rule)
+		{
+			parsed.clear();
+			beg = s.begin();
+			itr = s.begin();
+			end = s.end();
+
+			d.body.clear();
+			d.head.clear();
+
+			res = x3::parse(itr, end, rule, d);
+		};
+
+
+	s = "/// some comment ä12893\n";
+
+	p2(comment_pre_doc);
+
+	BOOST_CHECK(parsed.empty());
+
+	BOOST_CHECK(d.head == " some comment ä12893");
+	BOOST_CHECK(d.body.empty());
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
+
+	s = "///< some comment ä12893\n";
+
+	p2(comment_post_doc);
+
+	BOOST_CHECK(parsed.empty());
+
+	BOOST_CHECK(d.head == " some comment ä12893");
+	BOOST_CHECK(d.body.empty());
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
+	s = "/** some comment ä12893\n */";
+
+	p2(comment_pre_doc);
+
+	std::cerr << d.head << std::endl;
+
+	BOOST_CHECK(d.head == " some comment ä12893\n ");
+	BOOST_CHECK(d.body.empty());
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
+	s = "/**< some comment ä12893\n */";
+
+	p2(comment_post_doc);
+
+	BOOST_CHECK(d.head == " some comment ä12893\n ");
+	BOOST_CHECK(d.body.empty());
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
+	/*** look if the pre thingy fails */
+
+	p2(comment_pre_doc);
+	BOOST_CHECK(!res);
+
+	//ok, works, now see if combinations work as they should
+
+	s = "///head\n/**body*//** body2*/";
+
+	p2(comment_pre_doc);
+
+	BOOST_CHECK(d.head == "head");
+	BOOST_CHECK(d.body == "body body2");
+	BOOST_CHECK(res);
+	BOOST_CHECK(itr == end);
+
 
 	return 0;
 }

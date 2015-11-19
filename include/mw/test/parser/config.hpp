@@ -10,7 +10,6 @@
 #define MW_TEST_PARSER_CONFIG_HPP_
 
 #include <boost/spirit/home/x3.hpp>
-#include <iostream>
 
 namespace mw
 {
@@ -31,6 +30,8 @@ using x3::space;
 using x3::_val;
 using x3::_attr;
 using x3::lit;
+using x3::lexeme;
+using x3::omit;
 auto no_action = [](auto &ctx){};
 
 }

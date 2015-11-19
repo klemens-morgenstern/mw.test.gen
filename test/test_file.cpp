@@ -100,7 +100,8 @@ int test_main (int, char**)
 
 
 	d::tests_file t;
-	s = "tests file dings.h;";
+	s = "/* some comment */\n"
+		"tests file dings.h;";
 	p(tests_file, t);
 
 	BOOST_CHECK(res);
@@ -116,31 +117,39 @@ int test_main (int, char**)
 
 
 	//test the pre commentary
-	s = "///Some doc\n file f;\n";
+	s = "///Some doc\n  file f;";
 
 	p(file, f);
+
+
+
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(f.filename == "f");
-	BOOST_CHECK(f.doc == "Some doc");
+	BOOST_CHECK(f.doc.head == "Some doc");
 
 	s = "include d.h; //!< post doc\n";
 
+	i.doc.head.clear();
 	p(include, i);
+
+
+	std::cerr << "Head: " << i.doc.head << std::endl;
+	std::cerr << "Body: " << i.doc.body << std::endl;
 
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(i.filename == "d.h");
-	BOOST_CHECK(i.doc == " post doc");
+	BOOST_CHECK(i.doc.head == " post doc");
 
 
-	s = "/*! pre doc */ test file i.ipp; //!< post doc\n";
+	s = "/*! pre doc */ tests file i.ipp; //!< post doc\n";
 
 	p(tests_file, t);
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(t.filename == "i.ipp");
-	BOOST_CHECK(t.doc == " pre doc  post doc");
+	BOOST_CHECK(t.doc.head == " pre doc  post doc");
 
 
 	return 0;

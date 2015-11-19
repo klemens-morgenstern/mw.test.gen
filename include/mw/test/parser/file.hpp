@@ -21,40 +21,45 @@ namespace test
 namespace parser
 {
 
-x3::rule<class filename, std::string> const filename("filename");
+x3::rule<class filename, std::string> const filename;
 
 auto const filename_def =
-		no_skip[
+		lexeme[
 		+(char_("-._$A-Za-z0-9"))];
 
 
 auto file_lambda = [](auto& ctx)
 		{
-			data::entity::set_entity(_val(ctx));
 			_val(ctx).filename = _attr(ctx);
 		};
 
 
 
-x3::rule<class file, data::file> const file("file");
+x3::rule<class file, data::file> const file;
 
 auto const file_def =
-			no_skip["file" >> (space | eol)]
-					>> (filename  >> ";")[file_lambda] ;
+			-comment_pre_doc[doc_f]
+			>> lexeme["file" >> (space | eol)]
+			>> (filename  >> ";")[file_lambda]
+			>> -comment_post_doc[doc_f];
 
 
-x3::rule<class tests_file, data::tests_file> const tests_file("tests_file");
+x3::rule<class tests_file, data::tests_file> const tests_file;
 
 auto const tests_file_def =
-			no_skip["tests"  >> (space | eol)]
-		>> 	no_skip["file"   >> (space | eol)]
-					>> (filename >> ";")[file_lambda];
+		-comment_pre_doc[doc_f]
+		>>	lexeme["tests"  >> (space | eol)]
+		>> 	lexeme["file"   >> (space | eol)]
+		>> (filename >> ";")[file_lambda]
+		>> -comment_post_doc[doc_f];
 
-x3::rule<class include, data::include> const include("include");
+x3::rule<class include, data::include> const include;
 
 auto const include_def =
-			no_skip["include" >> (space | eol)]
-					>> (filename >> ";")[file_lambda];
+		-comment_pre_doc[doc_f]
+		>> lexeme["include" >> (space | eol)]
+		>> (filename >> ";")[file_lambda]
+		>> -comment_post_doc[doc_f];
 
 
 BOOST_SPIRIT_DEFINE(filename, file, tests_file, include);

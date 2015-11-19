@@ -9,7 +9,7 @@
 #ifndef MW_TEST_DATA_ENTITY_HPP_
 #define MW_TEST_DATA_ENTITY_HPP_
 
-#include <string>
+#include <mw/test/data/doc.hpp>
 
 namespace mw
 {
@@ -20,11 +20,7 @@ namespace data
 
 struct entity
 {
-	std::string doc;
-
-	static void set_entity(entity & e);
-	static void add_post(const std::string& data);
-	static void add_pre(const std::string& data);
+	data::doc doc;
 };
 
 
