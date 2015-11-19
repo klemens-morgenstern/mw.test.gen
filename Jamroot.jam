@@ -22,8 +22,8 @@ project mw.test.gen :
 	
 build-project test ;	
 	
-exe tg : main.cpp ;
+# exe tg : main.cpp ;
 
-install bin : tg ;
+# install bin : tg ;
 		
 		

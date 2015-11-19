@@ -10,6 +10,7 @@
 #define MW_TEST_PARSER_UTILITY_HPP_
 
 
+#include <string>
 #include <mw/test/parser/config.hpp>
 
 namespace mw
@@ -19,13 +20,48 @@ namespace test
 namespace parser
 {
 
+auto append = [](auto &ctx)
+		{
+			_val(ctx) += _attr(ctx);
+		};
 
-x3::rule<class log> const id("log");
+x3::rule<class quoted_string, std::string> const quoted_string;
+
+auto const quoted_string_def =
+		lexeme['"' >> *(!lit('"') >> char_) >> '"'];
+
+
+x3::rule<class squoted_string, std::string> const squoted_string;
+
+auto const squoted_string_def =
+		lexeme["'" >> *(!lit("'") >> char_) >> "'"];
+
+
+auto qappend = [](auto &ctx)
+		{
+			_val(ctx) += '"';
+			_val(ctx) += _attr(ctx);
+			_val(ctx) += '"';
+		};
+
+auto sqappend = [](auto &ctx)
+		{
+			_val(ctx) += "'";
+			_val(ctx) += _attr(ctx);
+			_val(ctx) += "'";
+		};
+
+x3::rule<class log, std::string> const log;
 
 auto const log_def =
-		(!char_(";") >> ";") >> ";";
+		lexeme["log" >> (eol | space)
+			   	>> *(!lit(";")
+				>> ((!char_(";\"'") >> char_[append]) |
+			        quoted_string[qappend] |
+					squoted_string[sqappend]))
+			] >> ";";
 
-BOOST_SPIRIT_DEFINE(log);
+BOOST_SPIRIT_DEFINE(quoted_string, squoted_string, log);
 
 }
 }
