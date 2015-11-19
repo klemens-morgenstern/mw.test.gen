@@ -1,0 +1,41 @@
+os:
+  - linux
+
+
+before_script:
+  - git submodule update --init --merge
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq g++-5
+  - export CXX="g++-5" CC="gcc-5"
+  - sudo rm /usr/bin/gcc
+  - sudo rm /usr/bin/g++
+  - sudo rm /usr/bin/gcov
+  - sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+  - sudo ln -s /usr/bin/g++-5 /usr/bin/g++
+  - sudo ln -s /usr/bin/gcov-5 /usr/bin/gcov
+  - sudo apt-get install 
+  - git clone https://github.com/boostorg/boost.git boost
+  - cd boost
+  - git submodule update --init --merge
+  - cd tools/build
+  - ./bootstrap.sh
+  - sudo ./b2 
+  - cd ../..
+  - sudo b2 headers
+  - cd .. 
+script:
+  - b2 cxxflags="--coverage" linkflags="--coverage" include="./boost"
+after_success:
+  - git clone https://github.com/linux-test-project/lcov.git lcov
+  - cd lcov 
+  - sudo make install
+  - cd ..
+  - mkdir -p coverals
+  - find test/bin/ -name "*.gcda" -exec cp "{}" coverals/ \;
+  - find test/bin/ -name "*.gcno" -exec cp "{}" coverals/ \;
+  - sudo apt-get install -qq python-yaml 
+  - lcov --directory ./coverals --base-directory ./ --capture --output-file ./coverals/coverals.info 
+  - lcov --remove ./coverals/coverals.info "/usr*" "./jsoncpp/*" "./example/*" "./bin*" "./lcov*" "./boost*" "/boost*" -o coverals/coverals.info
+  - gem install coveralls-lcov
+  - coveralls-lcov coverals/coverals.info
