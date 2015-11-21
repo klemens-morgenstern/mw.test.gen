@@ -20,46 +20,62 @@ namespace test
 {
 namespace parser
 {
-
+/** Rule to parase a filename
+ * @code{.ebnf}
+ * <filename> ::= '[-.$A-Za-z0-9]+' ;
+ * @endcode
+ * Has a pre-skip.
+ *
+ */
 x3::rule<class filename, std::string> const filename;
 
 auto const filename_def =
 		lexeme[
 		+(char_("-._$A-Za-z0-9"))];
 
-
+///Lambda to set the filename of an object with a filename member. Mostly used when the object is inheriting mw::test::data::file_decl
 auto file_lambda = [](auto& ctx)
 		{
 			_val(ctx).filename = _attr(ctx);
 		};
 
 
-
+///Rule to parse mw::test::file
+/** @code{.ebnf}
+ *  <file> ::= 'file' <filename> ';' ;
+ *  @endcode
+ */
 x3::rule<class file, data::file> const file;
 
 auto const file_def =
-			-comment_pre_doc[doc_f]
-			>> lexeme["file" >> (space | eol)]
-			>> (filename  >> ";")[file_lambda]
-			>> -comment_post_doc[doc_f];
+			doc(
+			   lexeme["file" >> (space | eol)]
+			>> (filename  >> ";")[file_lambda]);
 
-
+///Rule to parse mw::test::tests_file
+/** @code{.ebnf}
+ *  <file> ::= 'tests' 'file' <filename> ';' ;
+ *  @endcode
+ */
 x3::rule<class tests_file, data::tests_file> const tests_file;
 
 auto const tests_file_def =
-		-comment_pre_doc[doc_f]
-		>>	lexeme["tests"  >> (space | eol)]
+		doc(
+			lexeme["tests"  >> (space | eol)]
 		>> 	lexeme["file"   >> (space | eol)]
-		>> (filename >> ";")[file_lambda]
-		>> -comment_post_doc[doc_f];
+		>> (filename >> ";")[file_lambda]);
 
+
+///Rule to parse mw::test::include
+/** @code{.ebnf}
+ *  <file> ::= 'include' <filename> ';' ;
+ *  @endcode
+ */
 x3::rule<class include, data::include> const include;
 
 auto const include_def =
-		-comment_pre_doc[doc_f]
-		>> lexeme["include" >> (space | eol)]
-		>> (filename >> ";")[file_lambda]
-		>> -comment_post_doc[doc_f];
+		doc(lexeme["include" >> (space | eol)]
+		>> (filename >> ";")[file_lambda]);
 
 
 BOOST_SPIRIT_DEFINE(filename, file, tests_file, include);

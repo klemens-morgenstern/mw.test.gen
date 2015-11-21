@@ -32,7 +32,9 @@ using x3::_attr;
 using x3::lit;
 using x3::lexeme;
 using x3::omit;
-auto no_action = [](auto &ctx){};
+
+///Utility, to declare a c++14 lambda directly in a rule
+auto l = [](auto l){return l;};
 
 }
 }

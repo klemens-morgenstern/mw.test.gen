@@ -25,7 +25,7 @@ namespace parser
 x3::rule<class inheritance> const inheritance("inheritance");
 
 auto const inheritance_def =
-		":" >> (id >> -templ_param) % ","
+		":" >> (id >> -tpl_par) % ","
 		;
 
 

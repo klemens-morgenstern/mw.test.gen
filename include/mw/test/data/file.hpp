@@ -18,15 +18,15 @@ namespace test
 {
 namespace data
 {
-
+///Base class for objects including a filename.
 struct file_decl : entity
 {
 	std::string filename;
 };
 
-struct file		  : file_decl {};
-struct include 	  : file_decl {};
-struct tests_file : file_decl {};
+struct file		  : file_decl {}; ///< a file, used by a test file, that is anything that is tested
+struct include 	  : file_decl {}; ///< a test-defintion file, included by this file
+struct tests_file : file_decl {}; ///< explicit statement that this tests tests a file.
 
 }
 }

@@ -19,7 +19,12 @@ namespace test
 namespace parser
 {
 
-
+///Defintion for an id
+/** @return std::string
+ * @code{.enbf}
+ * <id> ::= '[_A-Za-z]' '[_A-Za-z0-9]'* ;
+ * @endcode
+ */
 x3::rule<class id, std::string> const id("id");
 
 auto const id_def =

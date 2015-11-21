@@ -26,10 +26,12 @@ int test_main (int, char**)
 
 	bool res;
 	using mw::test::parser::log;
+	using mw::test::parser::quoted_string;
+	using mw::test::parser::squoted_string;
 
 	std::string parsed;
 
-	auto p = [&]
+	auto p = [&](auto rule)
 		{
 			parsed.clear();
 			beg = s.begin();
@@ -40,14 +42,14 @@ int test_main (int, char**)
 
 	s = "log dings;";
 
-	p();
+	p(log);
 
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(parsed == "dings");
 
 	s = "log some log thingy ';' \"string; \" << other value 223223 ;";
-	p();
+	p(log);
 
 	std::cerr << "'" << parsed << "'" << std::endl;
 

@@ -19,24 +19,37 @@ namespace test
 {
 namespace parser
 {
-
+///General appending tool for parsers.
 auto append = [](auto &ctx)
 		{
 			_val(ctx) += _attr(ctx);
 		};
 
+///A quoted string
+/** @return std::string
+ * @code{.enbf}
+ * <quoted string> ::= '"' >> (!'"')* >> '"' ;
+ * @endcode
+ */
 x3::rule<class quoted_string, std::string> const quoted_string;
 
 auto const quoted_string_def =
-		lexeme['"' >> *(!lit('"') >> char_) >> '"'];
+		lexeme['"' >> *(
+				  !lit('"') >> char_)  >> '"'];
 
-
+///A single quoted string
+/** @return std::string
+ * @code{.enbf}
+ * <single quoted string> ::= "'" >> (!"'")* >> "'" ;
+ * @endcode
+ */
 x3::rule<class squoted_string, std::string> const squoted_string;
 
 auto const squoted_string_def =
-		lexeme["'" >> *(!lit("'") >> char_) >> "'"];
+		lexeme["'" >> *(
+				  !lit('\'') >> char_) >> "'"];
 
-
+///Append a string with quotes
 auto qappend = [](auto &ctx)
 		{
 			_val(ctx) += '"';
@@ -44,6 +57,7 @@ auto qappend = [](auto &ctx)
 			_val(ctx) += '"';
 		};
 
+///Append a string with single quotes
 auto sqappend = [](auto &ctx)
 		{
 			_val(ctx) += "'";
@@ -51,6 +65,11 @@ auto sqappend = [](auto &ctx)
 			_val(ctx) += "'";
 		};
 
+///Log rule, parses a string, which may containt (single) quoted strings
+/**@code{.enbf}
+ * <log> ::= 'log' char* ';' ;
+ * @endcode
+ */
 x3::rule<class log, std::string> const log;
 
 auto const log_def =
