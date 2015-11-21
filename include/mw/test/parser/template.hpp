@@ -31,13 +31,49 @@ namespace test
 namespace parser
 {
 
-
+///Escaped template for []
+/**@code{.ebnf}
+ * <tpl_square_par> ::= '[' tpl_par_step ']';
+ * @endcode
+ */
 x3::rule<class tpl_square_par, std::string> const  tpl_square_par;
+
+///Escaped template for ()
+/**@code{.ebnf}
+ * <tpl_round_par> ::= '(' tpl_par_step ')';
+ * @endcode
+ */
 x3::rule<class tpl_round_par , std::string> const  tpl_round_par ;
+
+///Escaped template for ()
+/**@code{.ebnf}
+ * <tpl_curly_par> ::= '{' tpl_par_step '}';
+ * @endcode
+ */
 x3::rule<class tpl_curly_par , std::string> const  tpl_curly_par ;
+
+///Escaped template for <>
+/**@code{.ebnf}
+ * <tpl_pointy_par> ::= '<' tpl_par_step '>';
+ * @endcode
+ */
 x3::rule<class tpl_pointy_par, std::string> const  tpl_pointy_par;
 
+/// Parser rule for an entry in the template-parameter-list
+/** @code{.ebnf}
+ * <tpl_par> ::= <tpl_par_step>* ;
+ *  @endcode
+ */
 x3::rule<class tpl_par, 	 std::string> const tpl_par;
+
+/// Parser rule for an element of a template parameter list, basically a token
+/**@code{.ebnf}
+ * <tpl_par> ::= -'[[]{}()<>]' |
+ * 				<tpl_square_par> | <tpl_round_par> |
+ * 				<tpl_curly_par>  | <tpl_pointy_par>|
+ * 				<quoted_string>	 | <squoted_string> ;
+ * @endcode
+ */
 x3::rule<class tpl_par_step, std::string> const tpl_par_step;
 
 auto const tpl_par_step_def =
@@ -57,7 +93,12 @@ auto const tpl_pointy_par_def = char_("<") >> *tpl_par_step >> char_(">");
 
 auto const tpl_par_def = lexeme[*(!lit(',') >> tpl_par_step)];
 
-
+///A template argument
+/**@code{.ebnf}
+ * <tpl_arg> ::= <id> | (<id> '=' <tpl_par> );
+ * @endcode
+ *
+ */
 x3::rule<class tpl_arg, data::tpl_arg> tpl_arg;
 
 auto const tpl_arg_def = id >> -('=' >> tpl_par);
@@ -68,16 +109,22 @@ auto push_back = [](auto &ctx)
 		{
 			_val(ctx).push_back(_attr(ctx));
 		};
-///Rule for parameter list
+
+///Rule for a template declaration list
 /**@code{.ebnf}
  * <tpl_decl> ::= '<' -(<id> (',' <id> )* ) '>' ;
  * @endcode
- *
  */
 x3::rule<class tpl_decl, std::vector<data::tpl_arg>> const tpl_decl;
 
 auto const tpl_decl_def 	= '<' >> -(tpl_arg % ',') >> '>';
 
+
+///Rule for the template parameter list, i.e. definition
+/**@code{.ebnf}
+ * <tpl_par_list> ::= '<' <tpl_par> (',' <tpl_par> )* '>';
+ * @endcode
+ */
 x3::rule<class tpl_par_list, std::vector<std::string>> const tpl_par_list;
 
 auto const tpl_par_list_def = '<' >> tpl_par % ',' >> '>';
