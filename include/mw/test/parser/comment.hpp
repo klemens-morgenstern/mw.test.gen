@@ -13,7 +13,7 @@
 #include <mw/test/data/doc.hpp>
 #include <type_traits>
 
-#include <boost/fusion/adapted/struct/adapt_struct.hpp>
+//#include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
 

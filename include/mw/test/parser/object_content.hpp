@@ -21,6 +21,7 @@ namespace test
 namespace parser
 {
 
+///Rule to parse
 x3::rule<class input> const input("input");
 auto const input_def = "input" >> char_("{") >> func_content >> "}";
 

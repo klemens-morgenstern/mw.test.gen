@@ -21,7 +21,12 @@ namespace test
 namespace parser
 {
 
-
+///Rule to declare the inheritance of an object
+/**
+ * @code{.ebnf}
+ * <inheritance> ::= ':' <id> -<tpl_par> (<id> -<tpl_par>)* ;
+ * @endcode
+ */
 x3::rule<class inheritance> const inheritance("inheritance");
 
 auto const inheritance_def =
