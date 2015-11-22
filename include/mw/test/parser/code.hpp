@@ -10,6 +10,19 @@
 #define MW_TEST_PARSER_CODE_HPP_
 
 #include <mw/test/parser/config.hpp>
+#include <mw/test/parser/utility.hpp>
+#include <mw/test/parser/comment.hpp>
+#include <mw/test/parser/id.hpp>
+
+#include <mw/test/data/code.hpp>
+
+
+BOOST_FUSION_ADAPT_STRUCT(
+		mw::test::data::declaration,
+		(std::string, type)
+		(std::string, name)
+		(decltype(mw::test::data::declaration::value), value)
+);
 
 namespace mw
 {
@@ -21,107 +34,99 @@ namespace parser
 enum ops
 {
 	equals,
+	not_equal,
 	greater_equal,
 	lesser_equal,
 	greater,
 	lesser,
 	tolerance,
+	assign,
+	pointer,
+	shift_r,
+	shift_l,
+	shift_assign_r,
+	shift_assign_l,
+	modulo,
+	modulo_assign,
 };
 
 struct operators_ : x3::symbols<ops>
 {
 	operators_()
     {
-        add
+        add ("="   , assign		  )
+        	("!="  , not_equal	  )
             ("=="  , equals       )
             (">="  , greater_equal)
             ("<="  , lesser_equal )
             (">"   , greater      )
             ("<"   , lesser       )
             ("+/-" , tolerance    )
+			("->"  , pointer	  )
+			("%"   , modulo)
+			("%="  , modulo_assign)
         ;
     }
 
 } operators;
 
+x3::rule<class unused_ops, std::string> const unused_ops;
 
-x3::rule<class square_par_code_chunk> const square_par_code_chunk("square_par_code_chunk");
-x3::rule<class round_par_code_chunk>  const round_par_code_chunk ("round_par_code_chunk");
-x3::rule<class curly_par_code_chunk>  const curly_par_code_chunk ("curly_par_code_chunk");
-x3::rule<class quote_par_code> 		  const quote_par_code 		 ("quote_par_code");
+auto const unused_ops_def
+	= string("->")
+	| string(">>")
+	| string("<<")
+	| string(">>=")
+	| string(">>=")
+	;
 
-x3::rule<class unaligned_code_chunk> const unaligned_code_chunk("unaligned_code_chunk");
+x3::rule<class square_par_code_chunk, std::string> const square_par_code_chunk;
+x3::rule<class round_par_code_chunk , std::string> const round_par_code_chunk ;
+x3::rule<class curly_par_code_chunk , std::string> const curly_par_code_chunk ;
+x3::rule<class pointy_par_code_chunk, std::string> const pointy_par_code_chunk ;
+
+x3::rule<class code_chunk, 			std::string> const code_chunk;
+x3::rule<class code_chunk_in, 		std::string> const code_chunk_in;
+x3::rule<class code_chunk_in_step, 	std::string> const code_chunk_in_step;
 
 
 auto const square_par_code_chunk_def =
-		"[" >> *(!(char_("[]{}()") | eol) >> *no_skip[!(eol | space)]) >> "]"
+		char_("[") >> *code_chunk_in_step >> char_("]")
 		;
 
 auto const round_par_code_chunk_def =
-		"(" >> *(!(char_("[]{}()") | eol) >> *no_skip[!(eol | space)]) >> ")"
+		char_("(") >> *code_chunk_in_step >> char_(")")
 		;
 
 auto const curly_par_code_chunk_def =
-		"{" >> *(!(char_("[]{}()") | eol) >> *no_skip[!(eol | space)]) >> "}"
+		char_("{") >> *code_chunk_in_step >> char_("}")
 		;
 
-auto const quote_par_code_def =
-		('"' >> *(!char_('"') >>  ("\\\"" | char_ ) ) >> '"')
-		| ('\'' >> char_ >> '\'')
-		;
-
-auto const unaligned_code_chunk_def =
-		  +(operators
-		| square_par_code_chunk_def
-		| round_par_code_chunk_def
-		| curly_par_code_chunk_def
-		| quote_par_code_def
-		| no_skip[+(!(char_(";")) >> char_)]);
-
-
-
-
-
-x3::rule<class aligned_code_chunk> const bracket_aligned_code_chunk("bracket_aligned_code_chunk");
-
-auto const bracket_aligned_code_chunk_def =
-		no_skip["[" >>
-				!(char_("[]")
-				>> ( bracket_aligned_code_chunk | *char_))
-				>> "]"]
+auto const pointy_par_code_chunk_def =
+		char_("<") >> *code_chunk_in_step >> char_(">")
 		;
 
 
-x3::rule<class aligned_code_chunk> const aligned_code_chunk("aligned_code_chunk");
+auto const code_chunk_in_step_def =
+		  ((!char_("[]{}()<>") >> char_)
+		   | square_par_code_chunk
+		   | round_par_code_chunk
+		   | curly_par_code_chunk
+		   | quoted_string
+		   | squoted_string);
 
-auto const aligned_code_chunk_def =
-		no_skip["[" >>
-				!(char_("[]")
-				>> (bracket_aligned_code_chunk | *char_))
-				>> "]"]
+
+auto const code_chunk_def =
+		lexeme[*(!lit(';') >> code_chunk_in_step)] >> char_(';');
 		;
-
-///a code_chunk fragment.
-x3::rule<class code_chunk> const code_chunk("code_chunk");
-
-auto const code_chunk_def = aligned_code_chunk | unaligned_code_chunk;
-
-
-x3::rule<class code> const code("code");
-
-auto const code_def = ((+aligned_code_chunk) | unaligned_code_chunk) >> ";";
 
 
 BOOST_SPIRIT_DEFINE(square_par_code_chunk);
-BOOST_SPIRIT_DEFINE(round_par_code_chunk);
-BOOST_SPIRIT_DEFINE(curly_par_code_chunk);
-BOOST_SPIRIT_DEFINE(unaligned_code_chunk);
-BOOST_SPIRIT_DEFINE(bracket_aligned_code_chunk);
-BOOST_SPIRIT_DEFINE(aligned_code_chunk);
-
+BOOST_SPIRIT_DEFINE(round_par_code_chunk );
+BOOST_SPIRIT_DEFINE(curly_par_code_chunk );
+BOOST_SPIRIT_DEFINE(pointy_par_code_chunk);
+BOOST_SPIRIT_DEFINE(code_chunk_in_step);
 BOOST_SPIRIT_DEFINE(code_chunk);
-BOOST_SPIRIT_DEFINE(code);
-
 
 }
 }

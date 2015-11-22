@@ -20,6 +20,8 @@ namespace test
 namespace parser
 {
 
+//auto const operator = '=' | lit("->") >> '<' | lit('>') | "<=" | lit(">=") | "==" | lit("!=");
+
 x3::rule<class assertion_qualification> const assertion_qualification("assertion_qualification");
 
 auto const assertion_qualification_def =

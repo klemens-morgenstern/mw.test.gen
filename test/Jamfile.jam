@@ -17,8 +17,9 @@ test-suite mw.test.test
 	[ run test_comment.cpp ]    
 	[ run test_file.cpp  ]   
 	[ run test_utility.cpp  ]  
-	[ run test_tpl.cpp ] 
-	 
+	[ run test_tpl.cpp ]
+	[ run test_code.cpp ] 
+#	[ run test_opers.cpp ]
      ; 	
 		
 		

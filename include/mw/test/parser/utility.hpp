@@ -42,6 +42,7 @@ auto const quoted_string_def =
  * @code{.enbf}
  * <single quoted string> ::= "'" >> (!"'")* >> "'" ;
  * @endcode
+ * @remark Multibyte chars are valid C++
  */
 x3::rule<class squoted_string, std::string> const squoted_string;
 
