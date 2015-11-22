@@ -12,6 +12,16 @@
 #include <mw/test/parser/config.hpp>
 #include <mw/test/parser/code.hpp>
 #include <mw/test/parser/utility.hpp>
+#include <mw/test/data/operations.hpp>
+
+
+#include <boost/fusion/include/adapt_struct.hpp>
+
+BOOST_FUSION_ADAPT_STRUCT(
+		mw::test::data::assignment,
+		(std::string, lhs)
+		(std::string, rhs)
+);
 
 namespace mw
 {
@@ -19,6 +29,9 @@ namespace test
 {
 namespace parser
 {
+
+x3::rule<class
+
 
 //auto const operator = '=' | lit("->") >> '<' | lit('>') | "<=" | lit(">=") | "==" | lit("!=");
 

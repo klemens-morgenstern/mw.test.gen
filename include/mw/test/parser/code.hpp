@@ -14,15 +14,7 @@
 #include <mw/test/parser/comment.hpp>
 #include <mw/test/parser/id.hpp>
 
-#include <mw/test/data/code.hpp>
 
-
-BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::data::declaration,
-		(std::string, type)
-		(std::string, name)
-		(decltype(mw::test::data::declaration::value), value)
-);
 
 namespace mw
 {
@@ -70,14 +62,18 @@ struct operators_ : x3::symbols<ops>
 
 } operators;
 
-x3::rule<class unused_ops, std::string> const unused_ops;
+x3::rule<class pointy_ops, std::string> const pointy_ops;
 
-auto const unused_ops_def
+auto const pointy_ops_def
 	= string("->")
 	| string(">>")
 	| string("<<")
 	| string(">>=")
 	| string(">>=")
+	| string("<")
+	| string(">")
+	| string("<=")
+	| string(">=")
 	;
 
 x3::rule<class square_par_code_chunk, std::string> const square_par_code_chunk;
@@ -91,19 +87,19 @@ x3::rule<class code_chunk_in_step, 	std::string> const code_chunk_in_step;
 
 
 auto const square_par_code_chunk_def =
-		char_("[") >> *code_chunk_in_step >> char_("]")
+		char_("[") >> *(!lit("]") >> code_chunk_in_step) >> char_("]")
 		;
 
 auto const round_par_code_chunk_def =
-		char_("(") >> *code_chunk_in_step >> char_(")")
+		char_("(") >> *(!lit(")") >> code_chunk_in_step) >> char_(")")
 		;
 
 auto const curly_par_code_chunk_def =
-		char_("{") >> *code_chunk_in_step >> char_("}")
+		char_("{") >> *(!lit("}") >> code_chunk_in_step) >> char_("}")
 		;
 
 auto const pointy_par_code_chunk_def =
-		char_("<") >> *code_chunk_in_step >> char_(">")
+		char_("<") >> *(!lit(">") >> code_chunk_in_step) >> char_(">")
 		;
 
 
@@ -113,7 +109,8 @@ auto const code_chunk_in_step_def =
 		   | round_par_code_chunk
 		   | curly_par_code_chunk
 		   | quoted_string
-		   | squoted_string);
+		   | squoted_string
+		   | pointy_ops);
 
 
 auto const code_chunk_def =
@@ -127,6 +124,7 @@ BOOST_SPIRIT_DEFINE(curly_par_code_chunk );
 BOOST_SPIRIT_DEFINE(pointy_par_code_chunk);
 BOOST_SPIRIT_DEFINE(code_chunk_in_step);
 BOOST_SPIRIT_DEFINE(code_chunk);
+BOOST_SPIRIT_DEFINE(pointy_ops);
 
 }
 }

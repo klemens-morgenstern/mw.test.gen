@@ -67,9 +67,10 @@ int test_main (int, char**)
 	BOOST_CHECK(res == "int i ;");
 	BOOST_CHECK(itr == end - 4);
 
-	s = "int i ";
-	BOOST_CHECK(!p(code_chunk));
-	BOOST_CHECK(itr == beg);
+	s = "x > 42;";
+	BOOST_CHECK(p(code_chunk));
+	BOOST_CHECK(itr == end);
+	BOOST_CHECK(res == "x > 42;");
 
 
 	return 0;
