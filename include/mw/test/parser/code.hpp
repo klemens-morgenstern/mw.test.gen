@@ -13,7 +13,7 @@
 #include <mw/test/parser/utility.hpp>
 #include <mw/test/parser/comment.hpp>
 #include <mw/test/parser/id.hpp>
-
+#include <mw/test/data/code.hpp>
 
 
 namespace mw
@@ -81,29 +81,29 @@ x3::rule<class round_par_code_chunk , std::string> const round_par_code_chunk ;
 x3::rule<class curly_par_code_chunk , std::string> const curly_par_code_chunk ;
 x3::rule<class pointy_par_code_chunk, std::string> const pointy_par_code_chunk ;
 
-x3::rule<class code_chunk, 			std::string> const code_chunk;
+x3::rule<class code_chunk, 			data::code > const code_chunk;
 x3::rule<class code_chunk_in, 		std::string> const code_chunk_in;
-x3::rule<class code_chunk_in_step, 	std::string> const code_chunk_in_step;
+x3::rule<class code_chunk_in_step, 	std::string> const code_chunk_step;
 
 
 auto const square_par_code_chunk_def =
-		char_("[") >> *(!lit("]") >> code_chunk_in_step) >> char_("]")
+		char_("[") >> *(!lit("]") >> code_chunk_step) >> char_("]")
 		;
 
 auto const round_par_code_chunk_def =
-		char_("(") >> *(!lit(")") >> code_chunk_in_step) >> char_(")")
+		char_("(") >> *(!lit(")") >> code_chunk_step) >> char_(")")
 		;
 
 auto const curly_par_code_chunk_def =
-		char_("{") >> *(!lit("}") >> code_chunk_in_step) >> char_("}")
+		char_("{") >> *(!lit("}") >> code_chunk_step) >> char_("}")
 		;
 
 auto const pointy_par_code_chunk_def =
-		char_("<") >> *(!lit(">") >> code_chunk_in_step) >> char_(">")
+		char_("<") >> *(!lit(">") >> code_chunk_step) >> char_(">")
 		;
 
 
-auto const code_chunk_in_step_def =
+auto const code_chunk_step_def =
 		  ((!char_("[]{}()<>") >> char_)
 		   | square_par_code_chunk
 		   | round_par_code_chunk
@@ -113,8 +113,31 @@ auto const code_chunk_in_step_def =
 		   | pointy_ops);
 
 
+namespace code
+{
+auto set_beg = [](auto &ctx)
+		{
+			using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
+			iterator itr = x3::_where(ctx).begin();
+			_val(ctx)._begin = itr;
+		};
+
+auto set_end = [](auto &ctx)
+		{
+			using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
+			iterator itr = x3::_where(ctx).begin();
+			_val(ctx)._end = itr;
+		};
+
+
+
+}
+
 auto const code_chunk_def =
-		lexeme[*(!lit(';') >> code_chunk_in_step)] >> char_(';');
+		eps[code::set_beg] >>
+		omit[
+			 lexeme[*(!lit(';') >> code_chunk_step)] >> char_(';')
+			 ] >> eps[code::set_end];
 		;
 
 
@@ -122,7 +145,7 @@ BOOST_SPIRIT_DEFINE(square_par_code_chunk);
 BOOST_SPIRIT_DEFINE(round_par_code_chunk );
 BOOST_SPIRIT_DEFINE(curly_par_code_chunk );
 BOOST_SPIRIT_DEFINE(pointy_par_code_chunk);
-BOOST_SPIRIT_DEFINE(code_chunk_in_step);
+BOOST_SPIRIT_DEFINE(code_chunk_step);
 BOOST_SPIRIT_DEFINE(code_chunk);
 BOOST_SPIRIT_DEFINE(pointy_ops);
 

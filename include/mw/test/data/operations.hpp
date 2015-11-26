@@ -10,6 +10,7 @@
 #define MW_TEST_DATA_OPERATIONS_HPP_
 
 #include <vector>
+#include <string>
 
 namespace mw
 {
@@ -18,50 +19,17 @@ namespace test
 namespace data
 {
 
-struct equality
+class operation
 {
-	std::string rhs;
-	std::string lhs;
-	std::string tolerance;
+	bool static_   = false;
+	bool bitwise  = false;
+	bool range    = false;
+	bool critical = false;
+	std::string data{};
 };
 
-struct inequality
-{
-	std::string rhs;
-	std::string lhs;
-	std::string tolerance;
-};
-
-
-struct greater_equal
-{
-	std::string rhs;
-	std::string lhs;
-};
-
-struct lesser_equal
-{
-	std::string rhs;
-	std::string lhs;
-};
-
-struct greater
-{
-	std::string rhs;
-	std::string lhs;
-};
-
-struct lesser
-{
-	std::string rhs;
-	std::string lhs;
-};
-
-struct assignment
-{
-	std::string rhs;
-	std::string lhs;
-};
+struct assertion 	: operation {};
+struct expectation 	: operation {};
 
 
 

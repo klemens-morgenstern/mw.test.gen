@@ -19,7 +19,7 @@ test-suite mw.test.test
 	[ run test_utility.cpp  ]  
 	[ run test_tpl.cpp ]
 	[ run test_code.cpp ] 
-#	[ run test_opers.cpp ]
+	[ run test_opers.cpp ]
      ; 	
 		
 		
