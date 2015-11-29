@@ -27,28 +27,38 @@ enum level_t
 	expectation,
 };
 
+struct check_qualification
+{
+	bool static_   = false;
+	bool bitwise  = false;
+	bool ranged    = false;
+	bool critical = false;
+};
+
+//location is inside the code
+struct code_check
+{
+
+	code data;
+	level_t lvl;
+	check_qualification qual;
+};
+
 struct execute_check
 {
 	code::iterator location;
 	level_t lvl;
+	bool critical;
 };
 
 struct no_execute_check
 {
 	code::iterator location;
 	level_t lvl;
+	check_qualification qual;
 };
 
-//location is inside the code
-struct code_check
-{
-	bool static_   = false;
-	bool bitwise  = false;
-	bool range    = false;
-	bool critical = false;
-	code data;
-	level_t lvl;
-};
+
 
 struct throw_check;
 struct no_throw_check;
@@ -63,12 +73,16 @@ using check_entry =
 			throw_check,
 			no_throw_check,
 			any_throw_check,
-			critical_section
+			critical_section,
+			code
 		>;
 
 
 struct throw_check
 {
+	bool critical = false;
+	void set_critical() {critical = true;}
+
 	code::iterator _begin;
 	code::iterator _end;
 
@@ -76,12 +90,17 @@ struct throw_check
 	code::iterator end()   const {return _end;}
 
 	std::vector<check_entry> steps;
-	std::vector<std::string> exceptions;
+	code_list exceptions;
 	level_t lvl;
+
+
 };
 
 struct no_throw_check
 {
+	bool critical = false;
+	void set_critical() {critical = true;}
+
 	code::iterator _begin;
 	code::iterator _end;
 
@@ -94,6 +113,9 @@ struct no_throw_check
 
 struct any_throw_check
 {
+	bool critical = false;
+	void set_critical() {critical = true;}
+
 	code::iterator _begin;
 	code::iterator _end;
 
@@ -102,15 +124,20 @@ struct any_throw_check
 
 	std::vector<check_entry> steps;
 	level_t lvl;
+
 };
 
 
 
 struct critical_section
 {
-	code::iterator begin;
-	code::iterator end;
+	code::iterator _begin;
+	code::iterator _end;
 	std::vector<check_entry> steps;
+
+	code::iterator begin(){return _begin;}
+	code::iterator end()  {return _end;};
+
 };
 
 
