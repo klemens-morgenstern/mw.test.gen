@@ -157,8 +157,8 @@ auto set_end = [](auto &ctx)
 auto const code_chunk_def =
 		eps[code::set_beg] >>
 		omit[
-			 lexeme[*(!lit(';') >> code_chunk_step)] >> char_(';')
-			 ] >> eps[code::set_end];
+			 lexeme[*(!lit(';') >> code_chunk_step)]
+			 ] >> eps[code::set_end] >> omit[';'];
 		;
 
 auto const code_section_def =

@@ -83,18 +83,18 @@ int test_main (int, char**)
 
 	s = "auto l = [this](int i) { return i*i;};";
 	BOOST_CHECK(pc(code_chunk));
-	BOOST_CHECK(dc.to_string() == "auto l = [this](int i) { return i*i;};");
+	BOOST_CHECK(dc.to_string() == "auto l = [this](int i) { return i*i;}");
 	BOOST_CHECK(itr == end);
 
 	s = "int i ; xyz";
 	BOOST_CHECK(pc(code_chunk));
-	BOOST_CHECK(dc.to_string() == "int i ;");
+	BOOST_CHECK(dc.to_string() == "int i ");
 	BOOST_CHECK(itr == end - 4);
 
 	s = "x > 42;";
 	BOOST_CHECK(pc(code_chunk));
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(dc.to_string() == "x > 42;");
+	BOOST_CHECK(dc.to_string() == "x > 42");
 
 	s = "{ asdklklss,d, {} };";
 	BOOST_CHECK(pc(code_section));

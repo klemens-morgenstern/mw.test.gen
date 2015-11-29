@@ -45,6 +45,38 @@ int test_main (int, char**)
 			return x3::phrase_parse(itr, end, rule, skipper, res);
 		};
 
+	s = "critical expect execution ;";
+	data::execute_check ec;
+
+	BOOST_CHECK(p(execute_check, ec));
+	BOOST_CHECK(ec.critical == true);
+	BOOST_CHECK(ec.lvl == data::expectation);
+	BOOST_CHECK(itr == end);
+
+	s = "assert execution ;";
+
+	BOOST_CHECK(p(execute_check, ec));
+	BOOST_CHECK(ec.critical == false);
+	BOOST_CHECK(ec.lvl == data::assertion);
+	BOOST_CHECK(itr == end);
+
+	s = " expect no execution ;";
+	data::no_execute_check nec;
+
+	BOOST_CHECK(p(no_execute_check, nec));
+	BOOST_CHECK(nec.critical == false);
+	BOOST_CHECK(nec.lvl == data::expectation);
+	BOOST_CHECK(itr == end);
+
+	s = "critical assert no execution ;";
+
+	BOOST_CHECK(p(no_execute_check, nec));
+	BOOST_CHECK(nec.critical == true);
+	BOOST_CHECK(nec.lvl == data::assertion);
+	BOOST_CHECK(itr == end);
+
+
+
 	s = "";
 	data::check_qualification cq;
 
@@ -73,7 +105,7 @@ int test_main (int, char**)
 	BOOST_CHECK(cc.qual.static_  == false);
 	BOOST_CHECK(cc.qual.ranged 	 == false);
 	BOOST_CHECK(cc.lvl == data::level_t::assertion);
-	BOOST_CHECK(cc.data.to_string() == "thingy ;");
+	BOOST_CHECK(cc.data.to_string() == "thingy ");
 
 	BOOST_CHECK(itr == end);
 
@@ -84,10 +116,27 @@ int test_main (int, char**)
 	BOOST_CHECK(cc.qual.static_  == true);
 	BOOST_CHECK(cc.qual.ranged 	 == true);
 	BOOST_CHECK(cc.lvl == data::level_t::expectation);
-	BOOST_CHECK(cc.data.to_string() == "xyz ;");
+	BOOST_CHECK(cc.data.to_string() == "xyz ");
 
 	BOOST_CHECK(itr == end);
 
+
+/*	s = "critical \n"
+		"{ assert x ; }";
+
+	data::critical_section cs;
+
+	BOOST_CHECK(p(crit_section, cs));
+
+	BOOST_CHECK(cs.steps.size() == 1);
+	BOOST_REQUIRE
+			   (cs.steps[0].type() ==
+				boost::typeindex::type_id<data::code_check>());
+
+	BOOST_CHECK(boost::get<data::code_check>(
+			cs.steps[0]).data.to_string() == "x ;");
+
+*/
 
 	return 0;
 }

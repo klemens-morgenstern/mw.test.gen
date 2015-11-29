@@ -55,7 +55,7 @@ struct no_execute_check
 {
 	code::iterator location;
 	level_t lvl;
-	check_qualification qual;
+	bool critical;
 };
 
 

@@ -56,9 +56,25 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::critical_section,
 	(bool, critical)
-	(mw::test::data::code::iterator, _begin)
+	(mw::test::data::code::iterator, location)
 	(std::vector<mw::test::data::check_entry>, steps)
 	(mw::test::data::code::iterator, _end)
+);
+
+BOOST_FUSION_ADAPT_STRUCT(
+	mw::test::data::execute_check,
+	(mw::test::data::code::iterator, location)
+	(bool, 							 critical)
+	(mw::test::data::level_t, 		 lvl)
+
+);
+
+BOOST_FUSION_ADAPT_STRUCT(
+	mw::test::data::no_execute_check,
+	(mw::test::data::code::iterator, location)
+	(bool, 							 critical)
+	(mw::test::data::level_t, 		 lvl)
+
 );
 
 namespace mw
@@ -122,10 +138,10 @@ auto const check_qualification_def =
 
 
 auto const execute_check_def =
-		code_location >> level >> lit("execution") >> ";";
+		code_location >> is_critical >> level >> lit("execution") >> ";";
 
 auto const no_execute_check_def =
-		code_location >> level >> "no">> lit("execution") >> ";";
+		code_location >> is_critical >> level >> "no">> lit("execution") >> ";";
 
 auto const code_check_def =
 		check_qualification >> level >> code_chunk;
