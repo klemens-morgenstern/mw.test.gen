@@ -49,6 +49,38 @@ struct code
 	}
 };
 
+struct code_list
+{
+	typedef
+			boost::spirit::line_pos_iterator<
+			BOOST_DEDUCED_TYPENAME
+			std::string::iterator>
+			iterator;
+
+	iterator _begin;
+	iterator _end;
+
+	iterator begin() const {return _begin;};
+	iterator end()   const {return _end;}
+
+	std::vector<std::string> data;
+
+	std::string to_string() const
+	{
+		return std::string(_begin, _end);
+	}
+	void clear()
+	{
+		_begin = iterator();
+		_end   = iterator();
+		data.clear();
+	}
+	std::size_t size()
+	{
+		return data.size();
+	}
+};
+
 }
 }
 }

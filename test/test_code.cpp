@@ -64,7 +64,7 @@ int test_main (int, char**)
 
 	data::code dc;
 
-	auto pc = [&]()
+	auto pc = [&](auto rule)
 		{
 			res.clear();
 			beg = s.begin();
@@ -74,7 +74,7 @@ int test_main (int, char**)
 			iterator ib{itr};
 			iterator en{end};
 
-			bool b = x3::parse(ib, en, code_chunk, dc);
+			bool b = x3::parse(ib, en, rule, dc);
 
 			itr = ib.base();
 
@@ -82,19 +82,57 @@ int test_main (int, char**)
 		};
 
 	s = "auto l = [this](int i) { return i*i;};";
-	BOOST_CHECK(pc());
+	BOOST_CHECK(pc(code_chunk));
 	BOOST_CHECK(dc.to_string() == "auto l = [this](int i) { return i*i;};");
 	BOOST_CHECK(itr == end);
 
 	s = "int i ; xyz";
-	BOOST_CHECK(pc());
+	BOOST_CHECK(pc(code_chunk));
 	BOOST_CHECK(dc.to_string() == "int i ;");
 	BOOST_CHECK(itr == end - 4);
 
 	s = "x > 42;";
-	BOOST_CHECK(pc());
+	BOOST_CHECK(pc(code_chunk));
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(dc.to_string() == "x > 42;");
+
+	s = "{ asdklklss,d, {} };";
+	BOOST_CHECK(pc(code_section));
+	BOOST_CHECK(itr == (end-1));
+	BOOST_CHECK(dc.to_string() == " asdklklss,d, {} ");
+
+
+	data::code_list cl;
+
+	auto pc2 = [&]()
+		{
+			res.clear();
+			beg = s.begin();
+			itr = s.begin();
+			end = s.end();
+
+			iterator ib{itr};
+			iterator en{end};
+
+			bool b = x3::parse(ib, en, code_list, cl);
+
+			itr = ib.base();
+
+			return b;
+		};
+
+	s = "thingy, boost::variant<int, void*>, dings,xyz";
+
+	BOOST_CHECK(pc2());
+	BOOST_CHECK(itr == end);
+	BOOST_REQUIRE(cl.size() == 4);
+
+	BOOST_CHECK(cl.data[0] == "thingy");
+	BOOST_CHECK(cl.data[1] == "boost::variant<int, void*>");
+	BOOST_CHECK(cl.data[2] == "dings");
+	BOOST_CHECK(cl.data[3] == "xyz");
+	BOOST_CHECK(cl.to_string() == "thingy, boost::variant<int, void*>, dings,xyz");
+
 
 
 	return 0;

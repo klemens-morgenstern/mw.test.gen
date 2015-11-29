@@ -26,6 +26,16 @@ namespace test
 namespace parser
 {
 
+struct level_t : x3::symbols<data::level_t>
+{
+	level_t()
+	{
+		add	("assertion",  data::assertion)
+			("expecation", data::expectation)
+			;
+	}
+} level;
+
 namespace oper
 {
 auto set_static   = [](auto &ctx){_val(ctx).static_ = true;};
@@ -33,6 +43,12 @@ auto set_critical = [](auto &ctx){_val(ctx).set_critical();};
 auto set_range 	  = [](auto &ctx){_val(ctx).range();};
 auto set_bitwise  = [](auto &ctx){_val(ctx).bitwise = true;};
 auto set_data     = [](auto &ctx){_val(ctx).data = _attr(ctx);};
+auto set_location = [](auto &ctx)
+		{
+			using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
+			iterator itr = x3::_where(ctx).begin();
+			_val(ctx).location = itr;
+		};
 }
 
 auto const assertion_qualification =
@@ -42,29 +58,27 @@ auto const assertion_qualification =
 		  lit("bitwise") [oper::set_bitwise ]) ;
 
 
-x3::rule<class func_content> const func_content	("func_content");
-x3::rule<class assertion,	data::assertion> 	 const assertion;
-x3::rule<class expectation, data::expectation>	 const expectation;
-x3::rule<class crit_section> const crit_section	("crit_section");
+x3::rule<class func_content> 					 			const func_content;
+x3::rule<class execute_check, 	 data::execute_check>		const execute_check;
+x3::rule<class no_execute_check, data::no_execute_check>	const no_execute_check;
+x3::rule<class crit_section> 					 			const crit_section;
+
+
+
+auto const execute_check_def =
+		code_location >> level >> lit("execution") >> ";";
+
+auto const no_execute_check_def =
+		code_location >> level >> "no">> lit("execution") >> ";";
+
 
 
 auto const func_content_def =
 		*(
-		  assertion    |
-		  expectation  |
+//		  assertion    |
+//		  expectation  |
 		  crit_section |
 		  log | code_chunk );
-
-
-auto const assertion_def =
-		assertion_qualification >> "assertion" >> code_chunk[oper::set_data] >> ";";
-
-
-
-auto const expectation_def =
-		assertion_qualification >> "expect" >> code_chunk[oper::set_data] >> ";";
-
-
 
 auto const crit_section_def =
 		"critical" >> char_('{') >> func_content >> '}';
@@ -72,8 +86,8 @@ auto const crit_section_def =
 
 
 BOOST_SPIRIT_DEFINE(func_content);
-BOOST_SPIRIT_DEFINE(assertion);
-BOOST_SPIRIT_DEFINE(expectation);
+BOOST_SPIRIT_DEFINE(execute_check);
+BOOST_SPIRIT_DEFINE(no_execute_check);
 BOOST_SPIRIT_DEFINE(crit_section);
 
 

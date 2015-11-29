@@ -11,6 +11,8 @@
 
 #include <vector>
 #include <string>
+#include <mw/test/data/code.hpp>
+#include <boost/variant.hpp>
 
 namespace mw
 {
@@ -19,26 +21,107 @@ namespace test
 namespace data
 {
 
-class operation
+enum level_t
+{
+	assertion,
+	expectation,
+};
+
+struct execute_check
+{
+	code::iterator location;
+	level_t lvl;
+};
+
+struct no_execute_check
+{
+	code::iterator location;
+	level_t lvl;
+};
+
+//location is inside the code
+struct code_check
 {
 	bool static_   = false;
 	bool bitwise  = false;
 	bool range    = false;
 	bool critical = false;
-	std::string data{};
+	code data;
+	level_t lvl;
 };
 
-struct assertion 	: operation {};
-struct expectation 	: operation {};
+struct throw_check;
+struct no_throw_check;
+struct any_throw_check;
+struct critical_section;
+
+using check_entry =
+		boost::variant<
+			execute_check,
+			no_execute_check,
+			code_check,
+			throw_check,
+			no_throw_check,
+			any_throw_check,
+			critical_section
+		>;
+
+
+struct throw_check
+{
+	code::iterator _begin;
+	code::iterator _end;
+
+	code::iterator begin() const {return _begin;};
+	code::iterator end()   const {return _end;}
+
+	std::vector<check_entry> steps;
+	std::vector<std::string> exceptions;
+	level_t lvl;
+};
+
+struct no_throw_check
+{
+	code::iterator _begin;
+	code::iterator _end;
+
+	code::iterator begin() const {return _begin;};
+	code::iterator end()   const {return _end;}
+
+	std::vector<check_entry> steps;
+	level_t lvl;
+};
+
+struct any_throw_check
+{
+	code::iterator _begin;
+	code::iterator _end;
+
+	code::iterator begin() const {return _begin;};
+	code::iterator end()   const {return _end;}
+
+	std::vector<check_entry> steps;
+	level_t lvl;
+};
 
 
 
+struct critical_section
+{
+	code::iterator begin;
+	code::iterator end;
+	std::vector<check_entry> steps;
+};
 
 
 
 }
 }
 }
+/*
 
+
+
+ */
 
 #endif /* MW_TEST_DATA_OPERATIONS_HPP_ */
