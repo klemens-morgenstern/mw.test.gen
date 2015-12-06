@@ -109,6 +109,19 @@ int test_main (int, char**)
 
 	BOOST_CHECK(itr == end);
 
+	s = "assert x == 42 ;";
+	BOOST_CHECK(p(code_check, cc));
+	BOOST_CHECK(cc.qual.bitwise  == false);
+	BOOST_CHECK(cc.qual.critical == false);
+	BOOST_CHECK(cc.qual.static_  == false);
+	BOOST_CHECK(cc.qual.ranged 	 == false);
+	BOOST_CHECK(cc.lvl == data::level_t::assertion);
+	BOOST_CHECK(cc.data.to_string() == "x == 42 ");
+
+	BOOST_CHECK(itr == end);
+
+
+
 	s = "static critical ranged bitwise expect xyz ;";
 	BOOST_CHECK(p(code_check, cc));
 	BOOST_CHECK(cc.qual.bitwise  == true);
@@ -128,8 +141,6 @@ int test_main (int, char**)
 
 	BOOST_CHECK(p(critical_section, cs));
 
-	std::cerr << "Size: " << cs.steps.size() << std::endl;
-
 	BOOST_REQUIRE(cs.steps.size() == 1);
 	BOOST_REQUIRE
 			   (cs.steps[0].type() ==
@@ -138,6 +149,53 @@ int test_main (int, char**)
 	BOOST_CHECK(boost::get<data::code_check>(
 			cs.steps[0]).data.to_string() == "x ");
 
+
+	s = " assert throw (std::exception, std::runtime_error)\n"
+		"{ expect x == 42 ;\n"
+		"};";
+
+	data::throw_check tc;
+
+	BOOST_CHECK(p(throw_check, tc));
+
+	BOOST_REQUIRE(tc.steps.size() == 1);
+	BOOST_REQUIRE(tc.exceptions.data.size() == 2);
+
+	BOOST_CHECK(itr == end);
+
+	BOOST_REQUIRE
+			   (tc.steps[0].type() ==
+				boost::typeindex::type_id<data::code_check>());
+
+	BOOST_CHECK(boost::get<data::code_check>(
+			tc.steps[0]).data.to_string() == "x == 42 ");
+
+	BOOST_CHECK(tc.exceptions.data[0] == "std::exception");
+	BOOST_CHECK(tc.exceptions.data[1] == "std::runtime_error");
+
+
+	s = "critical expect no throw { };";
+
+	data::no_throw_check ntc;
+
+	BOOST_CHECK(p(no_throw_check, ntc));
+
+	BOOST_CHECK(itr == end);
+	BOOST_CHECK(ntc.critical);
+	BOOST_CHECK(ntc.lvl == data::expectation);
+	BOOST_CHECK(ntc.steps.size() == 0);
+
+
+	s = " assert any throw { int i = 42; };";
+
+	data::any_throw_check atc;
+
+	BOOST_CHECK(p(any_throw_check, atc));
+
+	BOOST_CHECK(itr == end);
+	BOOST_CHECK(!atc.critical);
+	BOOST_CHECK(atc.lvl == data::assertion);
+	BOOST_REQUIRE(atc.steps.size() == 1);
 
 
 	return 0;

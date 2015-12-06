@@ -29,7 +29,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::throw_check,
 	(mw::test::data::code::iterator, 		_begin)
 	(bool, critical)
-	(mw::test::data::level_t, 					 lvl)
+	(mw::test::data::level_t, 				lvl)
 	(mw::test::data::code_list,		 		exceptions)
 	(std::vector<mw::test::data::check_entry>, steps)
 	(mw::test::data::code::iterator, _end)
@@ -149,23 +149,22 @@ auto const code_check_def =
 auto const throw_check_def =
 			code_location
 		>>  is_critical
-		>>	level
-		>> '(' >> code_list >>')'
-		>>  check_entries
+		>>	level >> "throw" >> '(' >> code_list >> ')'
+		>>  '{' >> check_entries >> '}' >> -lit(';')
 		>> 	code_location ;
 
 auto const no_throw_check_def =
 			code_location
 		>>  is_critical
 		>>	level >> "no" >> "throw"
-		>>  check_entries
+		>>  '{' >> check_entries >> '}' >> -lit(';')
 		>> 	code_location ;
 
 auto const any_throw_check_def =
 			code_location
 		>>  is_critical
 		>>	level >> "any" >> "throw"
-		>>  check_entries
+		>>  '{' >> check_entries >> '}' >> -lit(';')
 		>> 	code_location ;
 
 auto const check_entries_def = *check_entry ;
@@ -173,10 +172,9 @@ auto const check_entries_def = *check_entry ;
 
 auto const critical_section_def =
 		code_location >> "critical" >>
-		'{' >> check_entries >> '}'
+		'{' >> check_entries >> '}' >> -lit(';')
 		>> code_location;
 
-auto al = [](auto & ctx) {_val(ctx) = _attr(ctx);};
 
 auto const check_entry_def =
 			execute_check
@@ -188,6 +186,7 @@ auto const check_entry_def =
 		|	critical_section
 		| 	code_chunk
 		;
+
 
 BOOST_SPIRIT_DEFINE(execute_check);
 BOOST_SPIRIT_DEFINE(no_execute_check);

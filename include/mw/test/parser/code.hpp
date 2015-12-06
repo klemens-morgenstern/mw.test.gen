@@ -80,6 +80,7 @@ auto const pointy_ops_def
 	| string(">")
 	| string("<=")
 	| string(">=")
+	| string("=")
 	;
 
 x3::rule<class square_par_code_chunk, std::string> const square_par_code_chunk;
@@ -156,21 +157,19 @@ auto set_end = [](auto &ctx)
 
 auto const code_chunk_def =
 		eps[code::set_beg] >>
-		omit[
-			 lexeme[*(!lit(';') >> code_chunk_step)]
-			 ] >> eps[code::set_end] >> omit[';'];
+			omit[ lexeme[*(!lit(';') >> code_chunk_step)]]
+			  >> eps[code::set_end] >> omit[';'];
 		;
 
 auto const code_section_def =
 
-		omit[
 			 lexeme[
 				'{' >>
 				eps[code::set_beg] >>
-				*(!lit('}') >> code_chunk_step)
+				omit[*(!lit('}') >> code_chunk_step)]
 				>> eps[code::set_end]
 				>> '}'
-			 ]] ;
+			 ] >> -lit(';');
 		;
 
 auto const code_list_step_def =

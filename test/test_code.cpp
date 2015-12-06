@@ -98,8 +98,14 @@ int test_main (int, char**)
 
 	s = "{ asdklklss,d, {} };";
 	BOOST_CHECK(pc(code_section));
-	BOOST_CHECK(itr == (end-1));
+	BOOST_CHECK(itr == end);
 	BOOST_CHECK(dc.to_string() == " asdklklss,d, {} ");
+
+	s= "x == 42 ;";
+
+	BOOST_CHECK(pc(code_chunk));
+	BOOST_CHECK(itr == end);
+	BOOST_CHECK(dc.to_string() == "x == 42 ");
 
 
 	data::code_list cl;
