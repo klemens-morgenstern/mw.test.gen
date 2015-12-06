@@ -121,22 +121,24 @@ int test_main (int, char**)
 	BOOST_CHECK(itr == end);
 
 
-/*	s = "critical \n"
+	s = "critical \n"
 		"{ assert x ; }";
 
 	data::critical_section cs;
 
-	BOOST_CHECK(p(crit_section, cs));
+	BOOST_CHECK(p(critical_section, cs));
 
-	BOOST_CHECK(cs.steps.size() == 1);
+	std::cerr << "Size: " << cs.steps.size() << std::endl;
+
+	BOOST_REQUIRE(cs.steps.size() == 1);
 	BOOST_REQUIRE
 			   (cs.steps[0].type() ==
 				boost::typeindex::type_id<data::code_check>());
 
 	BOOST_CHECK(boost::get<data::code_check>(
-			cs.steps[0]).data.to_string() == "x ;");
+			cs.steps[0]).data.to_string() == "x ");
 
-*/
+
 
 	return 0;
 }

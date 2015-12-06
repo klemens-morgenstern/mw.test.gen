@@ -7,6 +7,7 @@ project test :
 	<include>$(boost-inc)
 	<include>../include
 	<toolset>gcc:<cxxflags>-std=gnu++1y
+	<toolset>gcc:<cxxflags>-ftemplate-depth=256
 	<linkflags>-LF:/boost/lib
 	<link>shared
 	;

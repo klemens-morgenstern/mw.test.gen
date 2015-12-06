@@ -27,8 +27,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::throw_check,
-	(bool, critical)
 	(mw::test::data::code::iterator, 		_begin)
+	(bool, critical)
 	(mw::test::data::level_t, 					 lvl)
 	(mw::test::data::code_list,		 		exceptions)
 	(std::vector<mw::test::data::check_entry>, steps)
@@ -37,8 +37,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::no_throw_check,
-	(bool, critical)
 	(mw::test::data::code::iterator, _begin)
+	(bool, critical)
 	(mw::test::data::level_t, 				 lvl)
 	(std::vector<mw::test::data::check_entry>, steps)
 	(mw::test::data::code::iterator, _end)
@@ -46,8 +46,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::any_throw_check,
-	(bool, critical)
 	(mw::test::data::code::iterator, _begin)
+	(bool, critical)
 	(mw::test::data::level_t, 				 lvl)
 	(std::vector<mw::test::data::check_entry>, steps)
 	(mw::test::data::code::iterator, _end)
@@ -55,8 +55,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::critical_section,
-	(bool, critical)
-	(mw::test::data::code::iterator, location)
+	(mw::test::data::code::iterator, _begin)
 	(std::vector<mw::test::data::check_entry>, steps)
 	(mw::test::data::code::iterator, _end)
 );
@@ -112,12 +111,13 @@ auto set_location = [](auto &ctx)
 x3::rule<class check_qualification, data::check_qualification> const check_qualification;
 
 
-x3::rule<class func_content> 					 		 const func_content;
 x3::rule<class execute_check, 	 data::execute_check>	 const execute_check;
 x3::rule<class no_execute_check, data::no_execute_check> const no_execute_check;
 x3::rule<class code_check, 		 data::code_check> 		 const code_check;
-x3::rule<class crit_section, 	 data::critical_section> const crit_section;
+x3::rule<class critical_section, data::critical_section> const critical_section;
 x3::rule<class check_entry, 	 data::check_entry> 	 const check_entry;
+x3::rule<class check_entries, 	 std::vector<data::check_entry>> const check_entries;
+
 x3::rule<class throw_check, 	 data::throw_check>		 const throw_check;
 x3::rule<class no_throw_check, 	 data::no_throw_check>	 const no_throw_check;
 x3::rule<class any_throw_check,	 data::any_throw_check>	 const any_throw_check;
@@ -151,27 +151,32 @@ auto const throw_check_def =
 		>>  is_critical
 		>>	level
 		>> '(' >> code_list >>')'
-		>>  code_section
+		>>  check_entries
 		>> 	code_location ;
 
 auto const no_throw_check_def =
 			code_location
 		>>  is_critical
 		>>	level >> "no" >> "throw"
-		>>  code_section
+		>>  check_entries
 		>> 	code_location ;
 
 auto const any_throw_check_def =
 			code_location
 		>>  is_critical
 		>>	level >> "any" >> "throw"
-		>>  code_section
+		>>  check_entries
 		>> 	code_location ;
 
-auto const crit_section_def =
-		code_location >>
-		'{' >> *check_entry >> '}'
+auto const check_entries_def = *check_entry ;
+
+
+auto const critical_section_def =
+		code_location >> "critical" >>
+		'{' >> check_entries >> '}'
 		>> code_location;
+
+auto al = [](auto & ctx) {_val(ctx) = _attr(ctx);};
 
 auto const check_entry_def =
 			execute_check
@@ -180,7 +185,7 @@ auto const check_entry_def =
 		|	throw_check
 		|	no_throw_check
 		|	any_throw_check
-		|	crit_section
+		|	critical_section
 		| 	code_chunk
 		;
 
@@ -188,8 +193,11 @@ BOOST_SPIRIT_DEFINE(execute_check);
 BOOST_SPIRIT_DEFINE(no_execute_check);
 
 BOOST_SPIRIT_DEFINE(code_check);
-BOOST_SPIRIT_DEFINE(crit_section);
+
+BOOST_SPIRIT_DEFINE(critical_section);
+
 BOOST_SPIRIT_DEFINE(check_entry);
+BOOST_SPIRIT_DEFINE(check_entries);
 
 BOOST_SPIRIT_DEFINE(throw_check);
 BOOST_SPIRIT_DEFINE(no_throw_check);
