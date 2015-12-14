@@ -6,8 +6,8 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_DOCT_HPP_
-#define MW_TEST_DATA_DOCT_HPP_
+#ifndef MW_TEST_DATA_DOC_HPP_
+#define MW_TEST_DATA_DOC_HPP_
 
 namespace mw
 {
@@ -32,4 +32,4 @@ inline doc_t& operator+=(doc_t & d, doc_t& rhs)
 }
 }
 }
-#endif /* MW_TEST_DATA_DOCT_HPP_ */
+#endif /* MW_TEST_DATA_DOC_HPP_ */
