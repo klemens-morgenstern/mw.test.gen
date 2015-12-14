@@ -14,7 +14,7 @@
 
 //#include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
-#include <mw/test/data/doct.hpp>
+#include <mw/test/data/doc.hpp>
 
 
 BOOST_FUSION_ADAPT_STRUCT(

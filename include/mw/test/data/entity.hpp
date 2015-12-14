@@ -9,7 +9,7 @@
 #ifndef MW_TEST_DATA_ENTITY_HPP_
 #define MW_TEST_DATA_ENTITY_HPP_
 
-#include <mw/test/data/doct.hpp>
+#include <mw/test/data/doc.hpp>
 
 namespace mw
 {

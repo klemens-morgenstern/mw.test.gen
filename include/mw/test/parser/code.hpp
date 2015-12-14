@@ -96,8 +96,8 @@ x3::rule<class code_chunk_in, 				std::string> const code_chunk_in;
 x3::rule<class code_chunk_in_step, 			std::string> const code_chunk_step;
 x3::rule<class code_chunk_in_step_no_ops, 	std::string> const code_chunk_step_no_ops;
 
-x3::rule<class code_section, 		data::code>	 const code_section;
-
+x3::rule<class code_section,  data::code>	 		const code_section;
+x3::rule<class code_function, data::code>			const code_function;
 x3::rule<class code_location, data::code::iterator> const code_location;
 
 auto const square_par_code_chunk_def =
@@ -155,6 +155,15 @@ auto set_end = [](auto &ctx)
 
 }
 
+auto const code_function_def =
+			eps[code::set_beg] >>
+			+(!lit('(') >> code_chunk_step ) >>
+			'(' >> code_list >> ')' >>
+			'{' >> *(!lit('}') >> code_chunk_step) >> '}'
+			>>
+			eps[code::set_end] >> -omit[';']
+		;
+
 auto const code_chunk_def =
 		eps[code::set_beg] >>
 			omit[ lexeme[*(!lit(';') >> code_chunk_step)]]
@@ -162,7 +171,6 @@ auto const code_chunk_def =
 		;
 
 auto const code_section_def =
-
 			 lexeme[
 				'{' >>
 				eps[code::set_beg] >>
@@ -200,6 +208,7 @@ BOOST_SPIRIT_DEFINE(pointy_ops);
 BOOST_SPIRIT_DEFINE(code_location);
 BOOST_SPIRIT_DEFINE(code_section);
 BOOST_SPIRIT_DEFINE(code_chunk_step_no_ops);
+BOOST_SPIRIT_DEFINE(code_function);
 
 }
 }

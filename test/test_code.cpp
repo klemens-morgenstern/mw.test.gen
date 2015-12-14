@@ -141,5 +141,22 @@ int test_main (int, char**)
 
 
 
+
+	s = "invalid function{42};";
+
+	BOOST_CHECK(!pc(code_function));
+
+	s = "valid function(){stuff;}"; //not parsed with phrase_parse...
+
+	BOOST_CHECK(pc(code_function));
+	BOOST_CHECK(itr == end);
+
+	s = "another valid function(int i = 42, double x = 0.221){}";
+
+	BOOST_CHECK(pc(code_function));
+	BOOST_CHECK(itr == end);
+
+
+
 	return 0;
 }
