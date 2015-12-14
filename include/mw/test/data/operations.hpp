@@ -38,7 +38,7 @@ struct check_qualification
 //location is inside the code
 struct code_check
 {
-	doc doc;
+	doc_t doc;
 	code data;
 	level_t lvl;
 	check_qualification qual;
@@ -46,7 +46,7 @@ struct code_check
 
 struct execute_check
 {
-	doc doc;
+	doc_t doc;
 	code::iterator location;
 	level_t lvl;
 	bool critical;
@@ -54,7 +54,7 @@ struct execute_check
 
 struct no_execute_check
 {
-	doc doc;
+	doc_t doc;
 	code::iterator location;
 	level_t lvl;
 	bool critical;
@@ -82,7 +82,7 @@ using check_entry =
 
 struct throw_check
 {
-	doc doc;
+	doc_t doc;
 	bool critical = false;
 	void set_critical() {critical = true;}
 
@@ -101,7 +101,7 @@ struct throw_check
 
 struct no_throw_check
 {
-	doc doc;
+	doc_t doc;
 	bool critical = false;
 	void set_critical() {critical = true;}
 
@@ -117,7 +117,7 @@ struct no_throw_check
 
 struct any_throw_check
 {
-	doc doc;
+	doc_t doc;
 	bool critical = false;
 	void set_critical() {critical = true;}
 
@@ -136,7 +136,7 @@ struct any_throw_check
 
 struct critical_section
 {
-	doc doc;
+	doc_t doc;
 	code::iterator _begin;
 	code::iterator _end;
 	std::vector<check_entry> steps;

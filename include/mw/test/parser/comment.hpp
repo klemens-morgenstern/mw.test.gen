@@ -10,15 +10,15 @@
 #define MW_TEST_COMMENT_HPP_
 
 #include <mw/test/parser/config.hpp>
-#include <mw/test/data/doc.hpp>
 #include <type_traits>
 
 //#include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
+#include <mw/test/data/doct.hpp>
 
 
 BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::data::doc,
+		mw::test::data::doc_t,
 		(std::string, head)
 		(std::string, body)
 );
@@ -132,7 +132,7 @@ BOOST_SPIRIT_DEFINE(skipper);
  * <comment_pre_doc> ::= (<line_comment_pre_doc> | <block_comment_pre_doc> ) (<line_comment_pre_doc> | <block_comment_pre_doc> ) * ;
  * @endcode
  */
-x3::rule<class comment_pre_doc, data::doc>  const comment_pre_doc ("comment_pre_doc");
+x3::rule<class comment_pre_doc, data::doc_t>  const comment_pre_doc ("comment_pre_doc");
 
 auto const comment_pre_doc_def =
 			 (line_comment_pre_doc | block_comment_pre_doc) >>
@@ -144,7 +144,7 @@ auto const comment_pre_doc_def =
  * <comment_post_doc> ::= (<line_comment_post_doc> | <block_comment_post_doc> ) (<line_comment_post_doc> | <block_comment_post_doc> ) * ;
  * @endcode
  */
-x3::rule<class comment_post_doc, data::doc> const comment_post_doc("comment_post_doc");
+x3::rule<class comment_post_doc, data::doc_t> const comment_post_doc("comment_post_doc");
 
 auto const comment_post_doc_def =
 			 (line_comment_post_doc | block_comment_post_doc) >>
@@ -157,7 +157,7 @@ BOOST_SPIRIT_DEFINE(comment_pre_doc, comment_post_doc);
 auto const doc_f = [](auto &ctx)
 {
 	static_assert(
-			std::is_convertible<decltype(_attr(ctx)), data::doc>::value,
+			std::is_convertible<decltype(_attr(ctx)), data::doc_t>::value,
 			"doc_lambda must be used in a rule that yields a data::doc");
 
 	_val(ctx).doc += _attr(ctx);

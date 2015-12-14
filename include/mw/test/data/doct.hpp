@@ -6,8 +6,8 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_DOC_HPP_
-#define MW_TEST_DATA_DOC_HPP_
+#ifndef MW_TEST_DATA_DOCT_HPP_
+#define MW_TEST_DATA_DOCT_HPP_
 
 namespace mw
 {
@@ -16,13 +16,13 @@ namespace test
 namespace data
 {
 
-struct doc
+struct doc_t
 {
 	std::string head;
 	std::string body;
 };
 
-inline doc& operator+=(doc & d, doc& rhs)
+inline doc_t& operator+=(doc_t & d, doc_t& rhs)
 {
 	d.head += rhs.head;
 	d.body += rhs.body;
@@ -32,4 +32,4 @@ inline doc& operator+=(doc & d, doc& rhs)
 }
 }
 }
-#endif /* MW_TEST_DATA_DOC_HPP_ */
+#endif /* MW_TEST_DATA_DOCT_HPP_ */
