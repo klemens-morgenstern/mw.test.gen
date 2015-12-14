@@ -198,5 +198,22 @@ int test_main (int, char**)
 	BOOST_REQUIRE(atc.steps.size() == 1);
 
 
+
+	s = "///some comment\nassert no execution; ///< 2\n/**<postfix comment*/";
+
+	BOOST_CHECK(p(check_entry, ce));
+
+	BOOST_CHECK(itr == end);
+	BOOST_REQUIRE(ce.type() == boost::typeindex::type_id<data::no_execute_check>());
+
+	{
+		auto & v = boost::get<data::no_execute_check>(ce);
+
+		BOOST_CHECK(v.critical == false);
+		BOOST_CHECK(v.lvl == data::assertion);
+		BOOST_CHECK(v.doc.head == "some comment 2");
+		BOOST_CHECK(v.doc.body == "postfix comment");
+
+	}
 	return 0;
 }

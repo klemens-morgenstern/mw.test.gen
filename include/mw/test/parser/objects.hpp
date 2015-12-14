@@ -38,7 +38,7 @@ x3::rule<class test_object> const test_object("test_object");
 
 auto const test_object_def =
 		string("test") >> "object" >> id
-		>> -template_decl
+		>> -tpl_decl
 		>> "{"
 		>> *object_content
 		>> "}" >> -char_(";");
@@ -48,7 +48,7 @@ x3::rule<class composition> const composition("composition");
 
 auto const composition_def =
 		string("composition") >> id
-		>> -template_decl
+		>> -tpl_decl
 		>> -inheritance
 		>> "{"
 		>> *object_content
@@ -59,7 +59,7 @@ x3::rule<class classification> const classification("classification");
 
 auto const classification_def =
 		string("classification") >> id
-		>> -template_decl
+		>> -tpl_decl
 		>> -inheritance
 		>> "{"
 		>> *object_content
@@ -69,7 +69,7 @@ x3::rule<class class_> const class_("class_");
 
 auto const class__def =
 		string("class") >> id
-		>> -template_decl
+		>> -tpl_decl
 		>> -inheritance
 		>> "{"
 		>> *object_content
@@ -80,7 +80,7 @@ x3::rule<class test_case> const test_case("test_case");
 
 auto const test_case_def =
 		string("test") >> "case"  >> id
-		>> -template_decl
+		>> -tpl_decl
 		>> -inheritance
 		>> "{"
 		>> *object_content
@@ -91,7 +91,7 @@ x3::rule<class test_sequence> const test_sequence("test_sequence");
 
 auto const test_sequence_def =
 		string("test") >> "sequence"
-		>> -template_decl
+		>> -tpl_decl
 		>> -inheritance
 		>> "{"
 		>> *object_content
@@ -102,7 +102,7 @@ x3::rule<class test_step> const test_step("test_step");
 
 auto const test_step_def =
 		string("test") >> "step"
-		>> -template_decl
+		>> -tpl_decl
 		>> -inheritance
 		>> "{"
 		>> *object_content

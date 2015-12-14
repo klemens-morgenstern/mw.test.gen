@@ -115,12 +115,25 @@ x3::rule<class execute_check, 	 data::execute_check>	 const execute_check;
 x3::rule<class no_execute_check, data::no_execute_check> const no_execute_check;
 x3::rule<class code_check, 		 data::code_check> 		 const code_check;
 x3::rule<class critical_section, data::critical_section> const critical_section;
+
 x3::rule<class check_entry, 	 data::check_entry> 	 const check_entry;
 x3::rule<class check_entries, 	 std::vector<data::check_entry>> const check_entries;
 
 x3::rule<class throw_check, 	 data::throw_check>		 const throw_check;
 x3::rule<class no_throw_check, 	 data::no_throw_check>	 const no_throw_check;
 x3::rule<class any_throw_check,	 data::any_throw_check>	 const any_throw_check;
+
+x3::rule<class execute_check_doc, 	 data::execute_check>	 const execute_check_doc;
+x3::rule<class no_execute_check_doc, data::no_execute_check> const no_execute_check_doc;
+x3::rule<class critical_section_doc, data::critical_section> const critical_section_doc;
+
+x3::rule<class check_entry_doc, 	 data::check_entry> 	 const check_entry_doc;
+x3::rule<class check_entries_doc, 	 std::vector<data::check_entry>> const check_entries_doc;
+
+x3::rule<class throw_check_doc, 	 data::throw_check>		 const throw_check_doc;
+x3::rule<class no_throw_check_doc, 	 data::no_throw_check>	 const no_throw_check_doc;
+x3::rule<class any_throw_check_doc,	 data::any_throw_check>	 const any_throw_check_doc;
+
 
 
 x3::rule<class is_critical, bool> const is_critical;
@@ -131,10 +144,10 @@ auto const is_critical_def =
 		;
 
 auto const check_qualification_def =
-		*omit[(	lit("static")  [oper::set_static  ]|
-				lit("critical")[oper::set_critical]|
-				lit("ranged")  [oper::set_ranged   ]|
-				lit("bitwise") [oper::set_bitwise ])] ;
+		*(	lit("static")  [oper::set_static  ] |
+			lit("critical")[oper::set_critical] |
+			lit("ranged")  [oper::set_ranged  ] |
+			lit("bitwise") [oper::set_bitwise ] ) ;
 
 
 auto const execute_check_def =
@@ -142,6 +155,7 @@ auto const execute_check_def =
 
 auto const no_execute_check_def =
 		code_location >> is_critical >> level >> "no">> lit("execution") >> ";";
+
 
 auto const code_check_def =
 		check_qualification >> level >> code_chunk;
@@ -158,7 +172,7 @@ auto const no_throw_check_def =
 		>>  is_critical
 		>>	level >> "no" >> "throw"
 		>>  '{' >> check_entries >> '}' >> -lit(';')
-		>> 	code_location ;
+		>> 	code_location;
 
 auto const any_throw_check_def =
 			code_location
@@ -176,16 +190,24 @@ auto const critical_section_def =
 		>> code_location;
 
 
+auto const execute_check_doc_def     = doc(execute_check    );
+auto const no_execute_check_doc_def  = doc(no_execute_check );
+auto const critical_section_doc_def  = doc(critical_section );
+auto const check_entry_doc_def       = doc(check_entry      );
+auto const check_entries_doc_def     = doc(check_entries    );
+auto const throw_check_doc_def       = doc(throw_check	    );
+auto const no_throw_check_doc_def    = doc(no_throw_check   );
+auto const any_throw_check_doc_def   = doc(any_throw_check  );
+
 auto const check_entry_def =
-			execute_check
-		|	no_execute_check
-		|	code_check
-		|	throw_check
-		|	no_throw_check
-		|	any_throw_check
-		|	critical_section
-		| 	code_chunk
-		;
+			execute_check_doc
+		|	no_execute_check_doc
+		|	code_check //< for some reason, this does not work with documentation.
+		|	throw_check_doc
+		|	no_throw_check_doc
+		|	any_throw_check_doc
+		|	critical_section_doc
+		| 	code_chunk;
 
 
 BOOST_SPIRIT_DEFINE(execute_check);
@@ -206,10 +228,17 @@ BOOST_SPIRIT_DEFINE(is_critical);
 
 BOOST_SPIRIT_DEFINE(check_qualification);
 
-}
-}
-}
+BOOST_SPIRIT_DEFINE(execute_check_doc      );
+BOOST_SPIRIT_DEFINE(no_execute_check_doc   );
+BOOST_SPIRIT_DEFINE(critical_section_doc   );
+BOOST_SPIRIT_DEFINE(check_entry_doc        );
+BOOST_SPIRIT_DEFINE(check_entries_doc      );
+BOOST_SPIRIT_DEFINE(throw_check_doc        );
+BOOST_SPIRIT_DEFINE(no_throw_check_doc     );
+BOOST_SPIRIT_DEFINE(any_throw_check_doc    );
 
-
+}
+}
+}
 
 #endif /* MW_TEST_PARSER_OPERATIONS_HPP_ */

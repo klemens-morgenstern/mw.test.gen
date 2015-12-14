@@ -165,7 +165,12 @@ auto const doc_f = [](auto &ctx)
 };
 
 ///This lambda allows to declare a rule as documented, which will provide the doc before and after to be added the entity.
-auto doc = [](auto rule) {return -comment_pre_doc[doc_f] >> rule >> -comment_post_doc[doc_f]; };
+auto doc = [](auto rule)
+		{
+			return 	omit[-comment_pre_doc [doc_f]]
+					>>	rule
+					>> 	omit[-comment_post_doc[doc_f]];
+		};
 
 
 
