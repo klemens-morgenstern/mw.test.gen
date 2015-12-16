@@ -14,8 +14,6 @@
 #include <mw/test/parser/utility.hpp>
 #include <mw/test/data/operations.hpp>
 
-#include <iostream>
-
 #include <boost/fusion/include/adapt_struct.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(

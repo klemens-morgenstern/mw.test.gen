@@ -21,20 +21,21 @@ namespace test
 namespace parser
 {
 
+
 ///Rule to declare the inheritance of an object
 /**
  * @code{.ebnf}
  * <inheritance> ::= ':' <id> -<tpl_par> (<id> -<tpl_par>)* ;
  * @endcode
  */
-x3::rule<class inheritance> const inheritance("inheritance");
+x3::rule<class inheritance> const inheritance;
 
 auto const inheritance_def =
 		":" >> (id >> -tpl_par) % ","
 		;
 
 
-x3::rule<class test_object> const test_object("test_object");
+x3::rule<class test_object> const test_object;
 
 auto const test_object_def =
 		string("test") >> "object" >> id
@@ -44,7 +45,7 @@ auto const test_object_def =
 		>> "}" >> -char_(";");
 
 
-x3::rule<class composition> const composition("composition");
+x3::rule<class composition> const composition;
 
 auto const composition_def =
 		string("composition") >> id
@@ -55,7 +56,7 @@ auto const composition_def =
 		>> "}" >> -char_(";");
 
 
-x3::rule<class classification> const classification("classification");
+x3::rule<class classification> const classification;
 
 auto const classification_def =
 		string("classification") >> id
@@ -65,7 +66,7 @@ auto const classification_def =
 		>> *object_content
 		>> "}" >> -char_(";");
 
-x3::rule<class class_> const class_("class_");
+x3::rule<class class_> const class_;
 
 auto const class__def =
 		string("class") >> id
@@ -76,7 +77,7 @@ auto const class__def =
 		>> "}" >> -char_(";");
 
 
-x3::rule<class test_case> const test_case("test_case");
+x3::rule<class test_case> const test_case;
 
 auto const test_case_def =
 		string("test") >> "case"  >> id
@@ -87,7 +88,7 @@ auto const test_case_def =
 		>> "}" >> -char_(";");
 
 
-x3::rule<class test_sequence> const test_sequence("test_sequence");
+x3::rule<class test_sequence> const test_sequence;
 
 auto const test_sequence_def =
 		string("test") >> "sequence"
@@ -98,7 +99,7 @@ auto const test_sequence_def =
 		>> "}" >> -char_(";");
 
 
-x3::rule<class test_step> const test_step("test_step");
+x3::rule<class test_step> const test_step;
 
 auto const test_step_def =
 		string("test") >> "step"
