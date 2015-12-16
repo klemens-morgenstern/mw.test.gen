@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <mw/test/data/code.hpp>
+#include <mw/test/data/actions.hpp>
 #include <boost/variant.hpp>
 
 namespace mw
@@ -76,6 +77,7 @@ using check_entry =
 			no_throw_check,
 			any_throw_check,
 			critical_section,
+			action_call,
 			code
 		>;
 

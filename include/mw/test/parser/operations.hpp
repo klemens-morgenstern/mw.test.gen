@@ -12,6 +12,7 @@
 #include <mw/test/parser/config.hpp>
 #include <mw/test/parser/code.hpp>
 #include <mw/test/parser/utility.hpp>
+#include <mw/test/parser/actions.hpp>
 #include <mw/test/data/operations.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
@@ -205,6 +206,7 @@ auto const check_entry_def =
 		|	no_throw_check_doc
 		|	any_throw_check_doc
 		|	critical_section_doc
+		|   action_call
 		| 	code_chunk;
 
 

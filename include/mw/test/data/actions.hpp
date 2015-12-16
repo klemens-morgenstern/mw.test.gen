@@ -31,7 +31,6 @@ struct action_call
 	action_t action;
 	std::string id;
 	std::vector<std::string> tpl_par;
-
 };
 
 
