@@ -24,6 +24,13 @@ BOOST_FUSION_ADAPT_STRUCT(
 		(std::string, def_arg)
 );
 
+BOOST_FUSION_ADAPT_STRUCT(
+		mw::test::data::obj_id,
+		(std::string, name)
+		(std::vector<std::string>, tpl_args)
+);
+
+
 namespace mw
 {
 namespace test
@@ -138,6 +145,14 @@ BOOST_SPIRIT_DEFINE(tpl_pointy_par);
 BOOST_SPIRIT_DEFINE(tpl_par);
 BOOST_SPIRIT_DEFINE(tpl_decl);
 BOOST_SPIRIT_DEFINE(tpl_par_list);
+
+
+
+x3::rule<class obj_id, data::obj_id> obj_id;
+
+auto const obj_id_def = id >> -tpl_par_list;
+
+BOOST_SPIRIT_DEFINE(obj_id);
 
 }
 }

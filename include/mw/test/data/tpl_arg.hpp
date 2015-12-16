@@ -26,6 +26,13 @@ struct tpl_arg
 	std::string def_arg;
 };
 
+///object id, may also contain template parameters
+struct obj_id
+{
+	std::string name;
+	std::vector<std::string> tpl_args;
+};
+
 }
 }
 }
