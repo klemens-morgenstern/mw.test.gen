@@ -39,7 +39,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(mw::test::data::code::iterator, location)
 	(boost::optional<mw::test::data::obj_id>, id)
 	(mw::test::data::action_t, action)
-	(std::vector<std::string>, exceptions)
+	(mw::test::data::level_t, level)
+	(mw::test::data::code_list, exceptions)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -47,6 +48,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(mw::test::data::code::iterator, location)
 	(boost::optional<mw::test::data::obj_id>, id)
 	(mw::test::data::action_t, action)
+	(mw::test::data::level_t, level)
+
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -54,6 +57,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(mw::test::data::code::iterator, location)
 	(boost::optional<mw::test::data::obj_id>, id)
 	(mw::test::data::action_t, action)
+	(mw::test::data::level_t, level)
+
 );
 
 namespace mw
@@ -93,36 +98,33 @@ x3::rule<class using_decl, data::using_decl> const using_decl;
 
 auto const using_plain_def =
 			lexeme["using" >> code_location >> skipper ]
-		>>	-(id >> "::")
+		>>	-((obj_id - action) >> "::")
 		>> 	action
 		>> 	";" ;
 
 auto const using_throw_def =
 		 	"using"
 		>>  code_location
-		>>  -(id >> "::")
+		>>  -((obj_id - action) >> "::")
 		>>  action
 		>> 	"for"
-		>>  is_critical
 		>>	level >> "throw" >> '(' >> code_list >> ')' >> ";";
 
 auto const using_no_throw_def =
 	 		"using"
 		>>  code_location
-		>>  -(id >> "::")
+		>>  -((obj_id - action) >> "::")
 		>>  action
 		>>	"for"
-		>>  is_critical
 		>>	level >> "no" >> "throw"
 		>> ";";
 
 auto const using_any_throw_def =
 	 		"using"
 		>>  code_location
-		>>  -(id >> "::")
+		>>  -((obj_id - action) >> "::")
 		>>  action
 		>>	"for"
-		>>  is_critical
 		>>	level >> "any" >> "throw"
 		>> ";";
 

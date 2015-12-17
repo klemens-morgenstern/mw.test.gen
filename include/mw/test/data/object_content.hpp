@@ -49,7 +49,8 @@ struct using_throw
 	code::iterator location;
 	boost::optional<obj_id> id;
 	action_t action;
-	std::vector<std::string> exceptions;
+	level_t level;
+	code_list exceptions;
 };
 
 struct using_no_throw
@@ -58,6 +59,7 @@ struct using_no_throw
 	code::iterator location;
 	boost::optional<obj_id> id;
 	action_t action;
+	level_t level;
 };
 
 struct using_any_throw
@@ -65,6 +67,7 @@ struct using_any_throw
 	code::iterator location;
 	boost::optional<obj_id> id;
 	action_t action;
+	level_t level;
 };
 
 struct using_decl  : boost::variant<using_plain, using_throw, using_no_throw, using_any_throw>
