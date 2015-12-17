@@ -75,6 +75,8 @@ struct using_decl  : boost::variant<using_plain, using_throw, using_no_throw, us
 	doc_t doc;
 };
 
+using object_content = boost::variant<obj_action, using_decl, code>;
+
 }
 }
 }

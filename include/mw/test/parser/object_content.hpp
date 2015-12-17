@@ -142,6 +142,12 @@ BOOST_SPIRIT_DEFINE(using_no_throw);
 BOOST_SPIRIT_DEFINE(using_any_throw);
 BOOST_SPIRIT_DEFINE(using_decl);
 
+x3::rule<class object_content, data::object_content> const object_content;
+
+auto const object_content_def = obj_action_doc | using_decl | code_chunk | code_function ;
+
+BOOST_SPIRIT_DEFINE(object_content);
+
 }
 }
 }
