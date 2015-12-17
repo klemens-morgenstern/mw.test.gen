@@ -134,8 +134,6 @@ struct any_throw_check
 
 };
 
-
-
 struct critical_section
 {
 	doc_t doc;

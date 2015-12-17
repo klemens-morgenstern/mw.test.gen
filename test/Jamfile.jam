@@ -22,6 +22,7 @@ test-suite mw.test.test
 	[ run test_code.cpp ] 
 	[ run test_opers.cpp ]
 	[ run test_actions.cpp ]
+	[ run test_obj_cnt.cpp ]
 	
      ; 	
 		

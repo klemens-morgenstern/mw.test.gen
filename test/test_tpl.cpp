@@ -151,14 +151,13 @@ int test_main (int, char**)
 
 	input = "dings<42,stuff>";
 
-	d::obj_id oi;
 
 	BOOST_CHECK(l(obj_id, oi));
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(oi.name == "dings");
 	BOOST_REQUIRE(oi.tpl_args.size() == 2);
-	BOOST_CHECK(oi[0] == "42");
-	BOOST_CHECK(oi[1] == "stuff");
+	BOOST_CHECK(oi.tpl_args[0] == "42");
+	BOOST_CHECK(oi.tpl_args[1] == "stuff");
 
 
 	return 0;

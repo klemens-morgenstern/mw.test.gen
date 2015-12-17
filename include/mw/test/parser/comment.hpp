@@ -116,11 +116,11 @@ BOOST_SPIRIT_DEFINE(line_comment, block_comment, comment);
 
 ///Skipper rule
 /** @code{.enbf}
- * <skiper> ::= <comment> | <end_of_line> | <space> ;
+ * <skipper> ::= <comment> | <end_of_line> | <space> ;
  * @endcode
  *
  */
-x3::rule<class skipper> const skipper("skipper");
+x3::rule<class skipper> const skipper;
 
 auto const skipper_def = comment | eol | space;
 
