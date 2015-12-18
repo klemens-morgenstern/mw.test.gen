@@ -70,8 +70,9 @@ struct using_any_throw
 	level_t level;
 };
 
-struct using_decl  : boost::variant<using_plain, using_throw, using_no_throw, using_any_throw>
+struct using_decl
 {
+	boost::variant<using_plain, using_throw, using_no_throw, using_any_throw> data;
 	doc_t doc;
 };
 

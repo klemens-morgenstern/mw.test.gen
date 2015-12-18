@@ -13,6 +13,16 @@
 #include <mw/test/parser/id.hpp>
 #include <mw/test/parser/template.hpp>
 #include <mw/test/parser/object_content.hpp>
+#include <mw/test/data/objects.hpp>
+
+
+BOOST_FUSION_ADAPT_STRUCT(
+	mw::test::data::test_object,
+	(mw::test::data::object_type_t, 				type)
+	(mw::test::data::obj_id, 						id)
+	(std::vector<mw::test::data::obj_id>, inheritance)
+	(std::vector<mw::test::data::object_content>, 	content)
+);
 
 namespace mw
 {
@@ -28,100 +38,60 @@ namespace parser
  * <inheritance> ::= ':' <id> -<tpl_par> (<id> -<tpl_par>)* ;
  * @endcode
  */
-x3::rule<class inheritance> const inheritance;
+x3::rule<class inheritance, std::vector<data::obj_id>> const inheritance;
 
 auto const inheritance_def =
-		":" >> (id >> -tpl_par) % ","
+		-(":" >> obj_id % ",")
 		;
 
+BOOST_SPIRIT_DEFINE(inheritance);
 
-x3::rule<class test_object> const test_object;
+struct plain_obj_type_t : x3::symbols<data::object_type_t>
+{
+	plain_obj_type_t()
+	{
+		add	("classification",  data::classification)
+			("composition", 	data::composition)
+			;
+	}
+} plain_obj_type;
+
+
+struct test_obj_type_t : x3::symbols<data::object_type_t>
+{
+	test_obj_type_t()
+	{
+		add ("object", data::object)
+			("class",  data::class_)
+			("case",   data::case_)
+			("step",   data::step)
+			("sequence", data::sequence);
+	}
+} test_obj_type;
+
+
+x3::rule<class object_type, data::object_type_t> const object_type;
+
+auto const object_type_def =
+		plain_obj_type |
+		(lexeme["test" >> skipper] >> test_obj_type) ;
+
+BOOST_SPIRIT_DEFINE(object_type);
+
+
+
+x3::rule<class test_object, data::test_object> const test_object;
 
 auto const test_object_def =
-		string("test") >> "object" >> id
-		>> -tpl_decl
+		object_type >>
+			obj_id >>
+			inheritance
 		>> "{"
 		>> *object_content
-		>> "}" >> -char_(";");
+		>> lit("}") >> -lit(";");
 
-
-x3::rule<class composition> const composition;
-
-auto const composition_def =
-		string("composition") >> id
-		>> -tpl_decl
-		>> -inheritance
-		>> "{"
-		>> *object_content
-		>> "}" >> -char_(";");
-
-
-x3::rule<class classification> const classification;
-
-auto const classification_def =
-		string("classification") >> id
-		>> -tpl_decl
-		>> -inheritance
-		>> "{"
-		>> *object_content
-		>> "}" >> -char_(";");
-
-x3::rule<class class_> const class_;
-
-auto const class__def =
-		string("class") >> id
-		>> -tpl_decl
-		>> -inheritance
-		>> "{"
-		>> *object_content
-		>> "}" >> -char_(";");
-
-
-x3::rule<class test_case> const test_case;
-
-auto const test_case_def =
-		string("test") >> "case"  >> id
-		>> -tpl_decl
-		>> -inheritance
-		>> "{"
-		>> *object_content
-		>> "}" >> -char_(";");
-
-
-x3::rule<class test_sequence> const test_sequence;
-
-auto const test_sequence_def =
-		string("test") >> "sequence"
-		>> -tpl_decl
-		>> -inheritance
-		>> "{"
-		>> *object_content
-		>> "}" >> -char_(";");
-
-
-x3::rule<class test_step> const test_step;
-
-auto const test_step_def =
-		string("test") >> "step"
-		>> -tpl_decl
-		>> -inheritance
-		>> "{"
-		>> *object_content
-		>> "}" >> -char_(";");
-
-
-
-
-
-BOOST_SPIRIT_DEFINE(object_content);
-BOOST_SPIRIT_DEFINE(inheritance);
 BOOST_SPIRIT_DEFINE(test_object);
-BOOST_SPIRIT_DEFINE(composition);
-BOOST_SPIRIT_DEFINE(classification);
-BOOST_SPIRIT_DEFINE(class_);
-BOOST_SPIRIT_DEFINE(test_case);
-BOOST_SPIRIT_DEFINE(test_sequence);
-BOOST_SPIRIT_DEFINE(test_step);
+
 
 
 

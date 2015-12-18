@@ -61,6 +61,12 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 );
 
+
+BOOST_FUSION_ADAPT_STRUCT(
+	mw::test::data::using_decl,
+	(decltype(mw::test::data::using_decl::data), data)
+);
+
 namespace mw
 {
 namespace test
@@ -131,22 +137,29 @@ auto const using_any_throw_def =
 
 
 auto const using_decl_def =
-		doc(using_plain 	|
+			using_plain 	|
             using_throw 	|
             using_no_throw	|
-            using_any_throw	);
+            using_any_throw	;
+
+x3::rule<class using_decl_doc, data::using_decl> const using_decl_doc;
+
+auto const using_decl_doc_def = doc(using_decl);
 
 BOOST_SPIRIT_DEFINE(using_plain);
 BOOST_SPIRIT_DEFINE(using_throw);
 BOOST_SPIRIT_DEFINE(using_no_throw);
 BOOST_SPIRIT_DEFINE(using_any_throw);
 BOOST_SPIRIT_DEFINE(using_decl);
+BOOST_SPIRIT_DEFINE(using_decl_doc);
 
 x3::rule<class object_content, data::object_content> const object_content;
 
 auto const object_content_def = obj_action_doc | using_decl | code_chunk | code_function ;
 
 BOOST_SPIRIT_DEFINE(object_content);
+
+
 
 }
 }
