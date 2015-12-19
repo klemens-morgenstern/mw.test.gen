@@ -92,6 +92,8 @@ x3::rule<class code_list, 			data::code_list > const code_list;
 x3::rule<class code_list_step,		std::string > const code_list_step;
 
 x3::rule<class code_chunk, 					data::code > const code_chunk;
+x3::rule<class code_chunk_no_ops, 			data::code > const code_chunk_no_ops;
+
 x3::rule<class code_chunk_in, 				std::string> const code_chunk_in;
 x3::rule<class code_chunk_in_step, 			std::string> const code_chunk_step;
 x3::rule<class code_chunk_in_step_no_ops, 	std::string> const code_chunk_step_no_ops;
@@ -135,6 +137,7 @@ auto const code_chunk_step_no_ops_def =
 		   | pointy_par_code_chunk
 		   | quoted_string
 		   | squoted_string);
+
 
 
 namespace code
