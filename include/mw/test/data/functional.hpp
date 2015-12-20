@@ -32,6 +32,18 @@ struct call_trace_decl : call_trace
 	std::string id;
 };
 
+struct stub
+{
+	code name;
+	boost::optional<std::string> return_name;
+	std::vector<std::string> arg_names;
+};
+
+struct fake
+{
+	code name;
+	code func;
+};
 
 
 }

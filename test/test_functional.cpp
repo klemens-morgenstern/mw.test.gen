@@ -28,18 +28,18 @@ int test_main (int, char**)
 	iterator beg {s.begin()};
 	iterator itr {s.begin()};
 	iterator end {s.end()  };
-	auto p = [&](auto rule)
+	auto p = [&](auto rule, auto & data)
 		{
 			beg = iterator(s.begin());
 			itr = iterator(s.begin());
 			end = iterator(s.end()  );
-			return x3::phrase_parse(itr, end, rule, skipper, ctd);
+			return x3::phrase_parse(itr, end, rule, skipper, data);
 		};
 
 
 	s = "call trace x for tested_function(int) =>\n"
 		"{\n"
-		"    &not_overloaded_function =>\n"
+		"    &thing<42>::not_overloaded_function =>\n"
 		"    {\n"
 		"        &func1,\n"
 		"        &func2\n"
@@ -48,7 +48,7 @@ int test_main (int, char**)
 		"    &overloaded_func(double) => {}\n"
 		"};";
 
-	BOOST_CHECK(p(call_trace_decl));
+	BOOST_CHECK(p(call_trace_decl, ctd));
 
 	BOOST_CHECK( ctd.id == "x");
 	BOOST_CHECK( ctd.name.to_string() == "tested_function(int) ");
@@ -61,7 +61,7 @@ int test_main (int, char**)
 	BOOST_REQUIRE(vec.size() == 3);
 
 	BOOST_CHECK(vec[0].content);
-	BOOST_CHECK(vec[0].name.to_string() == "&not_overloaded_function ");
+	BOOST_CHECK(vec[0].name.to_string() == "&thing<42>::not_overloaded_function ");
 
 	{
 		auto v1 = *vec[0].content;
@@ -82,7 +82,49 @@ int test_main (int, char**)
 	BOOST_REQUIRE(vec[2].content);
 	BOOST_CHECK(vec[2].content->size() == 0);
 
-	std::cerr << "Size: " << vec[2].content->size() << std::endl;
+
+
+	/******* test the stub rule ************************************/
+
+	data::stub sb;
+
+	s = "stub thingy<42>::func(int, double) => y(x,z);";
+
+	BOOST_CHECK(p(stub, sb));
+
+	BOOST_CHECK(sb.name.to_string() == "thingy<42>::func(int, double) ");
+	BOOST_REQUIRE(sb.return_name);
+	BOOST_CHECK(* sb.return_name == "y");
+
+	BOOST_REQUIRE(sb.arg_names.size() == 2);
+
+	BOOST_CHECK(sb.arg_names[0] == "x");
+	BOOST_CHECK(sb.arg_names[1] == "z");
+
+
+	s = "stub func() => void();";
+
+	sb = data::stub();
+
+	BOOST_CHECK(p(stub, sb));
+
+	BOOST_CHECK(sb.name.to_string() == "func() ");
+	BOOST_CHECK(!sb.return_name);
+
+	BOOST_CHECK(sb.arg_names.size() == 0);
+
+
+
+	/************* test the fake rule *****************************/
+
+	data::fake fk;
+
+	s = "fake ding(int x) => {return x+42;};";
+
+	BOOST_CHECK(p(fake, fk));
+
+	BOOST_CHECK(fk.name.to_string() == "ding(int x) ");
+	BOOST_CHECK(fk.func.to_string() == "return x+42;");
 
 
 	return 0;
