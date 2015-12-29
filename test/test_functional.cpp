@@ -126,6 +126,10 @@ int test_main (int, char**)
 	BOOST_CHECK(fk.name.to_string() == "ding(int x) ");
 	BOOST_CHECK(fk.func.to_string() == "return x+42;");
 
+	data::functional fc;
+
+	BOOST_CHECK(p(functional, fc));
+	BOOST_CHECK(fc.type() == boost::typeindex::type_id<data::fake>());
 
 	return 0;
 }

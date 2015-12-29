@@ -11,6 +11,7 @@
 
 
 #include <mw/test/data/code.hpp>
+#include <boost/variant.hpp>
 
 namespace mw
 {
@@ -44,6 +45,8 @@ struct fake
 	code name;
 	code func;
 };
+
+using functional = boost::variant<call_trace_decl, stub, fake>;
 
 
 }

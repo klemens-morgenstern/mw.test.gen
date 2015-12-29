@@ -114,6 +114,12 @@ auto const fake_def =
 
 BOOST_SPIRIT_DEFINE(fake);
 
+x3::rule<class functional, data::functional> const functional;
+auto const functional_def =
+			call_trace_decl | stub | fake;
+
+
+BOOST_SPIRIT_DEFINE(functional);
 
 }
 }
