@@ -18,6 +18,7 @@
 #include <mw/test/data/tpl_arg.hpp>
 #include <mw/test/data/code.hpp>
 #include <mw/test/data/operations.hpp>
+#include <mw/test/data/functional.hpp>
 
 namespace mw
 {
@@ -76,7 +77,7 @@ struct using_decl
 	doc_t doc;
 };
 
-using object_content = boost::variant<obj_action, using_decl, code>;
+using object_content = boost::variant<obj_action, using_decl, functional, code>;
 
 }
 }

@@ -17,6 +17,7 @@
 #include <mw/test/parser/operations.hpp>
 #include <mw/test/parser/actions.hpp>
 #include <mw/test/parser/comment.hpp>
+#include <mw/test/parser/functional.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
 
@@ -155,7 +156,7 @@ BOOST_SPIRIT_DEFINE(using_decl_doc);
 
 x3::rule<class object_content, data::object_content> const object_content;
 
-auto const object_content_def = obj_action_doc | using_decl | code_chunk | code_function ;
+auto const object_content_def = obj_action_doc | using_decl | functional | code_chunk | code_function ;
 
 BOOST_SPIRIT_DEFINE(object_content);
 
