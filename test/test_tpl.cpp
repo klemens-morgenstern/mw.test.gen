@@ -23,7 +23,7 @@ int test_main (int, char**)
 
 	namespace x3 = boost::spirit::x3;
 	using namespace mw::test::parser;
-	namespace d = mw::test::data;
+	namespace d = mw::test::ast;
 
 	auto l = [&](auto rule, auto & prod)
 	{

@@ -89,7 +89,7 @@ int test_main (int, char**)
 
 	/************ Now test documentation rules *****************/
 
-	mw::test::data::doc_t d;
+	mw::test::ast::doc_t d;
 
 	auto p2 = [&](auto rule)
 		{

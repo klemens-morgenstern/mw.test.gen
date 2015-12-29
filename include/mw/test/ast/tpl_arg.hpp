@@ -6,18 +6,18 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_TPL_ARG_HPP_
-#define MW_TEST_DATA_TPL_ARG_HPP_
+#ifndef MW_TEST_AST_TPL_ARG_HPP_
+#define MW_TEST_AST_TPL_ARG_HPP_
 
 
+#include <mw/test/ast/entity.hpp>
 #include <string>
-#include <mw/test/data/entity.hpp>
 
 namespace mw
 {
 namespace test
 {
-namespace data
+namespace ast
 {
 ///Base class for objects including a filename.
 struct tpl_arg
@@ -39,4 +39,4 @@ struct obj_id
 
 
 
-#endif /* MW_TEST_DATA_TPL_ARG_HPP_ */
+#endif /* MW_TEST_AST_TPL_ARG_HPP_ */

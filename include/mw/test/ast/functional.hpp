@@ -6,18 +6,18 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_FUNCTIONAL_HPP_
-#define MW_TEST_DATA_FUNCTIONAL_HPP_
+#ifndef MW_TEST_AST_FUNCTIONAL_HPP_
+#define MW_TEST_AST_FUNCTIONAL_HPP_
 
 
-#include <mw/test/data/code.hpp>
 #include <boost/variant.hpp>
+#include <mw/test/ast/code.hpp>
 
 namespace mw
 {
 namespace test
 {
-namespace data
+namespace ast
 {
 
 struct call_trace

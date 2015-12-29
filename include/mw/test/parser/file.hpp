@@ -10,7 +10,7 @@
 #define MW_TEST_PARSER_FILE_HPP_
 
 
-#include <mw/test/data/file.hpp>
+#include <mw/test/ast/file.hpp>
 #include <mw/test/parser/config.hpp>
 #include <mw/test/parser/comment.hpp>
 
@@ -45,7 +45,7 @@ auto file_lambda = [](auto& ctx)
  *  <file> ::= 'file' <filename> ';' ;
  *  @endcode
  */
-x3::rule<class file, data::file> const file;
+x3::rule<class file, ast::file> const file;
 
 auto const file_def =
 			doc(
@@ -57,7 +57,7 @@ auto const file_def =
  *  <file> ::= 'tests' 'file' <filename> ';' ;
  *  @endcode
  */
-x3::rule<class tests_file, data::tests_file> const tests_file;
+x3::rule<class tests_file, ast::tests_file> const tests_file;
 
 auto const tests_file_def =
 		doc(
@@ -71,7 +71,7 @@ auto const tests_file_def =
  *  <file> ::= 'include' <filename> ';' ;
  *  @endcode
  */
-x3::rule<class include, data::include> const include;
+x3::rule<class include, ast::include> const include;
 
 auto const include_def =
 		doc(lexeme["include" >> (space | eol)]

@@ -12,7 +12,7 @@
 #define MW_TEST_PARSER_ACTIONS_HPP_
 
 
-#include <mw/test/data/actions.hpp>
+#include <mw/test/ast/actions.hpp>
 
 #include <mw/test/parser/config.hpp>
 #include <mw/test/parser/id.hpp>
@@ -22,8 +22,8 @@
 #include <boost/fusion/include/adapt_struct.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::action_call,
-	(mw::test::data::action_t, 	action)
+	mw::test::ast::action_call,
+	(mw::test::ast::action_t, 	action)
 	(std::string, 				id)
 	(std::vector<std::string>, 	tpl_par)
 );
@@ -36,22 +36,22 @@ namespace test
 namespace parser
 {
 
-struct action_t : x3::symbols<data::action_t>
+struct action_t : x3::symbols<ast::action_t>
 {
 	action_t()
 	{
-		add	("init", 	 	data::initialize)
-			("initialize",  data::initialize)
-			("exec", 	 	data::execute)
-			("execute",  	data::execute)
-			("eval", 	 	data::evaluate)
-			("evaluate", 	data::evaluate)
+		add	("init", 	 	ast::initialize)
+			("initialize",  ast::initialize)
+			("exec", 	 	ast::execute)
+			("execute",  	ast::execute)
+			("eval", 	 	ast::evaluate)
+			("evaluate", 	ast::evaluate)
 			;
 	}
 } action;
 
 
-x3::rule<class action_call, data::action_call> action_call;
+x3::rule<class action_call, ast::action_call> action_call;
 
 
 auto const action_call_def = lexeme[action >> skipper]

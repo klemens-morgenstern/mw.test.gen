@@ -14,11 +14,11 @@
 
 //#include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
-#include <mw/test/data/doc.hpp>
+#include <mw/test/ast/doc.hpp>
 
 
 BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::data::doc_t,
+		mw::test::ast::doc_t,
 		(std::string, head)
 		(std::string, body)
 );
@@ -132,7 +132,7 @@ BOOST_SPIRIT_DEFINE(skipper);
  * <comment_pre_doc> ::= (<line_comment_pre_doc> | <block_comment_pre_doc> ) (<line_comment_pre_doc> | <block_comment_pre_doc> ) * ;
  * @endcode
  */
-x3::rule<class comment_pre_doc, data::doc_t>  const comment_pre_doc ("comment_pre_doc");
+x3::rule<class comment_pre_doc, ast::doc_t>  const comment_pre_doc ("comment_pre_doc");
 
 auto const comment_pre_doc_def =
 			 (line_comment_pre_doc | block_comment_pre_doc) >>
@@ -144,7 +144,7 @@ auto const comment_pre_doc_def =
  * <comment_post_doc> ::= (<line_comment_post_doc> | <block_comment_post_doc> ) (<line_comment_post_doc> | <block_comment_post_doc> ) * ;
  * @endcode
  */
-x3::rule<class comment_post_doc, data::doc_t> const comment_post_doc("comment_post_doc");
+x3::rule<class comment_post_doc, ast::doc_t> const comment_post_doc("comment_post_doc");
 
 auto const comment_post_doc_def =
 			 (line_comment_post_doc | block_comment_post_doc) >>
@@ -153,12 +153,12 @@ auto const comment_post_doc_def =
 
 BOOST_SPIRIT_DEFINE(comment_pre_doc, comment_post_doc);
 
-///Lambda used for documentation. It appends the string to an @ref mw::test::data::entity
+///Lambda used for documentation. It appends the string to an @ref mw::test::ast::entity
 auto const doc_f = [](auto &ctx)
 {
 	static_assert(
-			std::is_convertible<decltype(_attr(ctx)), data::doc_t>::value,
-			"doc_lambda must be used in a rule that yields a data::doc");
+			std::is_convertible<decltype(_attr(ctx)), ast::doc_t>::value,
+			"doc_lambda must be used in a rule that yields a ast::doc");
 
 	_val(ctx).doc += _attr(ctx);
 

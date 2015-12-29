@@ -14,18 +14,18 @@
 //#include <mw/test/parser/code.hpp>
 #include <mw/test/parser/id.hpp>
 
-#include <mw/test/data/tpl_arg.hpp>
+#include <mw/test/ast/tpl_arg.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::data::tpl_arg,
+		mw::test::ast::tpl_arg,
 		(std::string, name)
 		(std::string, def_arg)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::data::obj_id,
+		mw::test::ast::obj_id,
 		(std::string, name)
 		(std::vector<std::string>, tpl_args)
 );
@@ -106,7 +106,7 @@ auto const tpl_par_def = lexeme[*(!lit(',') >> tpl_par_step)];
  * @endcode
  *
  */
-x3::rule<class tpl_arg, data::tpl_arg> tpl_arg;
+x3::rule<class tpl_arg, ast::tpl_arg> tpl_arg;
 
 auto const tpl_arg_def = id >> -('=' >> tpl_par);
 
@@ -122,7 +122,7 @@ auto push_back = [](auto &ctx)
  * <tpl_decl> ::= '<' -(<id> (',' <id> )* ) '>' ;
  * @endcode
  */
-x3::rule<class tpl_decl, std::vector<data::tpl_arg>> const tpl_decl;
+x3::rule<class tpl_decl, std::vector<ast::tpl_arg>> const tpl_decl;
 
 auto const tpl_decl_def 	= '<' >> -(tpl_arg % ',') >> '>';
 
@@ -148,7 +148,7 @@ BOOST_SPIRIT_DEFINE(tpl_par_list);
 
 
 
-x3::rule<class obj_id, data::obj_id> obj_id;
+x3::rule<class obj_id, ast::obj_id> obj_id;
 
 auto const obj_id_def = id >> -tpl_par_list;
 

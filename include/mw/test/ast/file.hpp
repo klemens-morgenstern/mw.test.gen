@@ -6,17 +6,17 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_FILE_HPP_
-#define MW_TEST_DATA_FILE_HPP_
+#ifndef MW_TEST_AST_FILE_HPP_
+#define MW_TEST_AST_FILE_HPP_
 
+#include <mw/test/ast/entity.hpp>
 #include <string>
-#include <mw/test/data/entity.hpp>
 
 namespace mw
 {
 namespace test
 {
-namespace data
+namespace ast
 {
 ///Base class for objects including a filename.
 struct file_decl : entity
@@ -34,4 +34,4 @@ struct tests_file : file_decl {}; ///< explicit statement that this tests tests 
 
 
 
-#endif /* MW_TEST_DATA_FILE_HPP_ */
+#endif /* MW_TEST_AST_FILE_HPP_ */

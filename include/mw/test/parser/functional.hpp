@@ -11,33 +11,33 @@
 
 #include <mw/test/parser/code.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
-#include <mw/test/data/functional.hpp>
+#include <mw/test/ast/functional.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::call_trace,
-	(mw::test::data::code, name)
-	(boost::optional<std::vector<mw::test::data::call_trace>>, content)
+	mw::test::ast::call_trace,
+	(mw::test::ast::code, name)
+	(boost::optional<std::vector<mw::test::ast::call_trace>>, content)
 	(boost::optional<unsigned int>,  count)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::call_trace_decl,
+	mw::test::ast::call_trace_decl,
 	(std::string, id)
-	(mw::test::data::code, name)
-	(boost::optional<std::vector<mw::test::data::call_trace>>, content)
+	(mw::test::ast::code, name)
+	(boost::optional<std::vector<mw::test::ast::call_trace>>, content)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::stub,
-	(mw::test::data::code, name)
+	mw::test::ast::stub,
+	(mw::test::ast::code, name)
 	(boost::optional<std::string>, return_name)
 	(std::vector<std::string>, arg_names)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::fake,
-	(mw::test::data::code, name)
-	(mw::test::data::code, func)
+	mw::test::ast::fake,
+	(mw::test::ast::code, name)
+	(mw::test::ast::code, func)
 );
 
 namespace mw
@@ -47,14 +47,14 @@ namespace test
 namespace parser
 {
 
-x3::rule<class function_name, data::code> const function_name;
+x3::rule<class function_name, ast::code> const function_name;
 auto const function_name_def = eps[code::set_beg] >>
 		omit[lexeme[+(!(lit(',') | "=>" ) >> code_chunk_step)]]
 		  >> eps[code::set_end];;
 
-x3::rule<class call_trace, data::call_trace> const call_trace;
+x3::rule<class call_trace, ast::call_trace> const call_trace;
 
-x3::rule<class call_trace_list, std::vector<data::call_trace>> const call_trace_list;
+x3::rule<class call_trace_list, std::vector<ast::call_trace>> const call_trace_list;
 
 
 auto const call_trace_list_def =
@@ -71,7 +71,7 @@ auto const call_trace_def =
 
 
 
-x3::rule<class call_trace_decl, data::call_trace_decl> const call_trace_decl;
+x3::rule<class call_trace_decl, ast::call_trace_decl> const call_trace_decl;
 auto const call_trace_decl_def =
 		lexeme["call" 	>> skipper] >>
 		lexeme["trace" 	>> skipper] >>
@@ -91,7 +91,7 @@ x3::rule<class id_list, std::vector<std::string>> id_list;
 
 auto const id_list_def = (id % ',') | eps;
 
-x3::rule<class stub, data::stub> const stub;
+x3::rule<class stub, ast::stub> const stub;
 auto const stub_def =
 			lexeme["stub" >> skipper]
 		>> 	function_name
@@ -105,7 +105,7 @@ auto const stub_def =
 BOOST_SPIRIT_DEFINE(stub);
 BOOST_SPIRIT_DEFINE(id_list);
 
-x3::rule<class fake, data::fake> const fake;
+x3::rule<class fake, ast::fake> const fake;
 auto const fake_def =
 			lexeme["fake" >> skipper]
 		>>  function_name
@@ -114,7 +114,7 @@ auto const fake_def =
 
 BOOST_SPIRIT_DEFINE(fake);
 
-x3::rule<class functional, data::functional> const functional;
+x3::rule<class functional, ast::functional> const functional;
 auto const functional_def =
 			call_trace_decl | stub | fake;
 

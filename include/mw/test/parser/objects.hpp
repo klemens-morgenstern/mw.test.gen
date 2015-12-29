@@ -13,15 +13,15 @@
 #include <mw/test/parser/id.hpp>
 #include <mw/test/parser/template.hpp>
 #include <mw/test/parser/object_content.hpp>
-#include <mw/test/data/objects.hpp>
+#include <mw/test/ast/objects.hpp>
 
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::test_object,
-	(mw::test::data::object_type_t, 				type)
-	(mw::test::data::obj_id, 						id)
-	(std::vector<mw::test::data::obj_id>, inheritance)
-	(std::vector<mw::test::data::object_content>, 	content)
+	mw::test::ast::test_object,
+	(mw::test::ast::object_type_t, 				type)
+	(mw::test::ast::obj_id, 						id)
+	(std::vector<mw::test::ast::obj_id>, inheritance)
+	(std::vector<mw::test::ast::object_content>, 	content)
 );
 
 namespace mw
@@ -38,7 +38,7 @@ namespace parser
  * <inheritance> ::= ':' <id> -<tpl_par> (<id> -<tpl_par>)* ;
  * @endcode
  */
-x3::rule<class inheritance, std::vector<data::obj_id>> const inheritance;
+x3::rule<class inheritance, std::vector<ast::obj_id>> const inheritance;
 
 auto const inheritance_def =
 		-(":" >> obj_id % ",")
@@ -46,31 +46,31 @@ auto const inheritance_def =
 
 BOOST_SPIRIT_DEFINE(inheritance);
 
-struct plain_obj_type_t : x3::symbols<data::object_type_t>
+struct plain_obj_type_t : x3::symbols<ast::object_type_t>
 {
 	plain_obj_type_t()
 	{
-		add	("classification",  data::classification)
-			("composition", 	data::composition)
+		add	("classification",  ast::classification)
+			("composition", 	ast::composition)
 			;
 	}
 } plain_obj_type;
 
 
-struct test_obj_type_t : x3::symbols<data::object_type_t>
+struct test_obj_type_t : x3::symbols<ast::object_type_t>
 {
 	test_obj_type_t()
 	{
-		add ("object", data::object)
-			("class",  data::class_)
-			("case",   data::case_)
-			("step",   data::step)
-			("sequence", data::sequence);
+		add ("object", ast::object)
+			("class",  ast::class_)
+			("case",   ast::case_)
+			("step",   ast::step)
+			("sequence", ast::sequence);
 	}
 } test_obj_type;
 
 
-x3::rule<class object_type, data::object_type_t> const object_type;
+x3::rule<class object_type, ast::object_type_t> const object_type;
 
 auto const object_type_def =
 		plain_obj_type |
@@ -80,7 +80,7 @@ BOOST_SPIRIT_DEFINE(object_type);
 
 
 
-x3::rule<class test_object, data::test_object> const test_object;
+x3::rule<class test_object, ast::test_object> const test_object;
 
 auto const test_object_def =
 		object_type >>

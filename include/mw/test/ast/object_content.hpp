@@ -6,25 +6,25 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_OBJECT_CONTENT_HPP_
-#define MW_TEST_DATA_OBJECT_CONTENT_HPP_
+#ifndef MW_TEST_AST_OBJECT_CONTENT_HPP_
+#define MW_TEST_AST_OBJECT_CONTENT_HPP_
 
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
 
-#include <mw/test/data/actions.hpp>
-#include <mw/test/data/doc.hpp>
-#include <mw/test/data/tpl_arg.hpp>
-#include <mw/test/data/code.hpp>
-#include <mw/test/data/operations.hpp>
-#include <mw/test/data/functional.hpp>
+#include <mw/test/ast/actions.hpp>
+#include <mw/test/ast/code.hpp>
+#include <mw/test/ast/doc.hpp>
+#include <mw/test/ast/functional.hpp>
+#include <mw/test/ast/operations.hpp>
+#include <mw/test/ast/tpl_arg.hpp>
 
 namespace mw
 {
 namespace test
 {
-namespace data
+namespace ast
 {
 
 struct obj_action
@@ -32,7 +32,7 @@ struct obj_action
 	doc_t doc;
 	code::iterator location;
 	action_t action;
-	std::vector<data::check_entry> content;
+	std::vector<ast::check_entry> content;
 };
 
 

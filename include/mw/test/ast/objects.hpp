@@ -6,16 +6,16 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_OBJECTS_HPP_
-#define MW_TEST_DATA_OBJECTS_HPP_
+#ifndef MW_TEST_AST_OBJECTS_HPP_
+#define MW_TEST_AST_OBJECTS_HPP_
 
-#include <mw/test/data/object_content.hpp>
+#include <mw/test/ast/object_content.hpp>
 
 namespace mw
 {
 namespace test
 {
-namespace data
+namespace ast
 {
 
 enum object_type_t
@@ -44,4 +44,4 @@ struct test_object
 
 
 
-#endif /* MW_TEST_DATA_OBJECTS_HPP_ */
+#endif /* MW_TEST_AST_OBJECTS_HPP_ */

@@ -13,13 +13,13 @@
 #include <mw/test/parser/utility.hpp>
 #include <mw/test/parser/comment.hpp>
 #include <mw/test/parser/id.hpp>
-#include <mw/test/data/code.hpp>
+#include <mw/test/ast/code.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::code_list,
-	(mw::test::data::code::iterator, _begin)
+	mw::test::ast::code_list,
+	(mw::test::ast::code::iterator, _begin)
 	(std::vector<std::string>, 		  data)
-	(mw::test::data::code::iterator, _end)
+	(mw::test::ast::code::iterator, _end)
 );
 
 namespace mw
@@ -88,19 +88,19 @@ x3::rule<class round_par_code_chunk , std::string> const round_par_code_chunk ;
 x3::rule<class curly_par_code_chunk , std::string> const curly_par_code_chunk ;
 x3::rule<class pointy_par_code_chunk, std::string> const pointy_par_code_chunk ;
 
-x3::rule<class code_list, 			data::code_list > const code_list;
+x3::rule<class code_list, 			ast::code_list > const code_list;
 x3::rule<class code_list_step,		std::string > const code_list_step;
 
-x3::rule<class code_chunk, 					data::code > const code_chunk;
-x3::rule<class code_chunk_no_ops, 			data::code > const code_chunk_no_ops;
+x3::rule<class code_chunk, 					ast::code > const code_chunk;
+x3::rule<class code_chunk_no_ops, 			ast::code > const code_chunk_no_ops;
 
 x3::rule<class code_chunk_in, 				std::string> const code_chunk_in;
 x3::rule<class code_chunk_in_step, 			std::string> const code_chunk_step;
 x3::rule<class code_chunk_in_step_no_ops, 	std::string> const code_chunk_step_no_ops;
 
-x3::rule<class code_section,  data::code>	 		const code_section;
-x3::rule<class code_function, data::code>			const code_function;
-x3::rule<class code_location, data::code::iterator> const code_location;
+x3::rule<class code_section,  ast::code>	 		const code_section;
+x3::rule<class code_function, ast::code>			const code_function;
+x3::rule<class code_location, ast::code::iterator> const code_location;
 
 auto const square_par_code_chunk_def =
 		char_("[") >> *(!lit("]") >> code_chunk_step) >> char_("]")
@@ -194,7 +194,7 @@ auto const code_list_def =
 
 auto const code_location_def = eps[l([](auto &ctx)
 		{
-			data::code::iterator it = x3::_where(ctx).begin();
+			ast::code::iterator it = x3::_where(ctx).begin();
 			_val(ctx) = it;
 		})];
 

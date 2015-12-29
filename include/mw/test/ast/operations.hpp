@@ -6,20 +6,20 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_OPERATIONS_HPP_
-#define MW_TEST_DATA_OPERATIONS_HPP_
+#ifndef MW_TEST_AST_OPERATIONS_HPP_
+#define MW_TEST_AST_OPERATIONS_HPP_
 
 #include <vector>
 #include <string>
-#include <mw/test/data/code.hpp>
-#include <mw/test/data/actions.hpp>
 #include <boost/variant.hpp>
+#include <mw/test/ast/actions.hpp>
+#include <mw/test/ast/code.hpp>
 
 namespace mw
 {
 namespace test
 {
-namespace data
+namespace ast
 {
 
 enum level_t
@@ -157,4 +157,4 @@ struct critical_section
 
  */
 
-#endif /* MW_TEST_DATA_OPERATIONS_HPP_ */
+#endif /* MW_TEST_AST_OPERATIONS_HPP_ */

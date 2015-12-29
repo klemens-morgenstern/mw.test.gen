@@ -24,7 +24,7 @@ int test_main (int, char**)
 
 	using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
 
-	namespace data = mw::test::data;
+	namespace data = mw::test::ast;
 
 	data::check_entry ce;
 

@@ -9,7 +9,7 @@
 #ifndef MW_TEST_PARSER_OBJECT_CONTENT_HPP_
 #define MW_TEST_PARSER_OBJECT_CONTENT_HPP_
 
-#include <mw/test/data/object_content.hpp>
+#include <mw/test/ast/object_content.hpp>
 
 #include <mw/test/parser/config.hpp>
 #include <mw/test/parser/id.hpp>
@@ -22,50 +22,50 @@
 #include <boost/fusion/include/adapt_struct.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::obj_action,
-	(mw::test::data::code::iterator, location)
-	(mw::test::data::action_t, action)
-	(std::vector<mw::test::data::check_entry>, content)
+	mw::test::ast::obj_action,
+	(mw::test::ast::code::iterator, location)
+	(mw::test::ast::action_t, action)
+	(std::vector<mw::test::ast::check_entry>, content)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::using_plain,
-	(mw::test::data::code::iterator, location)
-	(boost::optional<mw::test::data::obj_id>, id)
-	(mw::test::data::action_t, action)
+	mw::test::ast::using_plain,
+	(mw::test::ast::code::iterator, location)
+	(boost::optional<mw::test::ast::obj_id>, id)
+	(mw::test::ast::action_t, action)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::using_throw,
-	(mw::test::data::code::iterator, location)
-	(boost::optional<mw::test::data::obj_id>, id)
-	(mw::test::data::action_t, action)
-	(mw::test::data::level_t, level)
-	(mw::test::data::code_list, exceptions)
+	mw::test::ast::using_throw,
+	(mw::test::ast::code::iterator, location)
+	(boost::optional<mw::test::ast::obj_id>, id)
+	(mw::test::ast::action_t, action)
+	(mw::test::ast::level_t, level)
+	(mw::test::ast::code_list, exceptions)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::using_no_throw,
-	(mw::test::data::code::iterator, location)
-	(boost::optional<mw::test::data::obj_id>, id)
-	(mw::test::data::action_t, action)
-	(mw::test::data::level_t, level)
+	mw::test::ast::using_no_throw,
+	(mw::test::ast::code::iterator, location)
+	(boost::optional<mw::test::ast::obj_id>, id)
+	(mw::test::ast::action_t, action)
+	(mw::test::ast::level_t, level)
 
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::using_any_throw,
-	(mw::test::data::code::iterator, location)
-	(boost::optional<mw::test::data::obj_id>, id)
-	(mw::test::data::action_t, action)
-	(mw::test::data::level_t, level)
+	mw::test::ast::using_any_throw,
+	(mw::test::ast::code::iterator, location)
+	(boost::optional<mw::test::ast::obj_id>, id)
+	(mw::test::ast::action_t, action)
+	(mw::test::ast::level_t, level)
 
 );
 
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::data::using_decl,
-	(decltype(mw::test::data::using_decl::data), data)
+	mw::test::ast::using_decl,
+	(decltype(mw::test::ast::using_decl::data), data)
 );
 
 namespace mw
@@ -76,7 +76,7 @@ namespace parser
 {
 
 ///Rule to parse
-x3::rule<class obj_action, 		data::obj_action> const obj_action;
+x3::rule<class obj_action, 		ast::obj_action> const obj_action;
 
 auto const obj_action_def =
 		code_location >> action >> '{' >> check_entries >> '}' >> -lit(';');
@@ -85,7 +85,7 @@ auto const obj_action_def =
 BOOST_SPIRIT_DEFINE(obj_action);
 
 
-x3::rule<class obj_action_doc, 	data::obj_action> const obj_action_doc;
+x3::rule<class obj_action_doc, 	ast::obj_action> const obj_action_doc;
 
 
 auto const obj_action_doc_def = doc(obj_action);
@@ -95,12 +95,12 @@ BOOST_SPIRIT_DEFINE(obj_action_doc);
 
 
 
-x3::rule<class using_plain,		data::using_plain>		const using_plain;
-x3::rule<class using_throw, 	data::using_throw>	 	const using_throw;
-x3::rule<class using_no_throw, 	data::using_no_throw>	const using_no_throw;
-x3::rule<class using_any_throw,	data::using_any_throw> 	const using_any_throw;
+x3::rule<class using_plain,		ast::using_plain>		const using_plain;
+x3::rule<class using_throw, 	ast::using_throw>	 	const using_throw;
+x3::rule<class using_no_throw, 	ast::using_no_throw>	const using_no_throw;
+x3::rule<class using_any_throw,	ast::using_any_throw> 	const using_any_throw;
 
-x3::rule<class using_decl, data::using_decl> const using_decl;
+x3::rule<class using_decl, ast::using_decl> const using_decl;
 
 
 auto const using_plain_def =
@@ -143,7 +143,7 @@ auto const using_decl_def =
             using_no_throw	|
             using_any_throw	;
 
-x3::rule<class using_decl_doc, data::using_decl> const using_decl_doc;
+x3::rule<class using_decl_doc, ast::using_decl> const using_decl_doc;
 
 auto const using_decl_doc_def = doc(using_decl);
 
@@ -154,7 +154,7 @@ BOOST_SPIRIT_DEFINE(using_any_throw);
 BOOST_SPIRIT_DEFINE(using_decl);
 BOOST_SPIRIT_DEFINE(using_decl_doc);
 
-x3::rule<class object_content, data::object_content> const object_content;
+x3::rule<class object_content, ast::object_content> const object_content;
 
 auto const object_content_def = obj_action_doc | using_decl | functional | code_chunk | code_function ;
 

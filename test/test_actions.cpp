@@ -22,7 +22,7 @@ int test_main (int, char**)
 	namespace x3 = boost::spirit::x3;
 	using namespace mw::test::parser;
 
-	namespace data = mw::test::data;
+	namespace data = mw::test::ast;
 	data::action_call res;
 
 	auto beg = s.begin();

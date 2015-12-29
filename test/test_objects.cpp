@@ -24,7 +24,7 @@ int test_main (int, char**)
 	using namespace mw::test::parser;
 	using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
 
-	namespace data = mw::test::data;
+	namespace data = mw::test::ast;
 
 	data::test_object to;
 

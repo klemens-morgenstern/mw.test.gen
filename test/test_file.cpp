@@ -32,7 +32,7 @@ int test_main (int, char**)
 	using mw::test::parser::include;
 	using mw::test::parser::skipper;
 
-	namespace d = mw::test::data;
+	namespace d = mw::test::ast;
 
 	auto p = [&](auto rule, auto &result)
 		{

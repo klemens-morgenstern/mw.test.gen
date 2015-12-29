@@ -6,8 +6,8 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_ACTIONS_HPP_
-#define MW_TEST_DATA_ACTIONS_HPP_
+#ifndef MW_TEST_AST_ACTIONS_HPP_
+#define MW_TEST_AST_ACTIONS_HPP_
 
 #include <string>
 #include <vector>
@@ -16,7 +16,7 @@ namespace mw
 {
 namespace test
 {
-namespace data
+namespace ast
 {
 
 enum action_t
@@ -38,4 +38,4 @@ struct action_call
 
 
 
-#endif /* MW_TEST_DATA_ACTIONS_HPP_ */
+#endif /* MW_TEST_AST_ACTIONS_HPP_ */
