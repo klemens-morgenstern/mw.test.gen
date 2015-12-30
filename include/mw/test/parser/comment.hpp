@@ -153,7 +153,7 @@ auto const comment_post_doc_def =
 
 BOOST_SPIRIT_DEFINE(comment_pre_doc, comment_post_doc);
 
-///Lambda used for documentation. It appends the string to an @ref mw::test::ast::entity
+///Lambda used for documentation
 auto const doc_f = [](auto &ctx)
 {
 	static_assert(
@@ -164,11 +164,20 @@ auto const doc_f = [](auto &ctx)
 
 };
 
+
 ///This lambda allows to declare a rule as documented, which will provide the doc before and after to be added the entity.
 auto doc = [](auto rule)
 		{
 			return 	omit[-comment_pre_doc [doc_f]]
-					>>	rule
+					>>	rule[l(
+							[](auto & c)
+							{
+								auto doc_p = _val(c).doc;
+								_val(c)    = _attr(c);
+								auto doc_2 = _val(c).doc;
+								_val(c).doc += doc_p;
+								_val(c).doc += doc_2;
+							})]
 					>> 	omit[-comment_post_doc[doc_f]];
 		};
 

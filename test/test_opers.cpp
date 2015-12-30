@@ -212,6 +212,7 @@ int test_main (int, char**)
 		BOOST_CHECK(v.critical == false);
 		BOOST_CHECK(v.lvl == data::assertion);
 		BOOST_CHECK(v.doc.head == "some comment 2");
+		std::cerr << "doc: '" << v.doc.head << "'" << std::endl;
 		BOOST_CHECK(v.doc.body == "postfix comment");
 
 	}

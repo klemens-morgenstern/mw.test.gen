@@ -10,8 +10,8 @@
 #define MW_TEST_AST_TPL_ARG_HPP_
 
 
-#include <mw/test/ast/entity.hpp>
 #include <string>
+#include <vector>
 
 namespace mw
 {
