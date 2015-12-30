@@ -92,7 +92,10 @@ auto const test_object_def =
 
 BOOST_SPIRIT_DEFINE(test_object);
 
+x3::rule<class test_object_doc, ast::test_object> const test_object_doc;
+auto const test_object_doc_def = doc(test_object);
 
+BOOST_SPIRIT_DEFINE(test_object_doc);
 
 
 }

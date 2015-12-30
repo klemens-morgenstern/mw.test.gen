@@ -38,7 +38,6 @@ struct obj_action
 
 struct using_plain
 {
-	doc_t doc;
 	code::iterator location;
 	boost::optional<obj_id> id;
 	action_t action;
@@ -46,7 +45,6 @@ struct using_plain
 
 struct using_throw
 {
-	doc_t doc;
 	code::iterator location;
 	boost::optional<obj_id> id;
 	action_t action;
@@ -56,7 +54,6 @@ struct using_throw
 
 struct using_no_throw
 {
-	doc_t doc;
 	code::iterator location;
 	boost::optional<obj_id> id;
 	action_t action;

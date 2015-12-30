@@ -32,6 +32,7 @@ enum object_type_t
 
 struct test_object
 {
+	doc_t doc;
 	object_type_t type;
 	obj_id id;
 	std::vector<obj_id> inheritance;

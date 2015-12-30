@@ -22,6 +22,8 @@ namespace ast
 
 struct call_trace
 {
+	doc_t doc;
+
 	code name;
 	boost::optional<std::vector<call_trace>> content{};
 	boost::optional<unsigned int> count{};
@@ -35,6 +37,8 @@ struct call_trace_decl : call_trace
 
 struct stub
 {
+	doc_t doc;
+
 	code name;
 	boost::optional<std::string> return_name;
 	std::vector<std::string> arg_names;
@@ -42,6 +46,8 @@ struct stub
 
 struct fake
 {
+	doc_t doc;
+
 	code name;
 	code func;
 };

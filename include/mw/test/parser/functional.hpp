@@ -93,7 +93,7 @@ auto const id_list_def = (id % ',') | eps;
 
 x3::rule<class stub, ast::stub> const stub;
 auto const stub_def =
-			lexeme["stub" >> skipper]
+		lexeme["stub" >> skipper]
 		>> 	function_name
 		>> "=>"
 		>>	("void" | id)
@@ -114,9 +114,22 @@ auto const fake_def =
 
 BOOST_SPIRIT_DEFINE(fake);
 
+
+x3::rule<class call_trace_decl_doc, ast::call_trace_decl> const call_trace_decl_doc;
+x3::rule<class stub_doc, ast::stub> const stub_doc;
+x3::rule<class fake_doc, ast::fake> const fake_doc;
+
+auto const call_trace_decl_doc_def = doc(call_trace_decl);
+auto const stub_doc_def = doc(stub);
+auto const fake_doc_def = doc(fake);
+
+BOOST_SPIRIT_DEFINE(call_trace_decl_doc);
+BOOST_SPIRIT_DEFINE(stub_doc);
+BOOST_SPIRIT_DEFINE(fake_doc);
+
 x3::rule<class functional, ast::functional> const functional;
 auto const functional_def =
-			call_trace_decl | stub | fake;
+			call_trace_decl_doc | stub_doc | fake_doc;
 
 
 BOOST_SPIRIT_DEFINE(functional);
