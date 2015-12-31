@@ -20,7 +20,7 @@ project mw.test.gen :
 	
 #lib mw.test : main.cpp ; #mw/test/data/entity.cpp ;	
 	
-build-project test ;	
+build-project test//parser ;	
 	
 # exe tg : main.cpp ;
 
