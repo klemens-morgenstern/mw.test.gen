@@ -151,14 +151,14 @@ namespace code
 {
 auto set_beg = [](auto &ctx)
 		{
-			using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
+			using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 			iterator itr = x3::_where(ctx).begin();
 			_val(ctx)._begin = itr;
 		};
 
 auto set_end = [](auto &ctx)
 		{
-			using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
+			using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 			iterator itr = x3::_where(ctx).begin();
 			_val(ctx)._end = itr;
 		};

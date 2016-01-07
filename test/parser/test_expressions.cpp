@@ -21,7 +21,7 @@ int test_main (int, char**)
 {
 	std::string s;
 
-	using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
+	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 
 
 	iterator beg {s.begin()};

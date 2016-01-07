@@ -17,7 +17,7 @@ int test_main (int, char**)
 	std::string s;
 
 
-	using iterator = boost::spirit::line_pos_iterator<typename std::string::iterator>;
+	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 
 	namespace x3 = boost::spirit::x3;
 	using namespace mw::test::parser;
@@ -25,15 +25,15 @@ int test_main (int, char**)
 	namespace data = mw::test::ast;
 	std::string res;
 
-	auto beg = s.begin();
-	auto itr = s.begin();
-	auto end = s.end()  ;
+	auto beg = s.cbegin();
+	auto itr = s.cbegin();
+	auto end = s.cend()  ;
 	auto p = [&](auto rule)
 		{
 			res.clear();
-			beg = s.begin();
-			itr = s.begin();
-			end = s.end();
+			beg = s.cbegin();
+			itr = s.cbegin();
+			end = s.cend();
 			return x3::parse(itr, end, rule, res);
 		};
 
@@ -67,9 +67,9 @@ int test_main (int, char**)
 	auto pc = [&](auto rule)
 		{
 			res.clear();
-			beg = s.begin();
-			itr = s.begin();
-			end = s.end();
+			beg = s.cbegin();
+			itr = s.cbegin();
+			end = s.cend();
 
 			iterator ib{itr};
 			iterator en{end};

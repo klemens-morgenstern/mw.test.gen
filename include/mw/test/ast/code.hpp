@@ -25,7 +25,7 @@ struct code
 	typedef
 			boost::spirit::line_pos_iterator<
 			BOOST_DEDUCED_TYPENAME
-			std::string::iterator>
+			std::string::const_iterator>
 			iterator;
 
 	iterator _begin;
@@ -54,7 +54,7 @@ struct code_list
 	typedef
 			boost::spirit::line_pos_iterator<
 			BOOST_DEDUCED_TYPENAME
-			std::string::iterator>
+			std::string::const_iterator>
 			iterator;
 
 	iterator _begin;
