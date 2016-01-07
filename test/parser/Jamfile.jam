@@ -26,6 +26,7 @@ test-suite mw.test.test
 	[ run test_objects.cpp	]
 	[ run test_functional.cpp ]
 	[ run test_group.cpp ]
+	[ run test_expressions.cpp ]
      ; 	
 		
 		

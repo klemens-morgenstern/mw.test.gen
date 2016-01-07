@@ -22,6 +22,12 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(mw::test::ast::code::iterator, _end)
 );
 
+BOOST_FUSION_ADAPT_STRUCT(
+	mw::test::ast::code,
+	(mw::test::ast::code::iterator, _begin)
+	(mw::test::ast::code::iterator, _end)
+);
+
 namespace mw
 {
 namespace test
@@ -48,9 +54,9 @@ enum ops
 	modulo_assign,
 };
 
-struct operators_ : x3::symbols<ops>
+struct operators_t : x3::symbols<ops>
 {
-	operators_()
+	operators_t()
     {
         add ("="   , assign		  )
         	("!="  , not_equal	  )
@@ -100,7 +106,8 @@ x3::rule<class code_chunk_in_step_no_ops, 	std::string> const code_chunk_step_no
 
 x3::rule<class code_section,  ast::code>	 		const code_section;
 x3::rule<class code_function, ast::code>			const code_function;
-x3::rule<class code_location, ast::code::iterator> const code_location;
+x3::rule<class code_location, ast::code::iterator>  const code_location;
+
 
 auto const square_par_code_chunk_def =
 		char_("[") >> *(!lit("]") >> code_chunk_step) >> char_("]")

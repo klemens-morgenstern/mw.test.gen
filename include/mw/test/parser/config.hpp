@@ -23,6 +23,7 @@ using x3::string;
 using x3::char_;
 using x3::uint_;
 using x3::eol;
+using x3::eoi;
 using x3::eps;
 using x3::no_skip;
 using x3::skip;
