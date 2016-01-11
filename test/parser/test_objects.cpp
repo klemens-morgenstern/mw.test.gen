@@ -9,7 +9,6 @@
 
 #define BOOST_TEST_MODULE test_code
 #include <boost/test/minimal.hpp>
-#include <boost/test/unit_test_log.hpp>
 
 #include <type_traits>
 
@@ -48,7 +47,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(p());
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(to.id.name == "thingy");
+	BOOST_CHECK(to.id == "thingy");
 
 
 	BOOST_CHECK(to.content.size() == 0);
@@ -60,7 +59,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(p());
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(to.id.name == "ding");
+	BOOST_CHECK(to.id == "ding");
 	BOOST_CHECK(to.content.size() == 1);
 	BOOST_CHECK(to.type == data::classification);
 

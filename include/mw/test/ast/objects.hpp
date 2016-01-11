@@ -34,7 +34,7 @@ struct test_object
 {
 	doc_t 			doc;
 	object_type_t 	type;
-	obj_id 			id;
+	std::string		id;
 	std::vector<obj_id> 		inheritance;
 	std::vector<object_content> content;
 	std::vector<tpl_arg>		tpl_args;
