@@ -1,29 +1,28 @@
 
 import modules ;
 
-local boost-inc = [ modules.peek user-config : boost-include ] ;
+#must be defined in user-config.jam, 
+local boost-inc 	= [ modules.peek user-config : boost-include ] ; #folder where the boost includes are, i.e. boost is a subfolder
+local boost-lib-loc = [ modules.peek user-config : boost-lib-loc ] ; #locatino of the libraries of boost
+local postfix = [ modules.peek user-config : boost-lib-postfix ] ; # the postfix to the libraries, e.g. -mgw-mt-1_60
 
 project mw.test.gen :
 	source-location src	
 	: requirements
 	<include>./libs/spirit/include
+	<include>./libs/mw.test.data/include
 	<include>$(boost-inc)
 	<include>./include
 	<toolset>gcc:<cxxflags>-std=gnu++1y
-	<linkflags>-LF:/boost/lib
-#	<linkflags>-lboost_program_options-mgw-mt-1_59
-#	<linkflags>-lboost_filesystem-mgw-mt-1_59
-#	<linkflags>-lboost_system-mgw-mt-1_59
-#	<linkflags>-lboost_locale-mgw-mt-1_59
+	<linkflags>-L$(boost-lib-loc)
+	<toolset>gcc:<cxxflags>-ftemplate-depth=256
+	<linkflags>-lboost_program_options$(postfix)
+	<linkflags>-lboost_filesystem$(postfix)
+	<linkflags>-lboost_system$(postfix)
+	<linkflags>-lboost_locale$(postfix)
 	<link>shared
 	;
 	
-#lib mw.test : main.cpp ; #mw/test/data/entity.cpp ;	
+lib mw.test : mw/test/parse_mwt.cpp ;	
 	
 build-project test//parser ;	
-	
-# exe tg : main.cpp ;
-
-# install bin : tg ;
-		
-		
