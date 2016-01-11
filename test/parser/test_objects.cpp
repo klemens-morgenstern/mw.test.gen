@@ -9,7 +9,7 @@
 
 #define BOOST_TEST_MODULE test_code
 #include <boost/test/minimal.hpp>
-
+#include <boost/test/unit_test_log.hpp>
 
 #include <type_traits>
 

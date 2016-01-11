@@ -18,10 +18,11 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::ast::test_object,
-	(mw::test::ast::object_type_t, 				type)
-	(mw::test::ast::obj_id, 						id)
-	(std::vector<mw::test::ast::obj_id>, inheritance)
-	(std::vector<mw::test::ast::object_content>, 	content)
+	(mw::test::ast::object_type_t, 				 type)
+	(mw::test::ast::obj_id, 					 id)
+	(std::vector<mw::test::ast::tpl_arg>,		 tpl_args)
+	(std::vector<mw::test::ast::obj_id>, 		 inheritance)
+	(std::vector<mw::test::ast::object_content>, content)
 );
 
 namespace mw
@@ -83,9 +84,10 @@ BOOST_SPIRIT_DEFINE(object_type);
 x3::rule<class test_object, ast::test_object> const test_object;
 
 auto const test_object_def =
-		object_type >>
-			obj_id >>
-			inheritance
+		object_type
+		>> obj_id
+		>> -tpl_decl
+		>> inheritance
 		>> "{"
 		>> *object_content
 		>> lit("}") >> -lit(";");
