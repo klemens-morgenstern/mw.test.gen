@@ -1,8 +1,10 @@
 os:
   - linux
 
-before_script:
+before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
+before_script:
   - git submodule update --init --merge
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
