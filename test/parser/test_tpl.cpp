@@ -17,9 +17,12 @@ int test_main (int, char**)
 	std::string input;
 	std::string result;
 
-	auto beg = input.begin();
-	auto itr = beg;
-	auto end = beg;
+	using iterator = mw::test::ast::code::iterator;
+
+
+	iterator beg = iterator{input.begin()};
+	iterator itr = iterator{beg};
+	iterator end = iterator{beg};
 
 	namespace x3 = boost::spirit::x3;
 	using namespace mw::test::parser;
@@ -28,9 +31,9 @@ int test_main (int, char**)
 	auto l = [&](auto rule, auto & prod)
 	{
 		prod = std::remove_reference_t<decltype(prod)>();
-		beg = input.begin();
-		itr = input.begin();
-		end = input.end();
+		beg = iterator{input.begin()};
+		itr = iterator{input.begin()};
+		end = iterator{input.end()  };
 
 		return x3::parse(itr, end, rule, prod);
 	};
@@ -39,7 +42,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(l(tpl_square_par, result));
 	BOOST_CHECK(result == "[ adlkjasdzi8998 ..; ]");
-	BOOST_CHECK(itr == (end-1));
+	BOOST_CHECK(itr.base() == (end.base()-1));
 
 
 	input = "[ {} ]";
@@ -90,7 +93,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(l(tpl_par, result));
 	BOOST_CHECK(result == "some");
-	BOOST_CHECK(itr == beg+4);
+	BOOST_CHECK(itr.base() == beg.base() + 4);
 
 
 	input = "thingy";

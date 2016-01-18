@@ -1,0 +1,46 @@
+/**
+ * @file   error_log.cpp
+ * @date   18.01.2016
+ * @author Klemens
+ *
+ * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
+ */
+
+#include <mw/test/error_log.hpp>
+
+namespace mw
+{
+namespace test
+{
+
+static bool error_state = false;
+
+void set_error()
+{
+	error_state = true;
+}
+
+void reset_error()
+{
+	error_state = false;
+}
+
+bool get_error()
+{
+	return error_state;
+}
+
+
+static bool warn_as_error = false;
+
+void set_warn_as_error(bool b)
+{
+	warn_as_error = b;
+}
+bool get_warn_as_error()
+{
+	return warn_as_error;
+}
+
+}
+}

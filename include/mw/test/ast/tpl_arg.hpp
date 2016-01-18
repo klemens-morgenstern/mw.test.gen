@@ -9,7 +9,7 @@
 #ifndef MW_TEST_AST_TPL_ARG_HPP_
 #define MW_TEST_AST_TPL_ARG_HPP_
 
-
+#include <mw/test/ast/code.hpp>
 #include <string>
 #include <vector>
 
@@ -29,6 +29,7 @@ struct tpl_arg
 ///object id, may also contain template parameters
 struct obj_id
 {
+	code::iterator location;
 	std::string name;
 	std::vector<std::string> tpl_args;
 };

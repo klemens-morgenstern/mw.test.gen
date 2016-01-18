@@ -25,7 +25,7 @@ namespace parser
  * <id> ::= '[_A-Za-z]' '[_A-Za-z0-9]'* ;
  * @endcode
  */
-x3::rule<class id, std::string> const id("id");
+x3::rule<class id, std::string> const id;
 
 auto const id_def =
 		lexeme[
