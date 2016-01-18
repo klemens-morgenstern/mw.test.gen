@@ -14,6 +14,10 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <unordered_map>
+
+#include <mutex>
+#include <set>
 
 using namespace std;
 
@@ -92,47 +96,6 @@ ast::main mwt_file::parse(const boost::filesystem::path &path)
 	return mn;
 }
 
-
-
-struct transformer
-{
-	const mwt_file & file;
-
-	data::main & mn;
-
-	data::group 		operator()(const ast::group & grp);
-	data::use_file 		operator()(const ast::use_file & grp);
-	std::shared_ptr<data::test_object>
-						operator()(const ast::test_object & grp);
-	data::doc_t			operator()(const ast::doc_t & doc);
-	std::weak_ptr<data::object>
-						operator()(const ast::obj_id &id);
-	data::use_file_type	operator()(ast::use_file_type uft);
-
-};
-
-std::weak_ptr<data::object> transformer::operator()(const ast::obj_id &id)
-{
-	std::shared_ptr<ast::test_object> to;
-
-/*	for (auto & t : mn.test_objects)
-	{
-		auto res = std::find_if(mn.test_objects.begin(), mn.test_objects.end(),
-				[&](const data::object_p & op){return op->id == id.name;});
-
-		if (res == mn.test_objects.end())
-			throw object_not_found(id.name);
-
-		//to = *res;
-	}*/
-
-	if (needed_template_args(*to) > id.tpl_args.size())
-		throw too_few_tpl_args("");
-
-
-}
-
-
 data::use_file_type	transform(ast::use_file_type uft)
 {
 	switch(uft)
@@ -156,49 +119,23 @@ data::doc_t			transform(const ast::doc_t & doc)
 }
 
 
-data::use_file 		transform(const ast::use_file & grp)
-{
-	data::use_file out;
-
-	out.doc 		= (*this)(grp.doc);
-	out.location	= file.get_location(grp.location);
-	out.filename	= grp.filename;
-	out.type		= (*this)(grp.type);
-
-	return out;
-}
-
 std::shared_ptr<data::test_object> 	transform(const ast::test_object & in)
 {
 	std::shared_ptr<data::test_object> to;
 
-	to->doc = (*this)(in.doc);
+	to->doc =	transform(in.doc);
 	//to->id  = in.id.
 	return to;
 }
 
-data::group transform(const ast::group & grp)
-{
-	/*data::group out;
-
-	out.content.	 resize(grp.content.	size());
-
-	std::transform(grp.content.begin(), 	grp.content.end(), 	out.content.begin(), *this);
-
-	out.name = grp.name;
-	out.doc	 = (*this)(grp.doc);
-	out.loc	 = file.get_location(grp.location);
-	return out;*/
-}
-
-data::use_file use_file_transform(const ast::use_file & grp, const mwt_file & file)
+data::use_file transform(const ast::use_file & grp, const mwt_file & file)
 {
 	data::use_file out;
 
 	out.doc 		= transform(grp.doc);
 	out.type		= transform(grp.type);
 
-	out.location	= file.get_location(grp.location);
+	out.loc			= file.get_location(grp.location);
 	out.filename	= grp.filename;
 
 	return out;
@@ -212,27 +149,114 @@ std::vector<data::use_file> use_file_transform_all(const std::vector<std::shared
 	{
 		ret.reserve(ret.size() + p->use_files.size());
 		for (auto &uf : p->use_files)
-			ret.push_back(use_file_transform(uf, *p));
+			ret.push_back(transform(uf, *p));
 
 	}
 	return ret;
 };
 
-data::main to_data(const std::vector<std::shared_ptr<mwt_file>> & parsed, std::launch async_mode)
+std::vector<std::string> get_files(const std::vector<std::shared_ptr<mwt_file>> & parsed)
 {
-	auto fut = std::async(async_mode, use_file_transform_all, parsed); //ok, this goes first, beause it maybe done async
+	std::vector<std::string> files;
+
+	files.reserve(parsed.size());
+	for (auto & p : parsed)
+		files.push_back(p->file_name.string());
+
+	return files;
+}
 
 
-	/*ok, for parallelization the actually things that make sense are to put the objects in parallel
-	  and maybe split the template instanciations up */
+struct object_transform_buf
+{
+	//ok, this stores the futures, when several threads are waiting.
+	std::unordered_map<std::string, std::shared_future<data::object_tpl_p>>	transformed_tpls;
+	std::unordered_map<std::string, std::shared_future<data::object_p>>		transformed_objects;
+
+	//this is the storage of the finished thingys.
+	std::set<data::object_p> 		test_objects;
+	std::set<data::object_tpl_p> 	test_object_tpls;
+
+	std::mutex tpls_mtx;
+	std::mutex object_mtx;
+
+};
+
+static data::object_tpl_p transform_tpl(object_transform_buf &ob, const ast::test_object &to)
+{
+
+}
+
+static data::object_tpl_p transform_obj(object_transform_buf &ob, const ast::test_object &to)
+{
+
+}
+
+static data::object_p instanciate_template(object_transform_buf & ob, const ast::obj_id & id)
+{
+
+}
 
 
+data::main to_data(const std::vector<std::shared_ptr<mwt_file>> & parsed,
+				   const std::vector<boost::filesystem::path>& include_path,
+				   std::launch async_mode)
+{
+	using namespace std;
+
+	auto fut = std::async(async_mode, use_file_transform_all, parsed); //ok, this goes first, beause it maybe async
 
 
+	//so, the first thing we do, is to collect the templates and the none-template objects
+
+	vector<ast::test_object*> tpls;
+	vector<ast::test_object*> raws;
+
+	for (auto & p : parsed)
+	{
+		for (auto  & o : p->test_objects)
+		{
+			if (o.is_template())
+				tpls.push_back(&o);
+			else
+				raws.push_back(&o);
+		}
+	}
+
+	//this is heavily functional style, needs to be better documented
+	object_transform_buf ob;
+
+	auto transform_object =
+			[&](const ast::test_object & to)
+			{
+
+			};
+
+	auto object_transform_lambda =
+			[&]{
+		/********************************************************************************************************************************/
+			};
+
+
+	std::future<void> object_transform = async(async_mode, object_transform_lambda);
 
 	data::main ret;
+	//ok, this stuff can be done whlie the other stuff runs asynchronous
+	ret.files = get_files(parsed);
 
-	ret.use_files = fut.get();
+	ret.include_paths.reserve(include_path.size());
+	for (auto &inc : include_path)
+		ret.include_paths.push_back(inc.string());
+
+	ret.use_files = use_file_transform_all(parsed); // fut.get();
+
+
+	//ok, finish the object transformation and copy the values from the hash maps.
+	object_transform.get();
+
+	ret.test_object_tpls.assign(ob.test_object_tpls.begin(), ob.test_object_tpls.end());
+	ret.test_objects 	.assign(ob.test_objects.begin(), 	 ob.test_objects.end());
+
 	return ret;
 
 }

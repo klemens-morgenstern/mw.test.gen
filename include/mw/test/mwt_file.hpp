@@ -90,7 +90,9 @@ std::vector<std::shared_ptr<mwt_file>> parse_file_set(const std::vector<boost::f
 													  std::launch async_mode = std::launch::deferred);
 
 
-data::main to_data(const std::vector<std::shared_ptr<mwt_file>> & parsed, std::launch async_mode = std::launch::deferred);
+data::main to_data(	const std::vector<std::shared_ptr<mwt_file>> & parsed,
+					const std::vector<boost::filesystem::path>& include_path = {},
+					std::launch async_mode = std::launch::deferred);
 
 
 }
