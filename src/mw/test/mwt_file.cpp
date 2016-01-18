@@ -133,7 +133,7 @@ std::weak_ptr<data::object> transformer::operator()(const ast::obj_id &id)
 }
 
 
-data::use_file_type	transformer::operator()(ast::use_file_type uft)
+data::use_file_type	transform(ast::use_file_type uft)
 {
 	switch(uft)
 	{
@@ -145,7 +145,7 @@ data::use_file_type	transformer::operator()(ast::use_file_type uft)
 	}
 }
 
-data::doc_t			transformer::operator()(const ast::doc_t & doc)
+data::doc_t			transform(const ast::doc_t & doc)
 {
 	data::doc_t out;
 
@@ -156,7 +156,7 @@ data::doc_t			transformer::operator()(const ast::doc_t & doc)
 }
 
 
-data::use_file 		transformer::operator()(const ast::use_file & grp)
+data::use_file 		transform(const ast::use_file & grp)
 {
 	data::use_file out;
 
@@ -168,7 +168,7 @@ data::use_file 		transformer::operator()(const ast::use_file & grp)
 	return out;
 }
 
-std::shared_ptr<data::test_object> 	transformer::operator()(const ast::test_object & in)
+std::shared_ptr<data::test_object> 	transform(const ast::test_object & in)
 {
 	std::shared_ptr<data::test_object> to;
 
@@ -177,9 +177,9 @@ std::shared_ptr<data::test_object> 	transformer::operator()(const ast::test_obje
 	return to;
 }
 
-data::group transformer::operator()(const ast::group & grp)
+data::group transform(const ast::group & grp)
 {
-	data::group out;
+	/*data::group out;
 
 	out.content.	 resize(grp.content.	size());
 
@@ -188,25 +188,54 @@ data::group transformer::operator()(const ast::group & grp)
 	out.name = grp.name;
 	out.doc	 = (*this)(grp.doc);
 	out.loc	 = file.get_location(grp.location);
-	return out;
+	return out;*/
 }
 
-/*
-data::main mwt_file::transform() const
+data::use_file use_file_transform(const ast::use_file & grp, const mwt_file & file)
 {
-	data::main out;
+	data::use_file out;
 
-	out.use_files.	 resize(use_files.	size());
-	out.test_objects.resize(test_objects.size());
-	out.groups.		 resize(groups.		size());
+	out.doc 		= transform(grp.doc);
+	out.type		= transform(grp.type);
 
-
-	std::transform(use_files.begin(), 		use_files.end(), 	out.use_files.begin(), 		transformer{*this, out});
-	std::transform(test_objects.begin(), 	test_objects.end(),	out.test_objects.begin(), 	transformer{*this, out});
-	std::transform(groups.begin(), 			groups.end(), 		out.groups.begin(), 		transformer{*this, out});
+	out.location	= file.get_location(grp.location);
+	out.filename	= grp.filename;
 
 	return out;
-}*/
+};
+
+std::vector<data::use_file> use_file_transform_all(const std::vector<std::shared_ptr<mwt_file>> & parsed)
+{
+	std::vector<data::use_file> ret;
+
+	for (auto & p : parsed)
+	{
+		ret.reserve(ret.size() + p->use_files.size());
+		for (auto &uf : p->use_files)
+			ret.push_back(use_file_transform(uf, *p));
+
+	}
+	return ret;
+};
+
+data::main to_data(const std::vector<std::shared_ptr<mwt_file>> & parsed, std::launch async_mode)
+{
+	auto fut = std::async(async_mode, use_file_transform_all, parsed); //ok, this goes first, beause it maybe done async
+
+
+	/*ok, for parallelization the actually things that make sense are to put the objects in parallel
+	  and maybe split the template instanciations up */
+
+
+
+
+
+	data::main ret;
+
+	ret.use_files = fut.get();
+	return ret;
+
+}
 
 std::vector<std::shared_ptr<mwt_file>> parse_file_set(const std::vector<boost::filesystem::path> & p,
 													  const std::vector<boost::filesystem::path>& include_path,

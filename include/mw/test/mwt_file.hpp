@@ -74,7 +74,6 @@ struct mwt_file : ast::main
 
 	ast::main 	parse(const boost::filesystem::path & path);
 
-
 };
 
 inline std::shared_ptr<mwt_file> parse_single_mwt(boost::filesystem::path p)
@@ -91,6 +90,7 @@ std::vector<std::shared_ptr<mwt_file>> parse_file_set(const std::vector<boost::f
 													  std::launch async_mode = std::launch::deferred);
 
 
+data::main to_data(const std::vector<std::shared_ptr<mwt_file>> & parsed, std::launch async_mode = std::launch::deferred);
 
 
 }
