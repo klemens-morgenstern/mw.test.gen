@@ -243,11 +243,14 @@ std::vector<std::shared_ptr<mwt_file>> parse_file_set(const std::vector<boost::f
 	}
 
 
+	vector<shared_ptr<mwt_file>> ret;
+
 	while (!futures.empty())//ok, always takeout the first and create new futures from the includes.
 	{
 		auto res = futures.front().get();//ok, get the first.
 		futures.erase(futures.begin()); //delete the currently taken.
 
+		ret.push_back(res); //push the found file into the return value.
 		for (auto & f : res->use_files)
 		{
 			if (f.type != ast::include) //ok, not an mwt file
@@ -270,10 +273,6 @@ std::vector<std::shared_ptr<mwt_file>> parse_file_set(const std::vector<boost::f
 		}
 
 	}
-
-
-	vector<shared_ptr<mwt_file>> ret;
-
 
 	return ret;
 
