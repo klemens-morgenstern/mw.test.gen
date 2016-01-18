@@ -31,15 +31,15 @@ bool get_error()
 }
 
 
-static bool warn_as_error = false;
+static bool _warn_as_error = false;
 
 void set_warn_as_error(bool b)
 {
-	warn_as_error = b;
+	_warn_as_error = b;
 }
-bool get_warn_as_error()
+bool warn_as_error()
 {
-	return warn_as_error;
+	return _warn_as_error;
 }
 
 }
