@@ -35,6 +35,7 @@ namespace test
 namespace parser
 {
 
+///Operator description as enumerator.
 enum ops
 {
 	equals,
@@ -54,6 +55,10 @@ enum ops
 	modulo_assign,
 };
 
+///Symbol definitions for operations, returns @ref ops.
+/**
+ *
+ */
 struct operators_t : x3::symbols<ops>
 {
 	operators_t()

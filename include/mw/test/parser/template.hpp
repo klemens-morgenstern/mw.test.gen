@@ -11,7 +11,7 @@
 
 #include <mw/test/parser/config.hpp>
 #include <mw/test/parser/utility.hpp>
-//#include <mw/test/parser/code.hpp>
+#include <mw/test/parser/code.hpp>
 #include <mw/test/parser/id.hpp>
 
 #include <mw/test/ast/tpl_arg.hpp>
@@ -26,6 +26,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
 		mw::test::ast::obj_id,
+		(mw::test::ast::code::iterator, location)
 		(std::string, name)
 		(std::vector<std::string>, tpl_args)
 );
@@ -150,7 +151,7 @@ BOOST_SPIRIT_DEFINE(tpl_par_list);
 
 x3::rule<class obj_id, ast::obj_id> obj_id;
 
-auto const obj_id_def = id >> -tpl_par_list;
+auto const obj_id_def =  code_location >> id >> -tpl_par_list;
 
 BOOST_SPIRIT_DEFINE(obj_id);
 

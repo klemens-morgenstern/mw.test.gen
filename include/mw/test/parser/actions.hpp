@@ -35,7 +35,14 @@ namespace test
 {
 namespace parser
 {
-
+///Symbol definition for actions in a test object.
+/** @code{.ebnf}
+ * 	<action> ::= 'init' | 'initialize'
+ * 			 |	 'exec' | 'execute'
+ * 			 |	 'eval' | 'evaluate' ;
+ *  @endcode
+ *
+ */
 struct action_t : x3::symbols<ast::action_t>
 {
 	action_t()
@@ -49,11 +56,17 @@ struct action_t : x3::symbols<ast::action_t>
 			;
 	}
 } action;
+///< Global variable of @ref action_t.
 
-
+///< Rule for action_call, that is if a test_object wants to call another test objects action.
+/** @code{.ebnf}
+ *  <action_call> ::= <action> <id> [ <tpl_par_list> ] ';' ;
+ *  @endcode
+ *
+ */
 x3::rule<class action_call, ast::action_call> action_call;
 
-
+///Definition of @ref action_call.
 auto const action_call_def = lexeme[action >> skipper]
 							 >> id
 							 >> -tpl_par_list
