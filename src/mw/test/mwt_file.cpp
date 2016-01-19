@@ -6,7 +6,6 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#include <boost/spirit/home/x3.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <mw/test/mwt_file.hpp>
@@ -19,6 +18,8 @@
 
 #include <mutex>
 #include <set>
+
+#include "../../../libs/spirit/include/boost/spirit/home/x3.hpp"
 
 using namespace std;
 
@@ -195,23 +196,38 @@ std::string transform(const ast::obj_id &id)
 struct obj_future
 {
 	std::shared_future<data::object_p> target;
-
 	std::string name;
+	std::vector<obj_future *> waits_for;
 
-	obj_future * waits_for = nullptr;
+	inline bool check_self_dependency(const obj_future * const);
 };
+
+bool obj_future::check_self_dependency(const obj_future * const pp)
+{
+	if (pp == this)
+		return true;
+
+
+	for (auto & p : pp->waits_for)
+		if (check_self_dependency(p))
+			return true;
+
+	return false;
+}
+
 
 struct object_transform_buf
 {
 	//ok, this stores the futures, when several threads are waiting.
-	std::unordered_map<std::string, obj_future>		transformed_objects;
+	std::unordered_map<std::string, obj_future>	transformed_objects;
+	std::unordered_map<std::string, obj_future> transformed_tpls;
 
 	//this is the storage of the finished thingys.
 	std::set<data::object_p> 		test_objects;
 	std::set<data::object_tpl_p> 	test_object_tpls;
 
-	std::mutex tpls_mtx;
-	std::mutex object_mtx;
+	std::mutex obj_mtx;
+	std::mutex tpl_mtx;
 
 };
 
@@ -281,7 +297,7 @@ data::main to_data(const std::vector<std::shared_ptr<mwt_file>> & parsed,
 	}
 
 	//this is heavily functional style, needs to be better documented
-	object_transform_buf ob;
+	object_transform_buf obb;
 
 	auto transform_object =
 			[&](const ast::test_object & to)
@@ -291,7 +307,27 @@ data::main to_data(const std::vector<std::shared_ptr<mwt_file>> & parsed,
 
 	auto object_transform_lambda =
 			[&]{
-		/********************************************************************************************************************************/
+				for (auto & fl : parsed)
+				{
+					for (auto & ob : fl->test_objects)
+					{
+						obj_future of;
+						std::string id = boost::trim_copy(ob.id);
+
+						//of. # TBDone
+						if (ob.is_template())
+						{
+
+							lock_guard<mutex> lk(obb.tpl_mtx);
+
+						}
+						else
+						{
+							lock_guard<mutex> lk(obb.obj_mtx);
+
+						}
+					}
+				}
 			};
 
 
@@ -311,8 +347,8 @@ data::main to_data(const std::vector<std::shared_ptr<mwt_file>> & parsed,
 	//ok, finish the object transformation and copy the values from the hash maps.
 	object_transform.get();
 
-	ret.test_object_tpls.assign(ob.test_object_tpls.begin(), ob.test_object_tpls.end());
-	ret.test_objects 	.assign(ob.test_objects.begin(), 	 ob.test_objects.end());
+//	ret.test_object_tpls.assign(ob.test_object_tpls.begin(), ob.test_object_tpls.end());
+//	ret.test_objects 	.assign(ob.test_objects.begin(), 	 ob.test_objects.end());
 
 	return ret;
 

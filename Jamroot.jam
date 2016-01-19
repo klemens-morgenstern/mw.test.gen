@@ -9,7 +9,7 @@ local postfix = [ modules.peek user-config : boost-lib-postfix ] ; # the postfix
 project mw.test.gen :
 	source-location src	
 	: requirements
-	<include>./libs/spirit/include
+#	<include>./libs/spirit/include
 	<include>./libs/mw.test.data/include
 	<include>$(boost-inc)
 	<include>./include

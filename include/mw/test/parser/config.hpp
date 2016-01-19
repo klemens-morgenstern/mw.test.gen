@@ -9,7 +9,7 @@
 #ifndef MW_TEST_PARSER_CONFIG_HPP_
 #define MW_TEST_PARSER_CONFIG_HPP_
 
-#include <boost/spirit/home/x3.hpp>
+#include "../../../../libs/spirit/include/boost/spirit/home/x3.hpp"
 
 namespace mw
 {

@@ -3,7 +3,7 @@ import testing ;
 project parser :
 	source-location .	
 	: requirements
-	<include>../../libs/spirit/include
+#	<include>../../libs/spirit/include
 	<include>$(boost-inc)
 	<include>../../include
 	<toolset>gcc:<cxxflags>-std=gnu++1y
