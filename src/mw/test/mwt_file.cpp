@@ -14,6 +14,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <boost/algorithm/string/trim.hpp>
 #include <unordered_map>
 
 #include <mutex>
@@ -166,6 +167,29 @@ std::vector<std::string> get_files(const std::vector<std::shared_ptr<mwt_file>> 
 	return files;
 }
 
+std::string transform(const ast::obj_id &id)
+{
+	/*ok, here's how it works: trim the thing, i..e remove the border cases. This may yield wrong results, since X<2+3> and X<2 + 3> would be two different objects.
+	  But this is a corner case, and this tool doesn't perform any semantic C++ tests on purpose */
+
+	std::stringstream res;
+	res << boost::trim_copy(id.name);
+
+
+	if (id.tpl_args.size() > 0)
+	{
+		res << '<';
+
+		for (auto & ta : id.tpl_args)
+		{
+			res << boost::trim_copy(ta);
+			if (&ta != &id.tpl_args.back())
+				res << ',';
+		}
+		res << '>';
+	}
+	return res.str();
+}
 
 struct object_transform_buf
 {
@@ -182,9 +206,33 @@ struct object_transform_buf
 
 };
 
+
+
+
 static data::object_tpl_p transform_tpl(object_transform_buf &ob, const ast::test_object &to)
 {
+	using namespace std;
 
+	data::object_tpl_p p = nullptr;
+
+	switch(to.type)
+	{
+	case ast::object:
+	{
+		auto p2 = std::make_shared<data::test_object_tpl>();
+		p = p2;
+		break;
+	}
+	case ast::classification:
+	case ast::composition:
+	case ast::class_:
+	case ast::case_:
+	case ast::step:
+	case ast::sequence:
+		break;
+	}
+
+	return p;
 }
 
 static data::object_tpl_p transform_obj(object_transform_buf &ob, const ast::test_object &to)
