@@ -191,11 +191,20 @@ std::string transform(const ast::obj_id &id)
 	return res.str();
 }
 
+
+struct obj_future
+{
+	std::shared_future<data::object_p> target;
+
+	std::string name;
+
+	obj_future * waits_for = nullptr;
+};
+
 struct object_transform_buf
 {
 	//ok, this stores the futures, when several threads are waiting.
-	std::unordered_map<std::string, std::shared_future<data::object_tpl_p>>	transformed_tpls;
-	std::unordered_map<std::string, std::shared_future<data::object_p>>		transformed_objects;
+	std::unordered_map<std::string, obj_future>		transformed_objects;
 
 	//this is the storage of the finished thingys.
 	std::set<data::object_p> 		test_objects;
