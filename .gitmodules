@@ -1,6 +1,3 @@
-[submodule "libs/spirit"]
-	path = libs/spirit
-	url = https://github.com/djowel/spirit_x3.git
 [submodule "libs/mw.test.data"]
 	path = libs/mw.test.data
 	url = https://github.com/MorgWal/mw.test.data.git

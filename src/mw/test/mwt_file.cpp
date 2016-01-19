@@ -19,7 +19,7 @@
 #include <mutex>
 #include <set>
 
-#include "../../../libs/spirit/include/boost/spirit/home/x3.hpp"
+#include <boost/spirit/home/x3.hpp>
 
 using namespace std;
 

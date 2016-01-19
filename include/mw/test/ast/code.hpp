@@ -12,7 +12,7 @@
 #include <string>
 #include <iterator>
 
-#include "../../../../libs/spirit/include/boost/spirit/include/support_line_pos_iterator.hpp"
+#include <boost/spirit/include/support_line_pos_iterator.hpp>
 
 namespace mw
 {
