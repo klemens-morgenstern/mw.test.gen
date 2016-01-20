@@ -10,7 +10,7 @@
 #define MW_TEST_TEMPLATE_INSTANTIATE_H_
 
 #include <string>
-#include <regex>
+#include <vector>
 
 namespace mw {
 namespace test {
@@ -23,7 +23,7 @@ struct template_instantiate
 	struct replacement
 	{
 		std::string id;
-		std::string replacement;
+		std::string replace;
 	};
 
 	static std::string replace(const std::string & data, const std::vector<replacement> & replacements);

@@ -23,6 +23,6 @@ project mw.test.gen :
 	<link>shared
 	;
 	
-lib mw.test : mw/test/mwt_file.cpp mw/test/error_log.cpp ;	
+lib mw.test : mw/test/mwt_file.cpp mw/test/error_log.cpp mw/test/template_instantiate.cpp ;	
 	
-build-project test//parser ;	
+build-project test ;	
