@@ -39,7 +39,7 @@ struct test_object
 	std::vector<object_content> content;
 	std::vector<tpl_arg>		tpl_args;
 
-	bool is_template() { return !tpl_args.empty();}
+	bool is_template() const { return !tpl_args.empty();}
 
 };
 

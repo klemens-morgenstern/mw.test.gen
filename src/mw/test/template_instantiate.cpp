@@ -10,6 +10,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <cassert>
+#include <mw/test/error_log.hpp>
 
 using namespace std;
 
@@ -232,6 +234,47 @@ string mw::test::template_instantiate::replace(const string& data, const vector<
 
 	return buf;
 }
+
+data::object_tpl_p template_instantiate::select_type(const ast::test_object & to)
+{
+	switch (to.type)
+	{
+	case ast::object:
+	{
+		auto p = std::make_shared<data::test_object_tpl>();
+		if (to.inheritance.size())
+		{
+
+		}
+
+	}
+
+	case ast::classification:   return std::make_shared<data::test_classification_tpl>();
+	case ast::composition:      return std::make_shared<data::test_composition_tpl>();
+	case ast::class_:           return std::make_shared<data::test_class_tpl>();
+	case ast::case_:            return std::make_shared<data::test_case_tpl>();
+	case ast::step:             return std::make_shared<data::test_step_tpl>();
+	case ast::sequence:         return std::make_shared<data::test_sequence_tpl>();
+	default:
+		assert(false);
+
+	}
+	return nullptr;
+}
+
+data::object_tpl_p template_instantiate::make(const ast::test_object & to)
+{
+	assert(to.is_template());//check internal error
+
+
+	auto p = select_type(to);
+
+
+	return p;
+}
+
+
+
 } /* namespace test */
 } /* namespace mw */
 
