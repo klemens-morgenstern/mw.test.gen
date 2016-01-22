@@ -10,11 +10,13 @@
 #define MW_TEST_ERROR_LOG_HPP_
 
 #include <iostream>
+#include <mutex>
 
 namespace mw
 {
 namespace test
 {
+
 
 void   set_error();
 void reset_error();
@@ -24,39 +26,81 @@ void set_warn_as_error(bool b);
 bool 	 warn_as_error();
 
 
-inline std::ostream& error(const std::string &file_name, std::size_t line_nr = 0)
+inline void print_error_location(const std::string & line, size_t column)
 {
-	set_error();
-	return std::cerr <<  file_name << "(" << line_nr << ") Error: ";
+	using namespace std;
+	cerr << line << endl;
+	cerr << std::string(column-1, ' ') << '^' << endl;
 }
 
-inline std::ostream& warn(const std::string &file_name, std::size_t line_nr = 0)
+inline void print_error_location(const std::string & line, size_t column, size_t range)
 {
+	using namespace std;
+	cerr << line << endl;
+	cerr << std::string(column-1, ' ') << std::string(range, '^') << endl;
+}
+
+inline std::ostream& error(const std::string &file_name, size_t line_nr = 0)
+{
+	using namespace std;
+	set_error();
+	return cerr <<  file_name << "(" << line_nr << ") Error: ";
+}
+
+inline std::ostream& error(const std::string &file_name, size_t line_nr, size_t column)
+{
+	using namespace std;
+	set_error();
+	return cerr <<  file_name << "(" << line_nr << "," << column << ") Error: ";
+}
+
+inline std::ostream& warn(const std::string &file_name, size_t line_nr = 0)
+{
+	using namespace std;
 	if (warn_as_error())
 		set_error();
-	return std::cerr <<  file_name << "(" << line_nr << ") Warn: ";
+	return cerr <<  file_name << "(" << line_nr << ") Warn: ";
 }
 
-inline std::ostream& note(const std::string &file_name, std::size_t line_nr = 0)
+inline std::ostream& warn(const std::string &file_name, size_t line_nr, size_t column)
 {
-	return std::cerr <<  file_name << "(" << line_nr << ") Note: ";
+	using namespace std;
+	if (warn_as_error())
+		set_error();
+	return cerr <<  file_name << "(" << line_nr << "," << column << ") Warn: ";
 }
 
-
-inline std::ostream& internal_error(const std::string &file_name, std::size_t line_nr = 0)
+inline std::ostream& note(const std::string &file_name, size_t line_nr = 0)
 {
+	using namespace std;
+
+	return cerr <<  file_name << "(" << line_nr << ") Note: ";
+}
+
+inline std::ostream& note(const std::string &file_name, size_t line_nr, size_t column)
+{
+	using namespace std;
+
+	return cerr <<  file_name << "(" << line_nr << "," << column << ") Note: ";
+}
+
+inline std::ostream& internal_error(const std::string &file_name, size_t line_nr = 0)
+{
+	using namespace std;
 	set_error();
-	return std::cerr <<  file_name << "(" << line_nr << ") Internal Error: ";
+	return cerr <<  file_name << "(" << line_nr << ") Internal Error: ";
 }
 
-inline std::ostream& internal_warn(const std::string &file_name, std::size_t line_nr = 0)
+inline std::ostream& internal_warn(const std::string &file_name, size_t line_nr = 0)
 {
-	return std::cerr <<  file_name << "(" << line_nr << ") Internal Warn: ";
+	using namespace std;
+	return cerr <<  file_name << "(" << line_nr << ") Internal Warn: ";
 }
 
-inline std::ostream& internal_note(const std::string &file_name, std::size_t line_nr = 0)
+inline std::ostream& internal_note(const std::string &file_name, size_t line_nr = 0)
 {
-	return std::cerr <<  file_name << "(" << line_nr << ") Internal Note: ";
+	using namespace std;
+	return cerr <<  file_name << "(" << line_nr << ") Internal Note: ";
 }
 
 

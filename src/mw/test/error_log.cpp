@@ -15,6 +15,7 @@ namespace test
 
 static bool error_state = false;
 
+
 void set_error()
 {
 	error_state = true;
