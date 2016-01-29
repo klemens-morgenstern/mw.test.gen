@@ -13,8 +13,8 @@
 
 #include <type_traits>
 
-#include <mw/test/parser/object_content.hpp>
-#include <mw/test/parser/comment.hpp>
+#include <mw/test/parsers/object_content.hpp>
+#include <mw/test/parsers/comment.hpp>
 
 int test_main (int, char**)
 {

@@ -9,7 +9,7 @@
 
 #define BOOST_TEST_MODULE test_comment
 #include <boost/test/minimal.hpp>
-#include <mw/test/parser/comment.hpp>
+#include <mw/test/parsers/comment.hpp>
 
 
 int test_main (int, char**)

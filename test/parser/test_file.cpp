@@ -11,8 +11,8 @@
 #define BOOST_TEST_MODULE test_file
 #include <boost/test/minimal.hpp>
 
-#include <mw/test/parser/use_file.hpp>
-#include <mw/test/parser/comment.hpp>
+#include <mw/test/parsers/use_file.hpp>
+#include <mw/test/parsers/comment.hpp>
 
 #include <type_traits>
 

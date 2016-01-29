@@ -12,7 +12,7 @@
 #include <vector>
 #include <mw/test/ast/tpl_arg.hpp>
 #include <mw/test/ast/code.hpp>
-#include <mw/test/parser/comment.hpp>
+#include <mw/test/parsers/comment.hpp>
 
 namespace mw
 {

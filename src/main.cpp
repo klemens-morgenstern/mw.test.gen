@@ -11,7 +11,7 @@
 #include <string>
 
 #include "../libs/spirit/include/boost/spirit/home/x3.hpp"
-//#include <mw/test/parser/objects.hpp>
+//#include <mw/test/parsers/objects.hpp>
 
 using namespace std;
 

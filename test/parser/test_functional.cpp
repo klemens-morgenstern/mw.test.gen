@@ -10,7 +10,7 @@
 #define BOOST_TEST_MODULE test_functional
 #include <boost/test/minimal.hpp>
 
-#include <mw/test/parser/functional.hpp>
+#include <mw/test/parsers/functional.hpp>
 
 int test_main (int, char**)
 {

@@ -11,7 +11,7 @@
 #define BOOST_TEST_MODULE test_expressions
 #include <boost/test/minimal.hpp>
 #include <iostream>
-#include <mw/test/parser/expressions.hpp>
+#include <mw/test/parsers/expressions.hpp>
 #include <type_traits>
 
 namespace x3 = boost::spirit::x3;

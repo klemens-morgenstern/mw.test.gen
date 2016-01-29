@@ -9,7 +9,7 @@
 
 #define BOOST_TEST_MODULE test_tpl
 #include <boost/test/minimal.hpp>
-#include <mw/test/parser/template.hpp>
+#include <mw/test/parsers/template.hpp>
 #include <type_traits>
 
 int test_main (int, char**)

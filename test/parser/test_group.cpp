@@ -10,7 +10,7 @@
 #define BOOST_TEST_MODULE test_group
 #include <boost/test/minimal.hpp>
 
-#include <mw/test/parser/group.hpp>
+#include <mw/test/parsers/group.hpp>
 
 int test_main (int, char**)
 {

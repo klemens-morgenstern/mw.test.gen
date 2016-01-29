@@ -12,7 +12,7 @@
 #define BOOST_TEST_MODULE test_oper
 #include <boost/test/minimal.hpp>
 
-#include <mw/test/parser/operations.hpp>
+#include <mw/test/parsers/operations.hpp>
 #include <boost/spirit/include/support_line_pos_iterator.hpp>
 
 int test_main (int, char**)

@@ -11,7 +11,7 @@
 #define BOOST_TEST_MODULE test_utility
 #include <boost/test/minimal.hpp>
 #include <iostream>
-#include <mw/test/parser/utility.hpp>
+#include <mw/test/parsers/utility.hpp>
 
 namespace x3 = boost::spirit::x3;
 

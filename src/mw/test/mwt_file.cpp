@@ -9,7 +9,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <mw/test/mwt_file.hpp>
-#include <mw/test/parser/main.hpp>
+#include <mw/test/parsers/main.hpp>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
