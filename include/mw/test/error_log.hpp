@@ -11,12 +11,12 @@
 
 #include <iostream>
 #include <mutex>
+#include <mw/test/data/location.hpp>
 
 namespace mw
 {
 namespace test
 {
-
 
 void   set_error();
 void reset_error();
@@ -53,6 +53,8 @@ inline std::ostream& error(const std::string &file_name, size_t line_nr, size_t 
 	set_error();
 	return cerr <<  file_name << "(" << line_nr << "," << column << ") Error: ";
 }
+
+
 
 inline std::ostream& warn(const std::string &file_name, size_t line_nr = 0)
 {
@@ -102,6 +104,12 @@ inline std::ostream& internal_note(const std::string &file_name, size_t line_nr 
 	using namespace std;
 	return cerr <<  file_name << "(" << line_nr << ") Internal Note: ";
 }
+
+inline std::ostream& error(const data::location & loc) { return error(loc.file_name, loc.line); }
+inline std::ostream& warn(const data::location & loc)  { return warn(loc.file_name, loc.line); }
+inline std::ostream& note(const data::location & loc)  { return note(loc.file_name, loc.line); }
+inline void print_error_location(const data::location & loc) {print_error_location(loc.file_name, loc.column);}
+
 
 
 }

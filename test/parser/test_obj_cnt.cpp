@@ -41,21 +41,13 @@ int test_main (int, char**)
 
 	data::using_plain up;
 
-	s = "using eval;";
-	BOOST_CHECK(p(using_plain, up));
-	BOOST_CHECK(itr == end);
-	BOOST_CHECK(up.action == data::evaluate);
-	BOOST_CHECK(!up.id);
-
-
 	s = "using father<42>::execute;";
 	BOOST_CHECK(p(using_plain, up));
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(up.action == data::execute);
-	BOOST_REQUIRE(up.id);
-	BOOST_CHECK(up.id->name == "father");
-	BOOST_REQUIRE(up.id->tpl_args.size() == 1);
-	BOOST_CHECK(up.id->tpl_args[0] == "42");
+	BOOST_CHECK(up.id.name == "father");
+	BOOST_REQUIRE(up.id.tpl_args.size() == 1);
+	BOOST_CHECK(up.id.tpl_args[0] == "42");
 
 
 	data::using_throw ut;
@@ -66,11 +58,10 @@ int test_main (int, char**)
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(ut.action == data::initialize);
 
-	BOOST_REQUIRE(ut.id);
-	BOOST_CHECK(ut.id->name == "dings");
-	BOOST_REQUIRE(ut.id->tpl_args.size() == 2);
-	BOOST_CHECK(ut.id->tpl_args[0] == "x");
-	BOOST_CHECK(ut.id->tpl_args[1] == "y");
+	BOOST_CHECK(ut.id.name == "dings");
+	BOOST_REQUIRE(ut.id.tpl_args.size() == 2);
+	BOOST_CHECK(ut.id.tpl_args[0] == "x");
+	BOOST_CHECK(ut.id.tpl_args[1] == "y");
 
 	BOOST_REQUIRE(ut.exceptions.size() == 2);
 
@@ -80,7 +71,7 @@ int test_main (int, char**)
 
 	data::using_any_throw uat;
 
-	s = "using evaluate for assert  any throw;";
+	s = "using xyz::evaluate for assert  any throw;";
 
 	BOOST_CHECK(p(using_any_throw, uat));
 	BOOST_CHECK(itr == end);
@@ -89,7 +80,7 @@ int test_main (int, char**)
 
 	data::using_no_throw unt;
 
-	s = "using eval for expect no throw;";
+	s = "using thingy::eval for expect no throw;";
 
 	BOOST_CHECK(p(using_no_throw, unt));
 	BOOST_CHECK(itr == end);

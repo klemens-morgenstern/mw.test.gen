@@ -72,6 +72,16 @@ struct mwt_file : ast::main
 				};
 	};
 
+	data::code get_code(const ast::code &c) const
+	{
+	    return {get_location(c.begin()), get_location(c.end()), c.to_string()};
+	}
+
+	data::code_list get_code_list(const ast::code_list & cl) const
+	{
+	    return {get_location(cl.begin()), get_location(cl.end()), cl.data};
+	}
+
 	ast::main 	parse(const boost::filesystem::path & path);
 
 };
