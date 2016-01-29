@@ -30,10 +30,10 @@ int test_main (int, char**)
 
 
 
-	using mw::test::parser::equality;
-	using mw::test::parser::comparison;
-	using mw::test::parser::predicate;
-	using mw::test::parser::skipper;
+	using mw::test::parsers::equality;
+	using mw::test::parsers::comparison;
+	using mw::test::parsers::predicate;
+	using mw::test::parsers::skipper;
 
 	using namespace mw::test::ast;
 
@@ -110,7 +110,7 @@ int test_main (int, char**)
 	mw::test::ast::predicate pr;
 
 	s = "(x<123>,y ) ";
-	BOOST_CHECK(p(mw::test::parser::arg_list, pr.arg_list));
+	BOOST_CHECK(p(mw::test::parsers::arg_list, pr.arg_list));
 	BOOST_REQUIRE(pr.arg_list.data.size() == 2);
 
 	BOOST_CHECK(pr.arg_list.data[0] == "x<123>");

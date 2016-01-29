@@ -21,7 +21,7 @@ int test_main (int, char**)
 	auto end = s.begin();
 
 	bool res;
-	using namespace mw::test::parser;
+	using namespace mw::test::parsers;
 
 	std::string parsed;
 

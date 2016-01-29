@@ -9,10 +9,10 @@
 #ifndef MW_TEST_PARSER_CODE_HPP_
 #define MW_TEST_PARSER_CODE_HPP_
 
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/utility.hpp>
-#include <mw/test/parser/comment.hpp>
-#include <mw/test/parser/id.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/utility.hpp>
+#include <mw/test/parsers/comment.hpp>
+#include <mw/test/parsers/id.hpp>
 #include <mw/test/ast/code.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -32,7 +32,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 ///Operator description as enumerator.

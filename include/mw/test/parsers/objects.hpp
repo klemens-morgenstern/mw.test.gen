@@ -9,11 +9,11 @@
 #ifndef MW_TEST_PARSER_OBJECTS_HPP_
 #define MW_TEST_PARSER_OBJECTS_HPP_
 
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/id.hpp>
-#include <mw/test/parser/template.hpp>
-#include <mw/test/parser/object_content.hpp>
-#include <mw/test/parser/code.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/id.hpp>
+#include <mw/test/parsers/template.hpp>
+#include <mw/test/parsers/object_content.hpp>
+#include <mw/test/parsers/code.hpp>
 #include <mw/test/ast/objects.hpp>
 
 
@@ -31,7 +31,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 

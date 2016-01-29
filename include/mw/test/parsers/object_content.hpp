@@ -11,13 +11,13 @@
 
 #include <mw/test/ast/object_content.hpp>
 
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/id.hpp>
-#include <mw/test/parser/code.hpp>
-#include <mw/test/parser/operations.hpp>
-#include <mw/test/parser/actions.hpp>
-#include <mw/test/parser/comment.hpp>
-#include <mw/test/parser/functional.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/id.hpp>
+#include <mw/test/parsers/code.hpp>
+#include <mw/test/parsers/operations.hpp>
+#include <mw/test/parsers/actions.hpp>
+#include <mw/test/parsers/comment.hpp>
+#include <mw/test/parsers/functional.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
 
@@ -72,7 +72,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 ///Rule to parse

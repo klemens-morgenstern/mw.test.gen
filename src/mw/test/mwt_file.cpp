@@ -90,7 +90,7 @@ ast::main mwt_file::parse(const boost::filesystem::path &path)
 
 	ast::main &mn = *static_cast<ast::main* const>(this);
 
-	x3::phrase_parse(itr, end, parser::main, parser::skipper, mn);
+	x3::phrase_parse(itr, end, parsers::main, parsers::skipper, mn);
 
 	if (itr != end)
 		throw incomplete_parse("Error"); //itr, end

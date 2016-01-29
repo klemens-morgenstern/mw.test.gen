@@ -15,7 +15,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 namespace x3 = boost::spirit::x3;

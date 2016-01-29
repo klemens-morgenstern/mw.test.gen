@@ -25,9 +25,9 @@ int test_main (int, char**)
 	auto end = s.begin();
 
 	bool res;
-	using mw::test::parser::log;
-	using mw::test::parser::quoted_string;
-	using mw::test::parser::squoted_string;
+	using mw::test::parsers::log;
+	using mw::test::parsers::quoted_string;
+	using mw::test::parsers::squoted_string;
 
 	std::string parsed;
 

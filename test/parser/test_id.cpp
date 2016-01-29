@@ -25,7 +25,7 @@ int test_main (int, char**)
 	auto end = s.begin();
 
 	bool res;
-	using mw::test::parser::id;
+	using mw::test::parsers::id;
 
 	std::string parsed;
 

@@ -20,7 +20,7 @@ int test_main (int, char**)
 	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 
 	namespace x3 = boost::spirit::x3;
-	using namespace mw::test::parser;
+	using namespace mw::test::parsers;
 
 	namespace data = mw::test::ast;
 	data::call_trace_decl ctd;

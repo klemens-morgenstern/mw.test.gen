@@ -11,7 +11,7 @@
 
 
 #include <string>
-#include <mw/test/parser/config.hpp>
+#include <mw/test/parsers/config.hpp>
 
 namespace mw
 {

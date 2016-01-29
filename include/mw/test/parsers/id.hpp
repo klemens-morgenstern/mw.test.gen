@@ -9,14 +9,14 @@
 #ifndef MW_TEST_PARSER_ID_HPP_
 #define MW_TEST_PARSER_ID_HPP_
 
-#include <mw/test/parser/config.hpp>
+#include <mw/test/parsers/config.hpp>
 #include <string>
 
 namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 ///Defintion for an id

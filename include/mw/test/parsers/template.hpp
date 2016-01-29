@@ -9,10 +9,10 @@
 #ifndef MW_TEST_PARSER_TEMPLATE_HPP_
 #define MW_TEST_PARSER_TEMPLATE_HPP_
 
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/utility.hpp>
-#include <mw/test/parser/code.hpp>
-#include <mw/test/parser/id.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/utility.hpp>
+#include <mw/test/parsers/code.hpp>
+#include <mw/test/parsers/id.hpp>
 
 #include <mw/test/ast/tpl_arg.hpp>
 
@@ -36,7 +36,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 ///Escaped template for []

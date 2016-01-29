@@ -20,7 +20,7 @@ int test_main (int, char**)
 
 
 	namespace x3 = boost::spirit::x3;
-	using namespace mw::test::parser;
+	using namespace mw::test::parsers;
 
 	namespace data = mw::test::ast;
 	data::group res;

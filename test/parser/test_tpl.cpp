@@ -25,7 +25,7 @@ int test_main (int, char**)
 	iterator end = iterator{beg};
 
 	namespace x3 = boost::spirit::x3;
-	using namespace mw::test::parser;
+	using namespace mw::test::parsers;
 	namespace d = mw::test::ast;
 
 	auto l = [&](auto rule, auto & prod)

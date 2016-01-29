@@ -9,8 +9,8 @@
 #ifndef MW_TEST_DATA_EXPRESSIONS_HPP_
 #define MW_TEST_DATA_EXPRESSIONS_HPP_
 
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/code.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/code.hpp>
 #include <mw/test/ast/expressions.hpp>
 
 
@@ -41,7 +41,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 struct relativity_t : x3::symbols<ast::relativity_t>

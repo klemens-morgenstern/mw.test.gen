@@ -9,7 +9,7 @@
 #ifndef MW_TEST_COMMENT_HPP_
 #define MW_TEST_COMMENT_HPP_
 
-#include <mw/test/parser/config.hpp>
+#include <mw/test/parsers/config.hpp>
 #include <type_traits>
 
 //#include <boost/fusion/adapted/struct/adapt_struct.hpp>
@@ -27,7 +27,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 ///general rule for a comment, used as a skipper

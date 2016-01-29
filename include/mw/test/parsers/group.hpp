@@ -10,10 +10,10 @@
 #define MW_TEST_PARSER_GROUP_HPP_
 
 #include <mw/test/ast/group.hpp>
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/id.hpp>
-#include <mw/test/parser/template.hpp>
-#include <mw/test/parser/code.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/id.hpp>
+#include <mw/test/parsers/template.hpp>
+#include <mw/test/parsers/code.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
 		mw::test::ast::group,
@@ -27,7 +27,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 x3::rule<class group, ast::group> const group;

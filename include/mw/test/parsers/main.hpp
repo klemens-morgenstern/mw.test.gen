@@ -10,9 +10,9 @@
 #define MW_TEST_PARSER_MAIN_HPP_
 
 
-#include <mw/test/parser/objects.hpp>
-#include <mw/test/parser/group.hpp>
-#include <mw/test/parser/use_file.hpp>
+#include <mw/test/parsers/objects.hpp>
+#include <mw/test/parsers/group.hpp>
+#include <mw/test/parsers/use_file.hpp>
 
 #include <mw/test/ast/main.hpp>
 #include <string>
@@ -21,7 +21,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 

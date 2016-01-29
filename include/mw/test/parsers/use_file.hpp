@@ -11,9 +11,9 @@
 
 
 #include <mw/test/ast/use_file.hpp>
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/comment.hpp>
-#include <mw/test/parser/code.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/comment.hpp>
+#include <mw/test/parsers/code.hpp>
 
 
 BOOST_FUSION_ADAPT_STRUCT(

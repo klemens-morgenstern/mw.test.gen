@@ -14,10 +14,10 @@
 
 #include <mw/test/ast/actions.hpp>
 
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/id.hpp>
-#include <mw/test/parser/template.hpp>
-#include <mw/test/parser/comment.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/id.hpp>
+#include <mw/test/parsers/template.hpp>
+#include <mw/test/parsers/comment.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
 
@@ -33,7 +33,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 ///Symbol definition for actions in a test object.
 /** @code{.ebnf}

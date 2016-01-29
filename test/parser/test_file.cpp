@@ -34,10 +34,10 @@ int test_main (int, char**)
 	iterator end{s.begin()};
 
 	bool res;
-	using mw::test::parser::use_file;
-	using mw::test::parser::use_file_doc;
-	using mw::test::parser::filename;
-	using mw::test::parser::skipper;
+	using mw::test::parsers::use_file;
+	using mw::test::parsers::use_file_doc;
+	using mw::test::parsers::filename;
+	using mw::test::parsers::skipper;
 
 	namespace d = mw::test::ast;
 

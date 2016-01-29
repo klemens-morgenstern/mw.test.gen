@@ -9,7 +9,7 @@
 #ifndef MW_TEST_PARSER_FUNCTIONAL_HPP_
 #define MW_TEST_PARSER_FUNCTIONAL_HPP_
 
-#include <mw/test/parser/code.hpp>
+#include <mw/test/parsers/code.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <mw/test/ast/functional.hpp>
 
@@ -44,7 +44,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 x3::rule<class function_name, ast::code> const function_name;

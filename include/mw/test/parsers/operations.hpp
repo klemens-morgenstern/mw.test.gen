@@ -9,10 +9,10 @@
 #ifndef MW_TEST_PARSER_OPERATIONS_HPP_
 #define MW_TEST_PARSER_OPERATIONS_HPP_
 
-#include <mw/test/parser/config.hpp>
-#include <mw/test/parser/code.hpp>
-#include <mw/test/parser/utility.hpp>
-#include <mw/test/parser/actions.hpp>
+#include <mw/test/parsers/config.hpp>
+#include <mw/test/parsers/code.hpp>
+#include <mw/test/parsers/utility.hpp>
+#include <mw/test/parsers/actions.hpp>
 #include <mw/test/ast/operations.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
@@ -79,7 +79,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 
 struct level_t : x3::symbols<ast::level_t>
