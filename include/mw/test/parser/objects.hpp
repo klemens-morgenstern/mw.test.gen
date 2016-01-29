@@ -13,12 +13,14 @@
 #include <mw/test/parser/id.hpp>
 #include <mw/test/parser/template.hpp>
 #include <mw/test/parser/object_content.hpp>
+#include <mw/test/parser/code.hpp>
 #include <mw/test/ast/objects.hpp>
 
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::ast::test_object,
 	(mw::test::ast::object_type_t, 				 type)
+	(mw::test::ast::code::iterator, 			 location)
 	(std::string,			 					 id)
 	(std::vector<mw::test::ast::tpl_arg>,		 tpl_args)
 	(std::vector<mw::test::ast::obj_id>, 		 inheritance)
@@ -85,6 +87,7 @@ x3::rule<class test_object, ast::test_object> const test_object;
 
 auto const test_object_def =
 		object_type
+		>> code_location
 		>> id
 		>> -tpl_decl
 		>> inheritance

@@ -32,6 +32,7 @@ enum object_type_t
 
 struct test_object
 {
+	code::iterator  location;
 	doc_t 			doc;
 	object_type_t 	type;
 	std::string		id;

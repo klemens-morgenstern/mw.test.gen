@@ -39,14 +39,14 @@ struct obj_action
 struct using_plain
 {
 	code::iterator location;
-	boost::optional<obj_id> id;
+	obj_id id;
 	action_t action;
 };
 
 struct using_throw
 {
 	code::iterator location;
-	boost::optional<obj_id> id;
+	obj_id id;
 	action_t action;
 	level_t level;
 	code_list exceptions;
@@ -55,7 +55,7 @@ struct using_throw
 struct using_no_throw
 {
 	code::iterator location;
-	boost::optional<obj_id> id;
+	obj_id id;
 	action_t action;
 	level_t level;
 };
@@ -63,7 +63,7 @@ struct using_no_throw
 struct using_any_throw
 {
 	code::iterator location;
-	boost::optional<obj_id> id;
+	obj_id id;
 	action_t action;
 	level_t level;
 };

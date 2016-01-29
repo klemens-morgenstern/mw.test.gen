@@ -31,14 +31,14 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::ast::using_plain,
 	(mw::test::ast::code::iterator, location)
-	(boost::optional<mw::test::ast::obj_id>, id)
+	(mw::test::ast::obj_id, id)
 	(mw::test::ast::action_t, action)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::ast::using_throw,
 	(mw::test::ast::code::iterator, location)
-	(boost::optional<mw::test::ast::obj_id>, id)
+	(mw::test::ast::obj_id, id)
 	(mw::test::ast::action_t, action)
 	(mw::test::ast::level_t, level)
 	(mw::test::ast::code_list, exceptions)
@@ -47,7 +47,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::ast::using_no_throw,
 	(mw::test::ast::code::iterator, location)
-	(boost::optional<mw::test::ast::obj_id>, id)
+	(mw::test::ast::obj_id, id)
 	(mw::test::ast::action_t, action)
 	(mw::test::ast::level_t, level)
 
@@ -56,7 +56,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::ast::using_any_throw,
 	(mw::test::ast::code::iterator, location)
-	(boost::optional<mw::test::ast::obj_id>, id)
+	(mw::test::ast::obj_id, id)
 	(mw::test::ast::action_t, action)
 	(mw::test::ast::level_t, level)
 
@@ -105,14 +105,14 @@ x3::rule<class using_decl, ast::using_decl> const using_decl;
 
 auto const using_plain_def =
 			lexeme["using" >> code_location >> skipper ]
-		>>	-((obj_id - action) >> "::")
+		>>	obj_id >> "::"
 		>> 	action
 		>> 	";" ;
 
 auto const using_throw_def =
 		 	"using"
 		>>  code_location
-		>>  -((obj_id - action) >> "::")
+		>>  obj_id >> "::"
 		>>  action
 		>> 	"for"
 		>>	level >> "throw" >> '(' >> code_list >> ')' >> ";";
@@ -120,7 +120,7 @@ auto const using_throw_def =
 auto const using_no_throw_def =
 	 		"using"
 		>>  code_location
-		>>  -((obj_id - action) >> "::")
+		>>  obj_id  >> "::"
 		>>  action
 		>>	"for"
 		>>	level >> "no" >> "throw"
@@ -129,7 +129,7 @@ auto const using_no_throw_def =
 auto const using_any_throw_def =
 	 		"using"
 		>>  code_location
-		>>  -((obj_id - action) >> "::")
+		>>  obj_id >> "::"
 		>>  action
 		>>	"for"
 		>>	level >> "any" >> "throw"
