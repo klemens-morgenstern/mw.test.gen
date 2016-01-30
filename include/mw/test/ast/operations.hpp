@@ -12,7 +12,7 @@
 #include <vector>
 #include <string>
 #include <boost/variant.hpp>
-#include <mw/test/ast/actions.hpp>
+#include <mw/test/ast/action_call.hpp>
 #include <mw/test/ast/code.hpp>
 
 namespace mw

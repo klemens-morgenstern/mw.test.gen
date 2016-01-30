@@ -17,7 +17,7 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
 ///General appending tool for parsers.
 auto append = [](auto &ctx)

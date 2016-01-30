@@ -14,18 +14,8 @@
 #include <mw/test/parsers/template.hpp>
 #include <mw/test/parsers/object_content.hpp>
 #include <mw/test/parsers/code.hpp>
-#include <mw/test/ast/objects.hpp>
+#include <mw/test/data/objects.hpp>
 
-
-BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::ast::test_object,
-	(mw::test::ast::object_type_t, 				 type)
-	(mw::test::ast::code::iterator, 			 location)
-	(std::string,			 					 id)
-	(std::vector<mw::test::ast::tpl_arg>,		 tpl_args)
-	(std::vector<mw::test::ast::obj_id>, 		 inheritance)
-	(std::vector<mw::test::ast::object_content>, content)
-);
 
 namespace mw
 {
@@ -34,14 +24,13 @@ namespace test
 namespace parsers
 {
 
-
 ///Rule to declare the inheritance of an object
 /**
  * @code{.ebnf}
  * <inheritance> ::= ':' <id> -<tpl_par> (<id> -<tpl_par>)* ;
  * @endcode
  */
-x3::rule<class inheritance, std::vector<ast::obj_id>> const inheritance;
+x3::rule<class inheritance, std::vector<data::obj_id>> const inheritance;
 
 auto const inheritance_def =
 		-(":" >> obj_id % ",")
@@ -49,44 +38,43 @@ auto const inheritance_def =
 
 BOOST_SPIRIT_DEFINE(inheritance);
 
-struct plain_obj_type_t : x3::symbols<ast::object_type_t>
+
+struct object_type_t : x3::symbols<boost::typeindex::type_index>
 {
-	plain_obj_type_t()
+    object_type_t()
 	{
-		add	("classification",  ast::classification)
-			("composition", 	ast::composition)
+		add ("classification",  boost::typeindex::type_id<data::test_classification>())
+            ("composition",     boost::typeindex::type_id<data::test_composition>())
+            ("test_object",     boost::typeindex::type_id<data::test_object>())
+			("test_class",      boost::typeindex::type_id<data::test_class>())
+			("test_case",       boost::typeindex::type_id<data::test_case>())
+			("test_step",       boost::typeindex::type_id<data::test_step>())
+			("test_sequence",   boost::typeindex::type_id<data::test_sequence>())
 			;
 	}
-} plain_obj_type;
+} object_type;
 
 
-struct test_obj_type_t : x3::symbols<ast::object_type_t>
-{
-	test_obj_type_t()
-	{
-		add ("object", ast::object)
-			("class",  ast::class_)
-			("case",   ast::case_)
-			("step",   ast::step)
-			("sequence", ast::sequence);
-	}
-} test_obj_type;
+auto const make_object = [](auto & c)
+        {
+            auto &t = x3::_attr(c);
 
+            x3::_val(c) = //used to add doc
+                parser::instance().make_object(
+                    boost::get<0>(t), //type_index
+                    boost::get<1>(t), //location
+                    boost::get<2>(t), //id
+                    boost::get<3>(t), //tpl-decls
+                    boost::get<4>(t), //inheritance
+                    boost::get<5>(t) //object_content
+                    );
 
-x3::rule<class object_type, ast::object_type_t> const object_type;
+        };
 
-auto const object_type_def =
-		plain_obj_type |
-		(lexeme["test" >> skipper] >> test_obj_type) ;
-
-BOOST_SPIRIT_DEFINE(object_type);
-
-
-
-x3::rule<class test_object, ast::test_object> const test_object;
+x3::rule<class test_object, data::object&> const test_object;
 
 auto const test_object_def =
-		object_type
+        object_type
 		>> code_location
 		>> id
 		>> -tpl_decl
@@ -97,7 +85,7 @@ auto const test_object_def =
 
 BOOST_SPIRIT_DEFINE(test_object);
 
-x3::rule<class test_object_doc, ast::test_object> const test_object_doc;
+x3::rule<class test_object_doc, data::test_object> const test_object_doc;
 auto const test_object_doc_def = doc(test_object);
 
 BOOST_SPIRIT_DEFINE(test_object_doc);

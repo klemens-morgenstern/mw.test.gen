@@ -51,8 +51,8 @@ inline std::string make_template_id(const ast::test_object& to, const ast::obj_i
 	std::vector<std::string> buf;
 	buf.resize(to.tpl_args.size());
 
-	std::transform(to.tpl_args.begin(), to.tpl_args.end(), buf.begin(), [](const ast::tpl_arg &ta){return ta.def_arg;});
-	std::copy(id.tpl_args.begin(), id.tpl_args.end(), buf.begin());
+	std::transform(to.tpl_args._begin(), to.tpl_args._end(), buf.begin(), [](const ast::tpl_arg &ta){return ta.def_arg;});
+	std::copy(id.tpl_args._begin(), id.tpl_args._end(), buf.begin());
 
 	ss << id.name << "<";
 
@@ -82,8 +82,8 @@ ast::main mwt_file::parse(const boost::filesystem::path &path)
 
 	using iterator = ast::code::iterator;
 
-	begin = iterator(buffer.begin());
-	end   = iterator(buffer.end());
+	_begin = iterator(buffer.begin());
+	_end   = iterator(buffer.end());
 
 	iterator itr{buffer.begin()};
 	iterator end{buffer.end  ()};

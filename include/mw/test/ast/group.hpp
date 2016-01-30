@@ -10,8 +10,8 @@
 #define MW_TEST_AST_GROUP_HPP_
 
 #include <vector>
-#include <mw/test/ast/tpl_arg.hpp>
-#include <mw/test/ast/code.hpp>
+#include <mw/test/data/tpl_arg.hpp>
+#include <mw/test/data/code.hpp>
 #include <mw/test/parsers/comment.hpp>
 
 namespace mw

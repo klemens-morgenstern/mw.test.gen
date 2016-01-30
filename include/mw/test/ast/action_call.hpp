@@ -6,8 +6,8 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_AST_ACTIONS_HPP_
-#define MW_TEST_AST_ACTIONS_HPP_
+#ifndef MW_TEST_AST_ACTION_CALL_HPP_
+#define MW_TEST_AST_ACTION_CALL_HPP_
 
 #include <string>
 #include <vector>
@@ -40,4 +40,4 @@ struct action_call
 
 
 
-#endif /* MW_TEST_AST_ACTIONS_HPP_ */
+#endif /* MW_TEST_AST_ACTION_CALL_HPP_ */

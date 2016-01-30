@@ -12,13 +12,13 @@
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
+#include <mw/test/ast/action_call.hpp>
 
-#include <mw/test/ast/actions.hpp>
-#include <mw/test/ast/code.hpp>
-#include <mw/test/ast/doc.hpp>
-#include <mw/test/ast/functional.hpp>
-#include <mw/test/ast/operations.hpp>
-#include <mw/test/ast/tpl_arg.hpp>
+#include <mw/test/data/code.hpp>
+#include <mw/test/data/doc.hpp>
+#include <mw/test/data/functional.hpp>
+#include <mw/test/data/operations.hpp>
+#include <mw/test/data/tpl_arg.hpp>
 
 namespace mw
 {

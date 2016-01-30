@@ -12,21 +12,24 @@ project parser :
 	<link>shared
 	;
 	
+
+lib parser : ../../src/mw/test/parser.cpp  ;
+
 test-suite mw.test.parser
      : 
-    [ run test_id.cpp  		]
-	[ run test_comment.cpp 	]    
-	[ run test_file.cpp  	]   
-	[ run test_utility.cpp  ]  
-	[ run test_tpl.cpp 		]
-	[ run test_code.cpp 	] 
-	[ run test_opers.cpp 	]
-	[ run test_actions.cpp	]
-	[ run test_obj_cnt.cpp	]
-	[ run test_objects.cpp	]
-	[ run test_functional.cpp ]
-	[ run test_group.cpp ]
-	[ run test_expressions.cpp ]
+#    [ run test_id.cpp  		]
+#	[ run test_comment.cpp 	]    
+#	[ run test_file.cpp  	]   
+#	[ run test_utility.cpp  ]  
+#	[ run test_tpl.cpp 		]
+	[ run test_code.cpp parser	] 
+#	[ run test_opers.cpp 	]
+#	[ run test_actions.cpp	]
+#	[ run test_obj_cnt.cpp	]
+#	[ run test_objects.cpp	]
+#	[ run test_functional.cpp ]
+#	[ run test_group.cpp ]
+#	[ run test_expressions.cpp ]
      ; 	
 		
 		

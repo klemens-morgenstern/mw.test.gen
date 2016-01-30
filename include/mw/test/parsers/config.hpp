@@ -10,6 +10,7 @@
 #define MW_TEST_PARSER_CONFIG_HPP_
 
 #include <boost/spirit/home/x3.hpp>
+#include <mw/test/parser.hpp>
 
 namespace mw
 {
@@ -33,6 +34,7 @@ using x3::_attr;
 using x3::lit;
 using x3::lexeme;
 using x3::omit;
+using x3::raw;
 
 ///Utility, to declare a c++14 lambda directly in a rule
 auto l = [](auto l){return l;};

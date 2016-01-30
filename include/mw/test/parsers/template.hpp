@@ -25,7 +25,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::ast::obj_id,
+		mw::test::data::obj_id,
 		(mw::test::ast::code::iterator, location)
 		(std::string, name)
 		(std::vector<std::string>, tpl_args)
@@ -112,12 +112,6 @@ x3::rule<class tpl_arg, ast::tpl_arg> tpl_arg;
 auto const tpl_arg_def = id >> -('=' >> tpl_par);
 
 
-
-auto push_back = [](auto &ctx)
-		{
-			_val(ctx).push_back(_attr(ctx));
-		};
-
 ///Rule for a template declaration list
 /**@code{.ebnf}
  * <tpl_decl> ::= '<' -(<id> (',' <id> )* ) '>' ;
@@ -149,9 +143,21 @@ BOOST_SPIRIT_DEFINE(tpl_par_list);
 
 
 
-x3::rule<class obj_id, ast::obj_id> obj_id;
+x3::rule<class obj_id_, ast::obj_id> obj_id_;
 
-auto const obj_id_def =  code_location >> id >> -tpl_par_list;
+auto const obj_id__def =  code_location >> id >> -tpl_par_list;
+
+BOOST_SPIRIT_DEFINE(obj_id_);
+
+auto get_object = [](auto & ctx)
+        {
+            auto & id = x3::_attr(ctx);
+            x3::_val(ctx) = parser::instance().get_object(id);
+        };
+
+x3::rule<class obj_id, data::object_p> obj_id;
+
+auto const obj_id_def = obj_id_[get_object];
 
 BOOST_SPIRIT_DEFINE(obj_id);
 

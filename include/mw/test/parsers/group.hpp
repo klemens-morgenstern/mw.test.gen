@@ -9,17 +9,17 @@
 #ifndef MW_TEST_PARSER_GROUP_HPP_
 #define MW_TEST_PARSER_GROUP_HPP_
 
-#include <mw/test/ast/group.hpp>
+#include <mw/test/data/group.hpp>
 #include <mw/test/parsers/config.hpp>
 #include <mw/test/parsers/id.hpp>
 #include <mw/test/parsers/template.hpp>
 #include <mw/test/parsers/code.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::ast::group,
-		(mw::test::ast::code::iterator, location)
+		mw::test::data::group,
+		(mw::test::data::location, location)
 		(std::string, name)
-		(std::vector<mw::test::ast::obj_id>, content)
+		(std::vector<std::weak_ptr<mw::test::data::object>>, content)
 );
 
 
@@ -42,7 +42,7 @@ auto const group_def =
 
 BOOST_SPIRIT_DEFINE(group);
 
-x3::rule<class group_doc, ast::group> const group_doc;
+x3::rule<class group_doc, data::group> const group_doc;
 auto const group_doc_def = doc(group);
 BOOST_SPIRIT_DEFINE(group_doc);
 

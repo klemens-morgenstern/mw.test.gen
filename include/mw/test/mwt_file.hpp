@@ -10,11 +10,14 @@
 #define MW_TEST_MWT_FILE_HPP_
 
 #include <string>
+#include <sstream>
 #include <boost/filesystem.hpp>
-#include <mw/test/ast/main.hpp>
-#include <mw/test/data/main.hpp>
+#include <boost/spirit/home/support/iterators/line_pos_iterator.hpp>
 #include <mw/test/data/location.hpp>
-#include <mw/test/error_log.hpp>
+//#include <mw/test/ast/main.hpp>
+//#include <mw/test/data/main.hpp>
+//#include <mw/test/data/location.hpp>
+//#include <mw/test/error_log.hpp>
 
 #include <exception>
 #include <future>
@@ -44,24 +47,25 @@ struct too_few_tpl_args : std::runtime_error
 	using std::runtime_error::runtime_error;
 };
 
-
-struct mwt_file : ast::main
+struct mwt_file
 {
 
-	using iterator = ast::code::iterator;
-
+	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 	boost::filesystem::path file_name;
 	std::string buffer;
 
 
-	iterator begin;
-	iterator end;
+	iterator _begin = iterator(buffer.cbegin());
+	iterator _end   = iterator(buffer.cend());
+
+	iterator end()   const {return _end;}
+	iterator begin() const {return _begin;}
 
 	std::size_t get_line	  	(iterator itr) const {return boost::spirit::get_line(itr);}
-	iterator	get_line_start	(iterator itr) const {return boost::spirit::get_line_start(begin, itr);}
+	iterator	get_line_start	(iterator itr) const {return boost::spirit::get_line_start(_begin, itr);}
 	boost::iterator_range<iterator>
-				get_current_line(iterator itr) const {return boost::spirit::get_current_line(begin, itr, end);}
-	std::size_t get_column		(iterator itr) const {return boost::spirit::get_column(begin, itr);}
+				get_current_line(iterator itr) const {return boost::spirit::get_current_line(_begin, itr, _end);}
+	std::size_t get_column		(iterator itr) const {return boost::spirit::get_column(_begin, itr);}
 
 	data::location get_location (iterator itr) const
 	{
@@ -72,40 +76,17 @@ struct mwt_file : ast::main
 				};
 	};
 
-	data::code get_code(const ast::code &c) const
-	{
-	    return {get_location(c.begin()), get_location(c.end()), c.to_string()};
-	}
+	bool is_virtual() const {return file_name.empty(); }
 
-	data::code_list get_code_list(const ast::code_list & cl) const
-	{
-	    return {get_location(cl.begin()), get_location(cl.end()), cl.data};
-	}
+	mwt_file(const boost::filesystem::path & file_name) :
+	    file_name(file_name),
+	    buffer(
+	            static_cast<std::stringstream&>((std::stringstream() << boost::filesystem::fstream(file_name).rdbuf())).str()
 
-	ast::main 	parse(const boost::filesystem::path & path);
-
+	            ) {}
+	mwt_file(const std::string & content) : buffer(content) {}
+	mwt_file(std::string && content) : buffer(std::move(content)) {}
 };
-
-inline std::shared_ptr<mwt_file> parse_single_mwt(boost::filesystem::path p)
-{
-	auto pp = std::make_shared<mwt_file>();
-	note(p.string()) << "Started parsing..." << std::endl;
-
-	pp->parse(p);
-	return pp;
-};
-
-std::vector<std::shared_ptr<mwt_file>> parse_file_set(const std::vector<boost::filesystem::path> & p,
-													  const std::vector<boost::filesystem::path>& include_path = {},
-													  std::launch async_mode = std::launch::deferred);
-
-
-data::main to_data(	const std::vector<std::shared_ptr<mwt_file>> & parsed,
-					const std::vector<boost::filesystem::path>& include_path = {},
-					std::launch async_mode = std::launch::deferred);
-
-
-
 
 
 

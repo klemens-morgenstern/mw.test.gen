@@ -13,65 +13,64 @@
 #include <mw/test/parsers/code.hpp>
 #include <mw/test/parsers/utility.hpp>
 #include <mw/test/parsers/actions.hpp>
-#include <mw/test/ast/operations.hpp>
+#include <mw/test/data/operations.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::ast::code_check,
-	(mw::test::ast::check_qualification, qual)
-	(mw::test::ast::level_t, lvl)
-	(mw::test::ast::code, 	  data)
+	mw::test::data::code_check,
+	(mw::test::data::level_t, lvl)
+	(mw::test::data::code, 	  data)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::ast::throw_check,
-	(mw::test::ast::code::iterator, 		_begin)
+	mw::test::data::throw_check,
+	(mw::test::data::location, 		_begin)
 	(bool, critical)
-	(mw::test::ast::level_t, 				lvl)
-	(mw::test::ast::code_list,		 		exceptions)
-	(std::vector<mw::test::ast::check_entry>, steps)
-	(mw::test::ast::code::iterator, _end)
+	(mw::test::data::level_t, 				lvl)
+	(mw::test::data::code_list,		 		exceptions)
+	(std::vector<mw::test::data::check_entry>, steps)
+	(mw::test::data::location, _end)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::ast::no_throw_check,
-	(mw::test::ast::code::iterator, _begin)
+	mw::test::data::no_throw_check,
+	(mw::test::data::location, _begin)
 	(bool, critical)
-	(mw::test::ast::level_t, 				 lvl)
-	(std::vector<mw::test::ast::check_entry>, steps)
-	(mw::test::ast::code::iterator, _end)
+	(mw::test::data::level_t, 				 lvl)
+	(std::vector<mw::test::data::check_entry>, steps)
+	(mw::test::data::location, _end)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::ast::any_throw_check,
-	(mw::test::ast::code::iterator, _begin)
+	mw::test::data::any_throw_check,
+	(mw::test::data::location, _begin)
 	(bool, critical)
-	(mw::test::ast::level_t, 				 lvl)
-	(std::vector<mw::test::ast::check_entry>, steps)
-	(mw::test::ast::code::iterator, _end)
+	(mw::test::data::level_t, 				 lvl)
+	(std::vector<mw::test::data::check_entry>, steps)
+	(mw::test::data::location, _end)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::ast::critical_section,
-	(mw::test::ast::code::iterator, _begin)
-	(std::vector<mw::test::ast::check_entry>, steps)
-	(mw::test::ast::code::iterator, _end)
+	mw::test::data::critical_section,
+	(mw::test::data::location, _begin)
+	(std::vector<mw::test::data::check_entry>, steps)
+	(mw::test::data::location, _end)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::ast::execute_check,
-	(mw::test::ast::code::iterator, location)
+	mw::test::data::execute_check,
+	(mw::test::data::location, location)
 	(bool, 							 critical)
-	(mw::test::ast::level_t, 		 lvl)
+	(mw::test::data::level_t, 		 lvl)
 
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
-	mw::test::ast::no_execute_check,
-	(mw::test::ast::code::iterator, location)
+	mw::test::data::no_execute_check,
+	(mw::test::data::location, location)
 	(bool, 							 critical)
-	(mw::test::ast::level_t, 		 lvl)
+	(mw::test::data::level_t, 		 lvl)
 
 );
 
@@ -82,12 +81,12 @@ namespace test
 namespace parsers
 {
 
-struct level_t : x3::symbols<ast::level_t>
+struct level_t : x3::symbols<data::level_t>
 {
 	level_t()
 	{
-		add	("assert", ast::assertion)
-			("expect", ast::expectation)
+		add	("assert", data::level_t::assertion)
+			("expect", data::level_t::expectation)
 			;
 	}
 } level;
@@ -107,31 +106,31 @@ auto set_location = [](auto &ctx)
 		};
 }
 
-x3::rule<class check_qualification, ast::check_qualification> const check_qualification;
+x3::rule<class check_qualification, data::check_qualification> const check_qualification;
 
 
-x3::rule<class execute_check, 	 ast::execute_check>	 const execute_check;
-x3::rule<class no_execute_check, ast::no_execute_check> const no_execute_check;
-x3::rule<class code_check, 		 ast::code_check> 		 const code_check;
-x3::rule<class critical_section, ast::critical_section> const critical_section;
+x3::rule<class execute_check, 	 data::execute_check>	 const execute_check;
+x3::rule<class no_execute_check, data::no_execute_check> const no_execute_check;
+x3::rule<class code_check, 		 data::code_check> 		 const code_check;
+x3::rule<class critical_section, data::critical_section> const critical_section;
 
-x3::rule<class check_entry, 	 ast::check_entry> 	 const check_entry;
-x3::rule<class check_entries, 	 std::vector<ast::check_entry>> const check_entries;
+x3::rule<class check_entry, 	 data::check_entry> 	 const check_entry;
+x3::rule<class check_entries, 	 std::vector<data::check_entry>> const check_entries;
 
-x3::rule<class throw_check, 	 ast::throw_check>		 const throw_check;
-x3::rule<class no_throw_check, 	 ast::no_throw_check>	 const no_throw_check;
-x3::rule<class any_throw_check,	 ast::any_throw_check>	 const any_throw_check;
+x3::rule<class throw_check, 	 data::throw_check>		 const throw_check;
+x3::rule<class no_throw_check, 	 data::no_throw_check>	 const no_throw_check;
+x3::rule<class any_throw_check,	 data::any_throw_check>	 const any_throw_check;
 
-x3::rule<class execute_check_doc, 	 ast::execute_check>	 const execute_check_doc;
-x3::rule<class no_execute_check_doc, ast::no_execute_check> const no_execute_check_doc;
-x3::rule<class critical_section_doc, ast::critical_section> const critical_section_doc;
+x3::rule<class execute_check_doc, 	 data::execute_check>	 const execute_check_doc;
+x3::rule<class no_execute_check_doc, data::no_execute_check> const no_execute_check_doc;
+x3::rule<class critical_section_doc, data::critical_section> const critical_section_doc;
 
-x3::rule<class check_entry_doc, 	 ast::check_entry> 	 const check_entry_doc;
-x3::rule<class check_entries_doc, 	 std::vector<ast::check_entry>> const check_entries_doc;
+x3::rule<class check_entry_doc, 	 data::check_entry> 	 const check_entry_doc;
+x3::rule<class check_entries_doc, 	 std::vector<data::check_entry>> const check_entries_doc;
 
-x3::rule<class throw_check_doc, 	 ast::throw_check>		 const throw_check_doc;
-x3::rule<class no_throw_check_doc, 	 ast::no_throw_check>	 const no_throw_check_doc;
-x3::rule<class any_throw_check_doc,	 ast::any_throw_check>	 const any_throw_check_doc;
+x3::rule<class throw_check_doc, 	 data::throw_check>		 const throw_check_doc;
+x3::rule<class no_throw_check_doc, 	 data::no_throw_check>	 const no_throw_check_doc;
+x3::rule<class any_throw_check_doc,	 data::any_throw_check>	 const any_throw_check_doc;
 
 
 
@@ -169,14 +168,14 @@ auto const throw_check_def =
 auto const no_throw_check_def =
 			code_location
 		>>  is_critical
-		>>	level >> "no" >> "throw"
+		>>	level >> "no_throw"
 		>>  '{' >> check_entries >> '}' >> -lit(';')
 		>> 	code_location;
 
 auto const any_throw_check_def =
 			code_location
 		>>  is_critical
-		>>	level >> "any" >> "throw"
+		>>	level >> "any_throw"
 		>>  '{' >> check_entries >> '}' >> -lit(';')
 		>> 	code_location ;
 

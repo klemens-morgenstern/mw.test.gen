@@ -10,16 +10,16 @@
 #define MW_TEST_PARSER_USE_FILE_HPP_
 
 
-#include <mw/test/ast/use_file.hpp>
+#include <mw/test/data/use_file.hpp>
 #include <mw/test/parsers/config.hpp>
 #include <mw/test/parsers/comment.hpp>
 #include <mw/test/parsers/code.hpp>
 
 
 BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::ast::use_file,
-		(mw::test::ast::use_file_type,  type    )
-		(mw::test::ast::code::iterator, location)
+		mw::test::data::use_file,
+		(mw::test::data::use_file_type,  type    )
+		(mw::test::data::location, location)
 		(std::string, filename                  )
 );
 
@@ -27,8 +27,12 @@ namespace mw
 {
 namespace test
 {
-namespace parser
+namespace parsers
 {
+
+
+
+
 /** Rule to parase a filename
  * @code{.ebnf}
  * <filename> ::= '[-.$A-Za-z0-9]+' ;
@@ -42,28 +46,19 @@ auto const filename_def =
 		lexeme[
 		+(char_("-._$A-Za-z0-9"))];
 
-///Lambda to set the filename of an object with a filename member. Mostly used when the object is inheriting mw::test::data::file_decl
-auto use_file_lambda = [](auto type)
-		{
-			return [type](auto & ctx)
-					{
-						_val(ctx) = type;
-					};
-
-		};
-
 BOOST_SPIRIT_DEFINE(filename);
 
 
-x3::rule<class use_file_type, ast::use_file_type> const use_file_type;
-
-auto const use_file_type_def =
-		(lexeme["tests"  >> skipper] >> lexeme["file" >> skipper])[use_file_lambda(ast::tests_file)] |
-        (lexeme["file"   >> skipper])[use_file_lambda(ast::file)] |
-		(lexeme["include">> skipper])[use_file_lambda(ast::include)];
-
-
-BOOST_SPIRIT_DEFINE(use_file_type);
+struct use_file_type_t : x3::symbols<data::use_file_type>
+{
+    use_file_type_t()
+    {
+        add ("file",      data::use_file_type::file)
+            ("test_file", data::use_file_type::tests_file)
+            ("include",   data::use_file_type::include)
+            ;
+    }
+} use_file_type;
 
 
 ///Rule to parse mw::test::file
@@ -71,10 +66,10 @@ BOOST_SPIRIT_DEFINE(use_file_type);
  *  <file> ::= 'file' <filename> ';' ;
  *  @endcode
  */
-x3::rule<class use_file, ast::use_file> const use_file;
+x3::rule<class use_file, data::use_file> const use_file;
 
 auto const use_file_def =
-			use_file_type >>
+			lexeme[use_file_type >> skipper] >>
 			code_location >>
 			filename >> ";";
 
