@@ -14,19 +14,19 @@
 #include <mw/test/parsers/code.hpp>
 #include <mw/test/parsers/id.hpp>
 
-#include <mw/test/ast/tpl_arg.hpp>
+#include <mw/test/data/objects.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
-		mw::test::ast::tpl_arg,
+		mw::test::data::tpl_arg,
 		(std::string, name)
-		(std::string, def_arg)
+		(boost::optional<std::string>, default_arg)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
 		mw::test::data::obj_id,
-		(mw::test::ast::code::iterator, location)
+		(mw::test::data::location, loc)
 		(std::string, name)
 		(std::vector<std::string>, tpl_args)
 );
@@ -107,7 +107,7 @@ auto const tpl_par_def = lexeme[*(!lit(',') >> tpl_par_step)];
  * @endcode
  *
  */
-x3::rule<class tpl_arg, ast::tpl_arg> tpl_arg;
+x3::rule<class tpl_arg, data::tpl_arg> tpl_arg;
 
 auto const tpl_arg_def = id >> -('=' >> tpl_par);
 
@@ -117,7 +117,7 @@ auto const tpl_arg_def = id >> -('=' >> tpl_par);
  * <tpl_decl> ::= '<' -(<id> (',' <id> )* ) '>' ;
  * @endcode
  */
-x3::rule<class tpl_decl, std::vector<ast::tpl_arg>> const tpl_decl;
+x3::rule<class tpl_decl, std::vector<data::tpl_arg>> const tpl_decl;
 
 auto const tpl_decl_def 	= '<' >> -(tpl_arg % ',') >> '>';
 
@@ -143,11 +143,11 @@ BOOST_SPIRIT_DEFINE(tpl_par_list);
 
 
 
-x3::rule<class obj_id_, ast::obj_id> obj_id_;
+x3::rule<class obj_id, data::obj_id> obj_id;
 
-auto const obj_id__def =  code_location >> id >> -tpl_par_list;
+auto const obj_id_def =  code_location >> id >> -tpl_par_list;
 
-BOOST_SPIRIT_DEFINE(obj_id_);
+BOOST_SPIRIT_DEFINE(obj_id);
 
 auto get_object = [](auto & ctx)
         {
@@ -155,11 +155,11 @@ auto get_object = [](auto & ctx)
             x3::_val(ctx) = parser::instance().get_object(id);
         };
 
-x3::rule<class obj_id, data::object_p> obj_id;
+x3::rule<class object_ref, data::object_p> object_ref;
 
-auto const obj_id_def = obj_id_[get_object];
+auto const object_ref_def = obj_id[get_object];
 
-BOOST_SPIRIT_DEFINE(obj_id);
+BOOST_SPIRIT_DEFINE(object_ref);
 
 }
 }

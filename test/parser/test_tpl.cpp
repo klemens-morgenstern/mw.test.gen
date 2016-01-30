@@ -14,19 +14,25 @@
 
 int test_main (int, char**)
 {
-	std::string input;
+
+    mw::test::parser parser;
+
+    parser.include_stack.emplace(std::string(""));
+
+    std::string &input = parser.include_stack.top().buffer;
+
+    auto &beg = parser.include_stack.top()._begin;
+    auto itr  = parser.include_stack.top()._begin;
+    auto &end = parser.include_stack.top()._end;
+
 	std::string result;
 
-	using iterator = mw::test::ast::code::iterator;
+    using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 
-
-	iterator beg = iterator{input.begin()};
-	iterator itr = iterator{beg};
-	iterator end = iterator{beg};
 
 	namespace x3 = boost::spirit::x3;
 	using namespace mw::test::parsers;
-	namespace d = mw::test::ast;
+	namespace d = mw::test::data;
 
 	auto l = [&](auto rule, auto & prod)
 	{
@@ -102,14 +108,15 @@ int test_main (int, char**)
 
 	BOOST_CHECK(l(tpl_arg, ta));
 	BOOST_CHECK(ta.name == "thingy");
-	BOOST_CHECK(ta.def_arg.empty());
+	BOOST_CHECK(!ta.default_arg);
 	BOOST_CHECK(itr == end);
 
 	input = "i=42";
 
 	BOOST_CHECK(l(tpl_arg, ta));
 	BOOST_CHECK(ta.name == "i");
-	BOOST_CHECK(ta.def_arg == "42");
+	BOOST_REQUIRE(ta.default_arg);
+	BOOST_CHECK(*ta.default_arg == "42");
 	BOOST_CHECK(itr == end);
 
 	input = "<stuff,x=32,asd=int()>";
@@ -120,11 +127,13 @@ int test_main (int, char**)
 	BOOST_CHECK(itr == end);
 	BOOST_REQUIRE(rv.size() == 3);
 	BOOST_CHECK(rv[0].name == "stuff");
-	BOOST_CHECK(rv[0].def_arg.empty());
+	BOOST_CHECK(!rv[0].default_arg);
 	BOOST_CHECK(rv[1].name	  == "x");
-	BOOST_CHECK(rv[1].def_arg == "32");
+	BOOST_REQUIRE(rv[1].default_arg);
+	BOOST_CHECK(*rv[1].default_arg == "32");
+	BOOST_REQUIRE(rv[2].default_arg);
 	BOOST_CHECK(rv[2].name	  == "asd");
-	BOOST_CHECK(rv[2].def_arg == "int()");
+	BOOST_CHECK(*rv[2].default_arg == "int()");
 
 
 	input = "<stuff,32,boost::variant<int>,decltype(23.44 * 2),{}>";
