@@ -17,7 +17,7 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
 		mw::test::data::group,
-		(mw::test::data::location, location)
+		(mw::test::data::location, loc)
 		(std::string, name)
 		(std::vector<std::weak_ptr<mw::test::data::object>>, content)
 );
@@ -30,14 +30,14 @@ namespace test
 namespace parsers
 {
 
-x3::rule<class group, ast::group> const group;
+x3::rule<class group, data::group> const group;
 
 auto const group_def =
 		lexeme["test"  >> skipper] >> code_location >>
 		lexeme["group" >> skipper] >>
 		 id >> -lit("=") >>
 		 "{" >>
-		(obj_id % ',') >>
+		(object_ref % ',') >>
 		"}" >> -lit(";");
 
 BOOST_SPIRIT_DEFINE(group);
