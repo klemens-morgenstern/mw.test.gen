@@ -20,6 +20,7 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::code_check,
+	(mw::test::data::code_check::qualification_t, qualification)
 	(mw::test::data::level_t,    lvl)
 	(mw::test::data::expression, data)
 );
@@ -111,10 +112,14 @@ auto set_location = [](auto &ctx)
 
 x3::rule<class execute_check, 	 data::execute_check>	 const execute_check;
 x3::rule<class no_execute_check, data::no_execute_check> const no_execute_check;
-x3::rule<class code_check, 		 data::code_check> 		 const code_check;
+x3::rule<class code_check,       data::code_check>       const code_check;
+x3::rule<class code_check,       data::code_check::qualification_t>      const check_qualification;
+
 x3::rule<class critical_section, data::critical_section> const critical_section;
 
-x3::rule<class check_entry, 	 data::check_entry> 	 const check_entry;
+
+
+x3::rule<class check_entry,      data::check_entry>      const check_entry;
 x3::rule<class check_entries, 	 std::vector<data::check_entry>> const check_entries;
 
 x3::rule<class throw_check, 	 data::throw_check>		 const throw_check;
@@ -147,16 +152,18 @@ auto const execute_check_def =
 auto const no_execute_check_def =
 		code_location >> is_critical >> level >> "no">> lit("execution") >> ";";
 
+auto const check_qualification_def =
+        *(  lit("static")  [oper::set_static  ] |
+            lit("critical")[oper::set_critical] |
+            lit("ranged")  [oper::set_ranged  ] |
+            lit("bitwise") [oper::set_bitwise ] ) ;
+
+
 
 auto const code_check_def =
-		/*check_qualification */
-        omit[
-             *( lit("static")  [oper::set_static  ] |
-                lit("critical")[oper::set_critical] |
-                lit("ranged")  [oper::set_ranged  ] |
-                lit("bitwise") [oper::set_bitwise ] )
-             ]
-        >> level >> expression >> ";";
+		check_qualification >> level >> expression; //expression; //expression;
+
+
 
 auto const throw_check_def =
 			code_location
@@ -224,7 +231,7 @@ BOOST_SPIRIT_DEFINE(no_throw_check);
 BOOST_SPIRIT_DEFINE(any_throw_check);
 
 BOOST_SPIRIT_DEFINE(is_critical);
-
+BOOST_SPIRIT_DEFINE(check_qualification);
 
 BOOST_SPIRIT_DEFINE(execute_check_doc      );
 BOOST_SPIRIT_DEFINE(no_execute_check_doc   );

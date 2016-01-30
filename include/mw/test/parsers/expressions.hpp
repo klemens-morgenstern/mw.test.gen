@@ -86,18 +86,6 @@ auto const arg_list_def = '(' >> code_list >> ')' >> eoi;
 
 BOOST_SPIRIT_DEFINE(arg_list);
 
-template<typename T, typename U>
-inline void range_to_code_assign(T &, const U&) {}
-inline void range_to_code_assign(data::code & val, const boost::iterator_range<iterator> & attr)
-{
-    val.content = std::string(attr.begin(), attr.end());
-    val.begin = parser::instance().current_file().get_location(attr.begin());
-    val.end   = parser::instance().current_file().get_location(attr.end());
-}
-
-auto range_to_code = [](auto &ctx) { range_to_code_assign(x3::_val(ctx), x3::_attr(ctx)); };
-
-
 x3::rule<class code_no_equal, data::code> const code_no_equal;
 auto const code_no_equal_def =
 		raw[  lexeme[*((!( ";" | equal_sym | "+/-" )  >> code_chunk_step) | (relativity >> code_chunk_step))]

@@ -16,6 +16,8 @@
 #include <mw/test/data/location.hpp>
 #include <mw/test/data/code.hpp>
 
+
+
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::code_list,
 	(mw::test::data::location, begin)
@@ -154,57 +156,36 @@ auto const code_chunk_step_no_ops_def =
 
 
 
-namespace code
-{
-
-
-auto set_beg = [](auto &ctx)
-		{
-			using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
-			iterator itr = x3::_where(ctx).begin();
-			_val(ctx).begin = parser::instance().current_file().get_location(itr);
-		};
-
-auto set_end = [](auto &ctx)
-		{
-			using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
-			iterator itr = x3::_where(ctx).begin();
-            _val(ctx).begin = parser::instance().current_file().get_location(itr);
-		};
-
-}
-
-auto range_to_string = [](auto &ctx)
+auto range_to_code = [](auto &ctx)
         {
-            auto val          = x3::_attr(ctx);
-            _val(ctx).content = std::string(val.begin(), val.end());
+            data::code & val = x3::_val(ctx);
+            const boost::iterator_range<iterator> & attr = x3::_attr(ctx);
+            val.content = std::string(attr.begin(), attr.end());
+            val.begin = parser::instance().current_file().get_location(attr.begin());
+            val.end   = parser::instance().current_file().get_location(attr.end());
         };
 
+
 auto const code_function_def =
-			eps[code::set_beg] >>
+			raw[
 			+(!lit('(') >> code_chunk_step ) >>
 			'(' >> code_list >> ')' >>
-			'{' >> *(!lit('}') >> code_chunk_step) >> '}'
-			>>
-			eps[code::set_end] >> -omit[';']
+			'{' >> *(!lit('}') >> code_chunk_step) >> '}'][range_to_code]
+			>> -omit[';']
 		;
 
 auto const code_chunk_def =
-		eps[code::set_beg] >>
 		raw[
 		    omit[ lexeme[*(!lit(';') >> code_chunk_step)]]
-		][range_to_string]
-		  >> eps[code::set_end] >> omit[';'];
+		][range_to_code] >> omit[';'];
 		;
 
 auto const code_section_def =
 			 lexeme[
 				'{' >>
-				eps[code::set_beg] >>
 				raw[
 				    omit[*(!lit('}') >> code_chunk_step)]
-				][range_to_string]
-				>> eps[code::set_end]
+				][range_to_code]
 				>> '}'
 			 ] >> -lit(';');
 		;
