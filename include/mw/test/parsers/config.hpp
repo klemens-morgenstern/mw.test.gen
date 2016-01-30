@@ -19,6 +19,7 @@ namespace test
 namespace parsers
 {
 
+using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 namespace x3 = boost::spirit::x3;
 using x3::string;
 using x3::char_;

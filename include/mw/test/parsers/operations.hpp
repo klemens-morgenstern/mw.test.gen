@@ -13,64 +13,65 @@
 #include <mw/test/parsers/code.hpp>
 #include <mw/test/parsers/utility.hpp>
 #include <mw/test/parsers/actions.hpp>
+#include <mw/test/parsers/expressions.hpp>
 #include <mw/test/data/operations.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::code_check,
-	(mw::test::data::level_t, lvl)
-	(mw::test::data::code, 	  data)
+	(mw::test::data::level_t,    lvl)
+	(mw::test::data::expression, data)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::throw_check,
-	(mw::test::data::location, 		_begin)
+	(mw::test::data::location, 		begin)
 	(bool, critical)
-	(mw::test::data::level_t, 				lvl)
-	(mw::test::data::code_list,		 		exceptions)
+	(mw::test::data::level_t, 	    lvl)
+	(mw::test::data::code_list,		exceptions)
 	(std::vector<mw::test::data::check_entry>, steps)
-	(mw::test::data::location, _end)
+	(mw::test::data::location,      end)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::no_throw_check,
-	(mw::test::data::location, _begin)
+	(mw::test::data::location, begin)
 	(bool, critical)
 	(mw::test::data::level_t, 				 lvl)
 	(std::vector<mw::test::data::check_entry>, steps)
-	(mw::test::data::location, _end)
+	(mw::test::data::location, end)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::any_throw_check,
-	(mw::test::data::location, _begin)
+	(mw::test::data::location, begin)
 	(bool, critical)
-	(mw::test::data::level_t, 				 lvl)
+	(mw::test::data::level_t, 				   lvl)
 	(std::vector<mw::test::data::check_entry>, steps)
-	(mw::test::data::location, _end)
+	(mw::test::data::location, end)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::critical_section,
-	(mw::test::data::location, _begin)
+	(mw::test::data::location, begin)
 	(std::vector<mw::test::data::check_entry>, steps)
-	(mw::test::data::location, _end)
+	(mw::test::data::location, end)
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::execute_check,
-	(mw::test::data::location, location)
-	(bool, 							 critical)
-	(mw::test::data::level_t, 		 lvl)
+	(mw::test::data::location, loc)
+	(bool, 					   critical)
+	(mw::test::data::level_t,  lvl)
 
 );
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::no_execute_check,
-	(mw::test::data::location, location)
-	(bool, 							 critical)
-	(mw::test::data::level_t, 		 lvl)
+	(mw::test::data::location,  loc)
+	(bool, 					    critical)
+	(mw::test::data::level_t,   lvl)
 
 );
 
@@ -106,7 +107,6 @@ auto set_location = [](auto &ctx)
 		};
 }
 
-x3::rule<class check_qualification/*, data::check_qualification*/> const check_qualification;
 
 
 x3::rule<class execute_check, 	 data::execute_check>	 const execute_check;
@@ -141,13 +141,6 @@ auto const is_critical_def =
 					| eps[l([](auto&c){_val(c) = false;})]
 		;
 
-auto const check_qualification_def =
-		*(	lit("static")  [oper::set_static  ] |
-			lit("critical")[oper::set_critical] |
-			lit("ranged")  [oper::set_ranged  ] |
-			lit("bitwise") [oper::set_bitwise ] ) ;
-
-
 auto const execute_check_def =
 		code_location >> is_critical >> level >> lit("execution") >> ";";
 
@@ -156,7 +149,14 @@ auto const no_execute_check_def =
 
 
 auto const code_check_def =
-		check_qualification >> level >> code_chunk;
+		/*check_qualification */
+        omit[
+             *( lit("static")  [oper::set_static  ] |
+                lit("critical")[oper::set_critical] |
+                lit("ranged")  [oper::set_ranged  ] |
+                lit("bitwise") [oper::set_bitwise ] )
+             ]
+        >> level >> expression >> ";";
 
 auto const throw_check_def =
 			code_location
@@ -225,7 +225,6 @@ BOOST_SPIRIT_DEFINE(any_throw_check);
 
 BOOST_SPIRIT_DEFINE(is_critical);
 
-BOOST_SPIRIT_DEFINE(check_qualification);
 
 BOOST_SPIRIT_DEFINE(execute_check_doc      );
 BOOST_SPIRIT_DEFINE(no_execute_check_doc   );

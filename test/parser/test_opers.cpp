@@ -15,6 +15,44 @@
 #include <mw/test/parsers/operations.hpp>
 #include <boost/spirit/include/support_line_pos_iterator.hpp>
 
+
+mw::test::data::obj_id req_id;
+
+// STUB the parser.cpp
+namespace mw
+{
+namespace test
+{
+
+thread_local parser *_instance = nullptr;
+
+
+parser::parser()
+{
+    assert(_instance == nullptr);
+
+    _instance = this;
+}
+
+
+parser &parser::instance()
+{
+    assert(_instance != nullptr);
+    return *_instance;
+}
+
+
+data::object_p parser::get_object(const data::obj_id& in)
+{
+    req_id = in;
+    return nullptr;
+}
+
+
+} /* namespace test */
+} /* namespace mw */
+
+
 int test_main (int, char**)
 {
     mw::test::parser parser;
@@ -40,7 +78,7 @@ int test_main (int, char**)
 
 	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 
-	namespace data = mw::test::ast;
+	namespace data = mw::test::data;
 
 	data::check_entry ce;
 
@@ -88,32 +126,7 @@ int test_main (int, char**)
 	BOOST_CHECK(itr == end);
 
 
-
-	s = "";
-	struct
-	{
-	    bool bitwise;
-	    bool critical;
-	    bool static_;
-	    bool ranged;
-	} cq;
-
-	BOOST_CHECK(p(check_qualification, cq));
-	BOOST_CHECK(cq.bitwise 	== false);
-	BOOST_CHECK(cq.critical == false);
-	BOOST_CHECK(cq.static_ 	== false);
-	BOOST_CHECK(cq.ranged	== false);
-	BOOST_CHECK(itr == end);
-
-	s = " critical static ranged bitwise";
-
-	BOOST_CHECK(p(check_qualification, cq));
-	BOOST_CHECK(cq.bitwise 	== true);
-	BOOST_CHECK(cq.critical == true);
-	BOOST_CHECK(cq.static_ 	== true);
-	BOOST_CHECK(cq.ranged	== true);
-	BOOST_CHECK(itr == end);
-
+	using boost::typeindex::type_id;
 
 	s = "assert thingy ;";
 	data::code_check cc;
@@ -123,18 +136,27 @@ int test_main (int, char**)
 	BOOST_CHECK(cc.static_  == false);
 	BOOST_CHECK(cc.ranged 	 == false);
 	BOOST_CHECK(cc.lvl == data::level_t::assertion);
-	BOOST_CHECK(cc.data.to_string() == "thingy ");
-
+	BOOST_REQUIRE(cc.data.type() == type_id<data::code>());
+	{
+	    auto & c = boost::get<data::code>(cc.data);
+	    BOOST_CHECK(c.content == "thingy ");
+	}
 	BOOST_CHECK(itr == end);
 
-	s = "assert x == 42 ;";
+	s = "static assert x == 42 ;";
 	BOOST_CHECK(p(code_check, cc));
 	BOOST_CHECK(cc.bitwise  == false);
 	BOOST_CHECK(cc.critical == false);
-	BOOST_CHECK(cc.static_  == false);
+	BOOST_CHECK(cc.static_  == true);
 	BOOST_CHECK(cc.ranged 	 == false);
 	BOOST_CHECK(cc.lvl == data::level_t::assertion);
-	BOOST_CHECK(cc.data.to_string() == "x == 42 ");
+    BOOST_REQUIRE(cc.data.type() == type_id<data::equality>());
+    {
+        auto & e = boost::get<data::equality>(cc.data);
+        BOOST_CHECK(e.lhs.content == "x ");
+        BOOST_CHECK(e.rhs.content == "42 ");
+
+    }
 
 	BOOST_CHECK(itr == end);
 
@@ -147,8 +169,11 @@ int test_main (int, char**)
 	BOOST_CHECK(cc.static_  == true);
 	BOOST_CHECK(cc.ranged 	 == true);
 	BOOST_CHECK(cc.lvl == data::level_t::expectation);
-	BOOST_CHECK(cc.data.to_string() == "xyz ");
-
+    BOOST_REQUIRE(cc.data.type() == type_id<data::code>());
+    {
+        auto & c = boost::get<data::code>(cc.data);
+        BOOST_CHECK(c.content == "xyz ");
+    }
 	BOOST_CHECK(itr == end);
 
 
@@ -163,10 +188,12 @@ int test_main (int, char**)
 	BOOST_REQUIRE
 			   (cs.steps[0].type() ==
 				boost::typeindex::type_id<data::code_check>());
-
-	BOOST_CHECK(boost::get<data::code_check>(
-			cs.steps[0]).data.to_string() == "x ");
-
+	{
+	    auto cc = boost::get<data::code_check>(cs.steps[0]);
+	    BOOST_REQUIRE(cc.data.type() == type_id<data::code>());
+        auto & c = boost::get<data::code>(cc.data);
+        BOOST_CHECK(c.content == "x ");
+	}
 
 	s = " assert throw (std::exception, std::runtime_error)\n"
 		"{ expect x == 42 ;\n"
@@ -177,19 +204,26 @@ int test_main (int, char**)
 	BOOST_CHECK(p(throw_check, tc));
 
 	BOOST_REQUIRE(tc.steps.size() == 1);
-	BOOST_REQUIRE(tc.exceptions.data.size() == 2);
+	BOOST_REQUIRE(tc.exceptions.content.size() == 2);
 
 	BOOST_CHECK(itr == end);
 
 	BOOST_REQUIRE
 			   (tc.steps[0].type() ==
 				boost::typeindex::type_id<data::code_check>());
+	{
+	    auto & cc = boost::get<data::code_check>(tc.steps[0]);
 
-	BOOST_CHECK(boost::get<data::code_check>(
-			tc.steps[0]).data.to_string() == "x == 42 ");
+	    BOOST_REQUIRE(cc.data.type() == type_id<data::equality>());
 
-	BOOST_CHECK(tc.exceptions.data[0] == "std::exception");
-	BOOST_CHECK(tc.exceptions.data[1] == "std::runtime_error");
+        auto & e = boost::get<data::equality>(cc.data);
+        BOOST_CHECK(e.lhs.content == "x ");
+        BOOST_CHECK(e.rhs.content == "42 ");
+
+
+	}
+	BOOST_CHECK(tc.exceptions.content[0] == "std::exception");
+	BOOST_CHECK(tc.exceptions.content[1] == "std::runtime_error");
 
 
 	s = "critical expect no throw { };";
@@ -230,7 +264,6 @@ int test_main (int, char**)
 		BOOST_CHECK(v.critical == false);
 		BOOST_CHECK(v.lvl == data::level_t::assertion);
 		BOOST_CHECK(v.doc.head == "some comment 2");
-		std::cerr << "doc: '" << v.doc.head << "'" << std::endl;
 		BOOST_CHECK(v.doc.body == "postfix comment");
 
 	}

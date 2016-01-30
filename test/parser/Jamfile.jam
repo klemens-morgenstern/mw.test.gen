@@ -3,7 +3,6 @@ import testing ;
 project parser :
 	source-location .	
 	: requirements
-#	<include>../../libs/spirit/include
 	<include>$(boost-inc)
 	<include>../../include
 	<toolset>gcc:<cxxflags>-std=gnu++1y
@@ -21,9 +20,9 @@ test-suite mw.test.parser
 	[ run test_comment.cpp 	]    
 	[ run test_file.cpp parser 	]   
 	[ run test_utility.cpp  ]  
-	[ run test_tpl.cpp 	parser	]
-	[ run test_code.cpp parser	] 
-#	[ run test_opers.cpp 	]
+	[ run test_tpl.cpp 	 parser	]
+	[ run test_code.cpp  parser	] 
+	[ run test_opers.cpp ]
 	[ run test_actions.cpp	]
 #	[ run test_obj_cnt.cpp	]
 #	[ run test_objects.cpp	]

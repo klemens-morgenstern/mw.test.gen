@@ -156,6 +156,8 @@ auto const code_chunk_step_no_ops_def =
 
 namespace code
 {
+
+
 auto set_beg = [](auto &ctx)
 		{
 			using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;

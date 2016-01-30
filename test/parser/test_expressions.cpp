@@ -41,6 +41,7 @@ int test_main (int, char**)
 	using mw::test::parsers::comparison;
 	using mw::test::parsers::predicate;
 	using mw::test::parsers::skipper;
+	using mw::test::parsers::expression;
 
 	using namespace mw::test::data;
 
@@ -63,8 +64,6 @@ int test_main (int, char**)
 	BOOST_CHECK(p(equality, e));
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(!e.inverted);
-	std::cout << "lhs.content: '" << e.lhs.content << "'" << std::endl;
-	std::cout << "rhs.content: '" << e.rhs.content << "'" << std::endl;
 	BOOST_CHECK(e.lhs.content == "boost::variant<int, double> ");
 	BOOST_CHECK(e.rhs.content == "42");
 	BOOST_CHECK(!e.tolerance);
@@ -135,6 +134,18 @@ int test_main (int, char**)
 
 	BOOST_CHECK(pr.arg_list.content[0] == "x");
 	BOOST_CHECK(pr.arg_list.content[1] == "y");
+
+
+	mw::test::data::expression ex;
+
+	s = "Thingy == 42;";
+	BOOST_CHECK(p(expression, ex));
+	BOOST_CHECK(ex.type() == boost::typeindex::type_id<mw::test::data::equality>());
+
+    s = "Thingy >= 42;";
+    BOOST_CHECK(p(expression, ex));
+    BOOST_CHECK(ex.type() == boost::typeindex::type_id<mw::test::data::comparison>());
+
 
 
 	return 0;

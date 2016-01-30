@@ -66,7 +66,7 @@ struct equal_sym_t : x3::symbols<bool>
 } equal_sym;
 
 
-struct compare_op_t : x3::symbols<mw::test::data::compare_op>
+struct compare_op_t : x3::symbols<data::compare_op>
 {
 	compare_op_t()
 	{
@@ -86,34 +86,40 @@ auto const arg_list_def = '(' >> code_list >> ')' >> eoi;
 
 BOOST_SPIRIT_DEFINE(arg_list);
 
+template<typename T, typename U>
+inline void range_to_code_assign(T &, const U&) {}
+inline void range_to_code_assign(data::code & val, const boost::iterator_range<iterator> & attr)
+{
+    val.content = std::string(attr.begin(), attr.end());
+    val.begin = parser::instance().current_file().get_location(attr.begin());
+    val.end   = parser::instance().current_file().get_location(attr.end());
+}
+
+auto range_to_code = [](auto &ctx) { range_to_code_assign(x3::_val(ctx), x3::_attr(ctx)); };
+
+
 x3::rule<class code_no_equal, data::code> const code_no_equal;
 auto const code_no_equal_def =
-		eps[code::set_beg] >>
-		raw[ omit[ lexeme[*((!( ";" | equal_sym | "+/-" )  >> code_chunk_step)| (relativity >> code_chunk_step))]]
-		         ][range_to_string]
-			  >> eps[code::set_end];
+		raw[  lexeme[*((!( ";" | equal_sym | "+/-" )  >> code_chunk_step) | (relativity >> code_chunk_step))]
+		         ][range_to_code];
 
 BOOST_SPIRIT_DEFINE(code_no_equal);
 
 
 x3::rule<class code_no_comparison, data::code> const code_no_comparison;
 auto const code_no_comparison_def =
-		eps[code::set_beg] >>
 		raw[
-			omit[ lexeme[+(!lit(';') >> code_chunk_step_no_ops)]]
-			      ][range_to_string]
-			  >> eps[code::set_end];
+			 lexeme[+(!lit(';') >> code_chunk_step_no_ops)]
+			      ][range_to_code];
 
 BOOST_SPIRIT_DEFINE(code_no_comparison);
 
 
 x3::rule<class code_no_relative, data::code> const code_no_relative;
 auto const code_no_relative_def =
-		eps[code::set_beg] >>
 		    raw[
-			omit[ lexeme[+(!(';' | relativity) >> code_chunk_step)]]
-			      ][range_to_string]
-			  >> eps[code::set_end];
+			 lexeme[+(!(';' | relativity) >> code_chunk_step)]
+			      ][range_to_code];
 
 BOOST_SPIRIT_DEFINE(code_no_relative);
 
@@ -121,11 +127,9 @@ BOOST_SPIRIT_DEFINE(code_no_relative);
 
 x3::rule<class code_no_arg_list, data::code> const code_no_arg_list;
 auto const code_no_arg_list_def =
-		eps[code::set_beg] >>
 		        raw[
-			omit[ lexeme[*(!(skip[arg_list] | ';') >> code_chunk_step) ]]
-			      ][range_to_string]
-			>> eps[code::set_end];
+			 lexeme[*(!(skip[arg_list] | ';') >> code_chunk_step) ]
+			      ][range_to_code];
 
 BOOST_SPIRIT_DEFINE(code_no_arg_list);
 
@@ -142,7 +146,6 @@ BOOST_SPIRIT_DEFINE(equality);
 
 x3::rule<class comparison, data::comparison> const comparison;
 auto const comparison_def = code_no_comparison >> compare_op >> code_no_comparison ;
-
 BOOST_SPIRIT_DEFINE(comparison);
 
 x3::rule<class predicate, data::predicate> const predicate;
@@ -152,7 +155,11 @@ BOOST_SPIRIT_DEFINE(predicate);
 
 
 x3::rule<class expression, data::expression> const expression;
-auto const expression_def = equality | comparison | predicate | code_chunk ;
+auto const expression_def =
+           (equality   >> ";")  |
+           (comparison >> ";")  |
+           (predicate  >> ";")  |
+           code_chunk ; //should be regarded as temporary, since things like (x == 42) || (x == 12) might be added in the future.
 
 BOOST_SPIRIT_DEFINE(expression);
 
