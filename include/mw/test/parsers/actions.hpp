@@ -23,9 +23,8 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
 	mw::test::data::action_call,
-	(mw::test::ast::action_t, 	action)
-	(std::string, 				id)
-	(std::vector<std::string>, 	tpl_par)
+	(mw::test::data::action_t, 	              type)
+	(std::weak_ptr<mw::test::data::object>,   target)
 );
 
 
@@ -43,7 +42,7 @@ namespace parsers
  *  @endcode
  *
  */
-struct action_t : x3::symbols<ast::action_t>
+struct action_t : x3::symbols<data::action_t>
 {
 	action_t()
 	{
@@ -59,18 +58,6 @@ struct action_t : x3::symbols<ast::action_t>
 ///< Global variable of @ref action_t.
 
 
-
-auto make_action_call = [](auto &ctx)
-        {
-           //tuple<data::action_t, data::obj_id>
-           auto & tup = x3::_attr(ctx);
-           data::action_call ac;
-           ac.type = boost::get<0>(tup);
-           ac.target = parser::instance().get_object(boost::get<1>(tup));
-           _val(ctx) = std::move(ac);
-        };
-
-
 ///< Rule for action_call, that is if a test_object wants to call another test objects action.
 /** @code{.ebnf}
  *  <action_call> ::= <action> <id> [ <tpl_par_list> ] ';' ;
@@ -81,7 +68,7 @@ x3::rule<class action_call, data::action_call> action_call;
 
 ///Definition of @ref action_call.
 auto const action_call_def =
-        (lexeme[action >> skipper] >> obj_id >> ';')[make_action_call];
+        lexeme[action >> skipper] >> object_ref >> ';';
 
 BOOST_SPIRIT_DEFINE(action_call);
 
