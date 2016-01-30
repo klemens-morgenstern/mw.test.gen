@@ -58,15 +58,15 @@ struct object_type_t : x3::symbols<boost::typeindex::type_index>
 auto const make_object = [](auto & c)
         {
             auto &t = x3::_attr(c);
-
+            using boost::fusion::at_c;
             x3::_val(c) = //used to add doc
                 parser::instance().make_object(
-                    boost::get<0>(t), //type_index
-                    boost::get<1>(t), //location
-                    boost::get<2>(t), //id
-                    boost::get<3>(t), //tpl-decls
-                    boost::get<4>(t), //inheritance
-                    boost::get<5>(t) //object_content
+                    at_c<0>(t), //type_index
+                    at_c<1>(t), //location
+                    at_c<2>(t), //id
+                    at_c<3>(t), //tpl-decls
+                    at_c<4>(t), //inheritance
+                    at_c<5>(t) //object_content
                     );
 
         };

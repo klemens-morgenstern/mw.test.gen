@@ -16,20 +16,72 @@
 #include <mw/test/parsers/object_content.hpp>
 #include <mw/test/parsers/comment.hpp>
 
+mw::test::data::obj_id req_id;
+
+// STUB the parser.cpp
+namespace mw
+{
+namespace test
+{
+
+thread_local parser *_instance = nullptr;
+
+
+parser::parser()
+{
+    assert(_instance == nullptr);
+
+    _instance = this;
+}
+
+
+parser &parser::instance()
+{
+    assert(_instance != nullptr);
+    return *_instance;
+}
+
+
+data::object_p parser::get_object(const data::obj_id& in)
+{
+    req_id = in;
+    return nullptr;
+}
+
+
+} /* namespace test */
+} /* namespace mw */
+
+
 int test_main (int, char**)
 {
-	std::string s;
+    mw::test::parser parser;
 
-	namespace x3 = boost::spirit::x3;
-	using namespace mw::test::parsers;
-	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
+    parser.include_stack.emplace(std::string(""));
 
-	namespace data = mw::test::ast;
+    std::string &s = parser.include_stack.top().buffer;
 
-	iterator beg { s.begin() };
-	iterator itr { s.begin() };
-	iterator end { s.end()   };
-	auto p = [&](auto rule, auto &res)
+    using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
+
+    namespace x3 = boost::spirit::x3;
+    using namespace mw::test::parsers;
+
+    namespace data = mw::test::data;
+
+    auto &beg = parser.include_stack.top()._begin;
+    auto itr  = parser.include_stack.top()._begin;
+    auto &end = parser.include_stack.top()._end;
+
+    namespace x3 = boost::spirit::x3;
+    using namespace mw::test::parsers;
+
+    using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
+
+    namespace data = mw::test::data;
+
+    data::using_decl res;
+
+	auto p = [&](auto rule)
 		{
 			using t = std::remove_reference_t<decltype(res)>;
 			res = t();
@@ -39,59 +91,53 @@ int test_main (int, char**)
 			return x3::phrase_parse(itr, end, rule, skipper, res);
 		};
 
-	data::using_plain up;
 
 	s = "using father<42>::execute;";
-	BOOST_CHECK(p(using_plain, up));
+	BOOST_CHECK(p(using_plain));
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(up.action == data::execute);
-	BOOST_CHECK(up.id.name == "father");
-	BOOST_REQUIRE(up.id.tpl_args.size() == 1);
-	BOOST_CHECK(up.id.tpl_args[0] == "42");
-
-
-	data::using_throw ut;
+	BOOST_CHECK(res.action == data::action_t::execute);
+	BOOST_CHECK(req_id.name == "father");
+	BOOST_REQUIRE(req_id.tpl_args.size() == 1);
+	BOOST_CHECK(req_id.tpl_args[0] == "42");
 
 	s = "using dings<x,y>::init for assert throw (std::runtime_error, std::logic_error);";
 
-	BOOST_CHECK(p(using_throw, ut));
+	BOOST_CHECK(p(using_throw));
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(ut.action == data::initialize);
+	BOOST_CHECK(res.action == data::action_t::initialize);
 
-	BOOST_CHECK(ut.id.name == "dings");
-	BOOST_REQUIRE(ut.id.tpl_args.size() == 2);
-	BOOST_CHECK(ut.id.tpl_args[0] == "x");
-	BOOST_CHECK(ut.id.tpl_args[1] == "y");
+	BOOST_CHECK(req_id.name == "dings");
+	BOOST_REQUIRE(req_id.tpl_args.size() == 2);
+	BOOST_CHECK(req_id.tpl_args[0] == "x");
+	BOOST_CHECK(req_id.tpl_args[1] == "y");
 
-	BOOST_REQUIRE(ut.exceptions.size() == 2);
+	BOOST_REQUIRE(res.exceptions);
+	{
+	    auto &cl = *res.exceptions;
 
-	BOOST_CHECK(ut.exceptions.data[0] == "std::runtime_error");
-	BOOST_CHECK(ut.exceptions.data[1] == "std::logic_error");
+	    BOOST_REQUIRE(cl.content.size() == 2);
 
+	    BOOST_CHECK(cl.content[0] == "std::runtime_error");
+	    BOOST_CHECK(cl.content[1] == "std::logic_error");
+	}
 
-	data::using_any_throw uat;
+	s = "using xyz::evaluate for assert  any_throw;";
 
-	s = "using xyz::evaluate for assert  any throw;";
-
-	BOOST_CHECK(p(using_any_throw, uat));
+	BOOST_CHECK(p(using_any_throw));
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(uat.action == data::evaluate);
+	BOOST_CHECK(res.action == data::action_t::evaluate);
 
 
-	data::using_no_throw unt;
+	s = "using thingy::eval for expect no_throw;";
 
-	s = "using thingy::eval for expect no throw;";
-
-	BOOST_CHECK(p(using_no_throw, unt));
+	BOOST_CHECK(p(using_no_throw));
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(unt.action == data::evaluate);
+	BOOST_CHECK(res.action == data::action_t::evaluate);
 
 
 
-
-	data::using_decl ud;
 	s = "using father::operator=;";
-	BOOST_CHECK(!p(using_decl, ud));
+	BOOST_CHECK(!p(using_decl));
 
 
 	return 0;

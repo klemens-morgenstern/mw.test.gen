@@ -24,7 +24,7 @@ test-suite mw.test.parser
 	[ run test_code.cpp  parser	] 
 	[ run test_opers.cpp ]
 	[ run test_actions.cpp	]
-#	[ run test_obj_cnt.cpp	]
+	[ run test_obj_cnt.cpp	]
 #	[ run test_objects.cpp	]
 	[ run test_functional.cpp parser ]
 	[ run test_group.cpp ]
