@@ -49,7 +49,9 @@ namespace parsers
 
 x3::rule<class function_name, data::code> const function_name;
 auto const function_name_def = eps[code::set_beg] >>
+        raw[
 		omit[lexeme[+(!(lit(',') | "=>" ) >> code_chunk_step)]]
+		    ][range_to_string]
 		  >> eps[code::set_end];;
 
 x3::rule<class call_trace, data::call_trace> const call_trace;

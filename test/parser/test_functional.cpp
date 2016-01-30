@@ -14,20 +14,32 @@
 
 int test_main (int, char**)
 {
-	std::string s;
+    mw::test::parser parser;
+
+    parser.include_stack.emplace(std::string(""));
+
+    std::string &s = parser.include_stack.top().buffer;
 
 
-	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
+    using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
+
+    namespace x3 = boost::spirit::x3;
+    using namespace mw::test::parsers;
+
+    namespace data = mw::test::data;
+    std::string res;
+
+    auto &beg = parser.include_stack.top()._begin;
+    auto itr  = parser.include_stack.top()._begin;
+    auto &end = parser.include_stack.top()._end;
 
 	namespace x3 = boost::spirit::x3;
 	using namespace mw::test::parsers;
 
-	namespace data = mw::test::ast;
+	namespace data = mw::test::data;
 	data::call_trace_decl ctd;
 
-	iterator beg {s.begin()};
-	iterator itr {s.begin()};
-	iterator end {s.end()  };
+
 	auto p = [&](auto rule, auto & data)
 		{
 			beg = iterator(s.begin());
@@ -51,7 +63,7 @@ int test_main (int, char**)
 	BOOST_CHECK(p(call_trace_decl, ctd));
 
 	BOOST_CHECK( ctd.id == "x");
-	BOOST_CHECK( ctd.name.to_string() == "tested_function(int) ");
+	BOOST_CHECK( ctd.name.content == "tested_function(int) ");
 	BOOST_CHECK(!ctd.count);
 
 
@@ -61,23 +73,23 @@ int test_main (int, char**)
 	BOOST_REQUIRE(vec.size() == 3);
 
 	BOOST_CHECK(vec[0].content);
-	BOOST_CHECK(vec[0].name.to_string() == "&thing<42>::not_overloaded_function ");
+	BOOST_CHECK(vec[0].name.content == "&thing<42>::not_overloaded_function ");
 
 	{
 		auto v1 = *vec[0].content;
 		BOOST_CHECK(v1.size() == 2);
-		BOOST_CHECK(v1[0].name.to_string() == "&func1");
-		BOOST_CHECK(v1[1].name.to_string() == "&func2\n    ");
+		BOOST_CHECK(v1[0].name.content == "&func1");
+		BOOST_CHECK(v1[1].name.content == "&func2\n    ");
 
 	}
 	BOOST_REQUIRE(vec[0].count);
 	BOOST_CHECK  (*vec[0].count == 2);
 
-	BOOST_CHECK(vec[1].name.to_string() == "&overloaded_func(int)");
+	BOOST_CHECK(vec[1].name.content == "&overloaded_func(int)");
 	BOOST_CHECK(!vec[1].count);
 	BOOST_CHECK(!vec[1].content);
 
-	BOOST_CHECK(vec[2].name.to_string() == "&overloaded_func(double) ");
+	BOOST_CHECK(vec[2].name.content == "&overloaded_func(double) ");
 	BOOST_CHECK(!vec[2].count);
 	BOOST_REQUIRE(vec[2].content);
 	BOOST_CHECK(vec[2].content->size() == 0);
@@ -92,7 +104,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(p(stub, sb));
 
-	BOOST_CHECK(sb.name.to_string() == "thingy<42>::func(int, double) ");
+	BOOST_CHECK(sb.name.content == "thingy<42>::func(int, double) ");
 	BOOST_REQUIRE(sb.return_name);
 	BOOST_CHECK(* sb.return_name == "y");
 
@@ -108,7 +120,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(p(stub, sb));
 
-	BOOST_CHECK(sb.name.to_string() == "func() ");
+	BOOST_CHECK(sb.name.content == "func() ");
 	BOOST_CHECK(!sb.return_name);
 
 	BOOST_CHECK(sb.arg_names.size() == 0);
@@ -123,8 +135,8 @@ int test_main (int, char**)
 
 	BOOST_CHECK(p(fake, fk));
 
-	BOOST_CHECK(fk.name.to_string() == "ding(int x) ");
-	BOOST_CHECK(fk.func.to_string() == "return x+42;");
+	BOOST_CHECK(fk.name.content == "ding(int x) ");
+	BOOST_CHECK(fk.func.content == "return x+42;");
 
 	data::functional fc;
 
