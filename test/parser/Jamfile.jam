@@ -17,10 +17,10 @@ lib parser : ../../src/mw/test/parser.cpp  ;
 
 test-suite mw.test.parser
      : 
-#    [ run test_id.cpp  		]
-#	[ run test_comment.cpp 	]    
+    [ run test_id.cpp  		]
+	[ run test_comment.cpp 	]    
 	[ run test_file.cpp parser 	]   
-#	[ run test_utility.cpp  ]  
+	[ run test_utility.cpp  ]  
 #	[ run test_tpl.cpp 	parser	]
 	[ run test_code.cpp parser	] 
 #	[ run test_opers.cpp 	]
