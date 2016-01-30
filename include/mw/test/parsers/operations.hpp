@@ -106,7 +106,7 @@ auto set_location = [](auto &ctx)
 		};
 }
 
-x3::rule<class check_qualification, data::check_qualification> const check_qualification;
+x3::rule<class check_qualification/*, data::check_qualification*/> const check_qualification;
 
 
 x3::rule<class execute_check, 	 data::execute_check>	 const execute_check;

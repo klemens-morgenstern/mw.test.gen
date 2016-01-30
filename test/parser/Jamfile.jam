@@ -29,7 +29,7 @@ test-suite mw.test.parser
 #	[ run test_objects.cpp	]
 	[ run test_functional.cpp parser ]
 #	[ run test_group.cpp ]
-#	[ run test_expressions.cpp ]
+	[ run test_expressions.cpp parser ]
      ; 	
 		
 		

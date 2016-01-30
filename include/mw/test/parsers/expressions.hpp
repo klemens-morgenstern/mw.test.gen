@@ -6,8 +6,8 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#ifndef MW_TEST_DATA_EXPRESSIONS_HPP_
-#define MW_TEST_DATA_EXPRESSIONS_HPP_
+#ifndef MW_TEST_PARSER_EXPRESSIONS_HPP_
+#define MW_TEST_PARSER_EXPRESSIONS_HPP_
 
 #include <mw/test/parsers/config.hpp>
 #include <mw/test/parsers/code.hpp>
@@ -89,7 +89,8 @@ BOOST_SPIRIT_DEFINE(arg_list);
 x3::rule<class code_no_equal, data::code> const code_no_equal;
 auto const code_no_equal_def =
 		eps[code::set_beg] >>
-			omit[ lexeme[*((!(equal_sym | "+/-" )  >> code_chunk_step)| (relativity >> code_chunk_step))]]
+		raw[ omit[ lexeme[*((!( ";" | equal_sym | "+/-" )  >> code_chunk_step)| (relativity >> code_chunk_step))]]
+		         ][range_to_string]
 			  >> eps[code::set_end];
 
 BOOST_SPIRIT_DEFINE(code_no_equal);
@@ -98,7 +99,9 @@ BOOST_SPIRIT_DEFINE(code_no_equal);
 x3::rule<class code_no_comparison, data::code> const code_no_comparison;
 auto const code_no_comparison_def =
 		eps[code::set_beg] >>
-			omit[ lexeme[+code_chunk_step_no_ops]]
+		raw[
+			omit[ lexeme[+(!lit(';') >> code_chunk_step_no_ops)]]
+			      ][range_to_string]
 			  >> eps[code::set_end];
 
 BOOST_SPIRIT_DEFINE(code_no_comparison);
@@ -107,7 +110,9 @@ BOOST_SPIRIT_DEFINE(code_no_comparison);
 x3::rule<class code_no_relative, data::code> const code_no_relative;
 auto const code_no_relative_def =
 		eps[code::set_beg] >>
-			omit[ lexeme[+(!relativity >> code_chunk_step)]]
+		    raw[
+			omit[ lexeme[+(!(';' | relativity) >> code_chunk_step)]]
+			      ][range_to_string]
 			  >> eps[code::set_end];
 
 BOOST_SPIRIT_DEFINE(code_no_relative);
@@ -117,7 +122,9 @@ BOOST_SPIRIT_DEFINE(code_no_relative);
 x3::rule<class code_no_arg_list, data::code> const code_no_arg_list;
 auto const code_no_arg_list_def =
 		eps[code::set_beg] >>
-			omit[ lexeme[*(!skip[arg_list] >> code_chunk_step) ]]
+		        raw[
+			omit[ lexeme[*(!(skip[arg_list] | ';') >> code_chunk_step) ]]
+			      ][range_to_string]
 			>> eps[code::set_end];
 
 BOOST_SPIRIT_DEFINE(code_no_arg_list);
@@ -128,8 +135,7 @@ auto const equality_def =
 		equal_sym >>
 		code_no_equal >>
 		-("+/-" >> code_no_relative) >>
-		-relativity >>
-		eoi;
+		-relativity;
 
 BOOST_SPIRIT_DEFINE(equality);
 
@@ -143,6 +149,12 @@ x3::rule<class predicate, data::predicate> const predicate;
 auto const predicate_def = code_no_arg_list >> arg_list;
 
 BOOST_SPIRIT_DEFINE(predicate);
+
+
+x3::rule<class expression, data::expression> const expression;
+auto const expression_def = equality | comparison | predicate | code_chunk ;
+
+BOOST_SPIRIT_DEFINE(expression);
 
 }
 }

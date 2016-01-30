@@ -17,7 +17,23 @@
 
 int test_main (int, char**)
 {
-	std::string s;
+    mw::test::parser parser;
+
+    parser.include_stack.emplace(std::string(""));
+
+    std::string &s = parser.include_stack.top().buffer;
+
+    using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
+
+    namespace x3 = boost::spirit::x3;
+    using namespace mw::test::parsers;
+
+    namespace data = mw::test::data;
+    std::string res;
+
+    auto &beg = parser.include_stack.top()._begin;
+    auto itr  = parser.include_stack.top()._begin;
+    auto &end = parser.include_stack.top()._end;
 
 	namespace x3 = boost::spirit::x3;
 	using namespace mw::test::parsers;
@@ -30,10 +46,6 @@ int test_main (int, char**)
 
 	namespace bs = boost::spirit;
 
-
-	iterator beg {s.begin()};
-	iterator itr {s.begin()};
-	iterator end {s.end()};
 
 	auto p = [&](auto rule, auto & res)
 		{
@@ -50,14 +62,14 @@ int test_main (int, char**)
 
 	BOOST_CHECK(p(execute_check, ec));
 	BOOST_CHECK(ec.critical == true);
-	BOOST_CHECK(ec.lvl == data::expectation);
+	BOOST_CHECK(ec.lvl == data::level_t::expectation);
 	BOOST_CHECK(itr == end);
 
 	s = "assert execution ;";
 
 	BOOST_CHECK(p(execute_check, ec));
 	BOOST_CHECK(ec.critical == false);
-	BOOST_CHECK(ec.lvl == data::assertion);
+	BOOST_CHECK(ec.lvl == data::level_t::assertion);
 	BOOST_CHECK(itr == end);
 
 	s = " expect no execution ;";
@@ -65,20 +77,26 @@ int test_main (int, char**)
 
 	BOOST_CHECK(p(no_execute_check, nec));
 	BOOST_CHECK(nec.critical == false);
-	BOOST_CHECK(nec.lvl == data::expectation);
+	BOOST_CHECK(nec.lvl == data::level_t::expectation);
 	BOOST_CHECK(itr == end);
 
 	s = "critical assert no execution ;";
 
 	BOOST_CHECK(p(no_execute_check, nec));
 	BOOST_CHECK(nec.critical == true);
-	BOOST_CHECK(nec.lvl == data::assertion);
+	BOOST_CHECK(nec.lvl == data::level_t::assertion);
 	BOOST_CHECK(itr == end);
 
 
 
 	s = "";
-	data::check_qualification cq;
+	struct
+	{
+	    bool bitwise;
+	    bool critical;
+	    bool static_;
+	    bool ranged;
+	} cq;
 
 	BOOST_CHECK(p(check_qualification, cq));
 	BOOST_CHECK(cq.bitwise 	== false);
@@ -100,10 +118,10 @@ int test_main (int, char**)
 	s = "assert thingy ;";
 	data::code_check cc;
 	BOOST_CHECK(p(code_check, cc));
-	BOOST_CHECK(cc.qual.bitwise  == false);
-	BOOST_CHECK(cc.qual.critical == false);
-	BOOST_CHECK(cc.qual.static_  == false);
-	BOOST_CHECK(cc.qual.ranged 	 == false);
+	BOOST_CHECK(cc.bitwise  == false);
+	BOOST_CHECK(cc.critical == false);
+	BOOST_CHECK(cc.static_  == false);
+	BOOST_CHECK(cc.ranged 	 == false);
 	BOOST_CHECK(cc.lvl == data::level_t::assertion);
 	BOOST_CHECK(cc.data.to_string() == "thingy ");
 
@@ -111,10 +129,10 @@ int test_main (int, char**)
 
 	s = "assert x == 42 ;";
 	BOOST_CHECK(p(code_check, cc));
-	BOOST_CHECK(cc.qual.bitwise  == false);
-	BOOST_CHECK(cc.qual.critical == false);
-	BOOST_CHECK(cc.qual.static_  == false);
-	BOOST_CHECK(cc.qual.ranged 	 == false);
+	BOOST_CHECK(cc.bitwise  == false);
+	BOOST_CHECK(cc.critical == false);
+	BOOST_CHECK(cc.static_  == false);
+	BOOST_CHECK(cc.ranged 	 == false);
 	BOOST_CHECK(cc.lvl == data::level_t::assertion);
 	BOOST_CHECK(cc.data.to_string() == "x == 42 ");
 
@@ -124,10 +142,10 @@ int test_main (int, char**)
 
 	s = "static critical ranged bitwise expect xyz ;";
 	BOOST_CHECK(p(code_check, cc));
-	BOOST_CHECK(cc.qual.bitwise  == true);
-	BOOST_CHECK(cc.qual.critical == true);
-	BOOST_CHECK(cc.qual.static_  == true);
-	BOOST_CHECK(cc.qual.ranged 	 == true);
+	BOOST_CHECK(cc.bitwise  == true);
+	BOOST_CHECK(cc.critical == true);
+	BOOST_CHECK(cc.static_  == true);
+	BOOST_CHECK(cc.ranged 	 == true);
 	BOOST_CHECK(cc.lvl == data::level_t::expectation);
 	BOOST_CHECK(cc.data.to_string() == "xyz ");
 
@@ -182,7 +200,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(ntc.critical);
-	BOOST_CHECK(ntc.lvl == data::expectation);
+	BOOST_CHECK(ntc.lvl == data::level_t::expectation);
 	BOOST_CHECK(ntc.steps.size() == 0);
 
 
@@ -194,7 +212,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(!atc.critical);
-	BOOST_CHECK(atc.lvl == data::assertion);
+	BOOST_CHECK(atc.lvl == data::level_t::assertion);
 	BOOST_REQUIRE(atc.steps.size() == 1);
 
 
@@ -210,7 +228,7 @@ int test_main (int, char**)
 		auto & v = boost::get<data::no_execute_check>(ce);
 
 		BOOST_CHECK(v.critical == false);
-		BOOST_CHECK(v.lvl == data::assertion);
+		BOOST_CHECK(v.lvl == data::level_t::assertion);
 		BOOST_CHECK(v.doc.head == "some comment 2");
 		std::cerr << "doc: '" << v.doc.head << "'" << std::endl;
 		BOOST_CHECK(v.doc.body == "postfix comment");
