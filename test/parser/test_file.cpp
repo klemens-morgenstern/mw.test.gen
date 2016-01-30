@@ -14,6 +14,8 @@
 #include <mw/test/parsers/use_file.hpp>
 #include <mw/test/parsers/comment.hpp>
 
+#include <mw/test/parser.hpp>
+
 #include <type_traits>
 
 namespace x3 = boost::spirit::x3;
@@ -24,14 +26,17 @@ namespace x3 = boost::spirit::x3;
 
 int test_main (int, char**)
 {
-	std::string s;
+    mw::test::parser parser;
+
+    parser.include_stack.emplace(std::string(""));
+
+    std::string &s = parser.include_stack.top().buffer;
 
 	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 
-
-	iterator beg{s.begin()};
-	iterator itr{s.begin()};
-	iterator end{s.begin()};
+    auto &beg = parser.include_stack.top()._begin;
+    auto itr  = parser.include_stack.top()._begin;
+    auto &end = parser.include_stack.top()._end;
 
 	bool res;
 	using mw::test::parsers::use_file;
@@ -39,7 +44,7 @@ int test_main (int, char**)
 	using mw::test::parsers::filename;
 	using mw::test::parsers::skipper;
 
-	namespace d = mw::test::ast;
+	namespace d = mw::test::data;
 
 	d::use_file uf;
 
@@ -97,7 +102,7 @@ int test_main (int, char**)
 
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(uf.type == d::file);
+	BOOST_CHECK(uf.type == d::use_file_type::file);
 	BOOST_CHECK(uf.filename == "thingy.hpp");
 
 
@@ -108,17 +113,17 @@ int test_main (int, char**)
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(uf.filename == "other_thingy.h");
-	BOOST_CHECK(uf.type == d::include);
+	BOOST_CHECK(uf.type == d::use_file_type::include);
 
 
 	s = "/* some comment */\n"
-		"tests file dings.h;";
+		"tests_file dings.h;";
 	p(use_file_doc, uf);
 
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(uf.filename == "dings.h");
-	BOOST_CHECK(uf.type == d::tests_file);
+	BOOST_CHECK(uf.type == d::use_file_type::tests_file);
 
 
 	s = "testsfile dings.h;";
@@ -142,7 +147,7 @@ int test_main (int, char**)
 	std::cout << "doc: '" << uf.doc.head << "'" << std::endl;
 	std::cout << "doc: '" << uf.doc.body << "'" << std::endl;
 
-	BOOST_CHECK(uf.type == d::file);
+	BOOST_CHECK(uf.type == d::use_file_type::file);
 
 	s = "include d.h; //!< post doc\n";
 
@@ -155,18 +160,18 @@ int test_main (int, char**)
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(uf.filename == "d.h");
 	BOOST_CHECK(uf.doc.head == " post doc");
-	BOOST_CHECK(uf.type == d::include);
+	BOOST_CHECK(uf.type == d::use_file_type::include);
 
 	uf.doc.head.clear();
 
-	s = "/*! pre doc */ tests file i.ipp; //!< post doc\n";
+	s = "/*! pre doc */ tests_file i.ipp; //!< post doc\n";
 
 	p(use_file_doc, uf);
 	BOOST_CHECK(res);
 	BOOST_CHECK(itr == end);
 	BOOST_CHECK(uf.filename == "i.ipp");
 	BOOST_CHECK(uf.doc.head == " pre doc  post doc");
-	BOOST_CHECK(uf.type == d::tests_file);
+	BOOST_CHECK(uf.type == d::use_file_type::tests_file);
 
 
 	return 0;

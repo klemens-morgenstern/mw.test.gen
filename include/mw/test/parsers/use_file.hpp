@@ -19,7 +19,7 @@
 BOOST_FUSION_ADAPT_STRUCT(
 		mw::test::data::use_file,
 		(mw::test::data::use_file_type,  type    )
-		(mw::test::data::location, location)
+		(mw::test::data::location, loc)
 		(std::string, filename                  )
 );
 
@@ -53,9 +53,9 @@ struct use_file_type_t : x3::symbols<data::use_file_type>
 {
     use_file_type_t()
     {
-        add ("file",      data::use_file_type::file)
-            ("test_file", data::use_file_type::tests_file)
-            ("include",   data::use_file_type::include)
+        add ("file",       data::use_file_type::file)
+            ("tests_file", data::use_file_type::tests_file)
+            ("include",    data::use_file_type::include)
             ;
     }
 } use_file_type;
@@ -76,7 +76,7 @@ auto const use_file_def =
 BOOST_SPIRIT_DEFINE(use_file);
 
 
-x3::rule<class use_file_doc, ast::use_file> const use_file_doc;
+x3::rule<class use_file_doc, data::use_file> const use_file_doc;
 
 auto const use_file_doc_def = doc(use_file);
 
