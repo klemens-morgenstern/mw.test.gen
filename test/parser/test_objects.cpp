@@ -179,5 +179,31 @@ int test_main (int, char**)
     BOOST_CHECK  (req_inheritance[1].tpl_args.empty());
 
 
+    s = "///Other Comment\n"
+        "test_case some_tc<X, YZ=42> {...};";
+
+    auto pl = [&]()
+        {
+            ret_object      = data::object();
+            ret_tpl_object  = data::object_tpl();
+            beg = iterator(s.begin());
+            itr = iterator(s.begin());
+            end = iterator(s.end());
+            return x3::phrase_parse(itr, end, test_template, skipper);
+        };
+
+    BOOST_CHECK(pl());
+    BOOST_CHECK(pre_doc.head == "Other Comment");
+    BOOST_CHECK(req_make_id == "some_tc");
+    BOOST_CHECK(req_obj_tpl_cont.content == "...");
+
+    BOOST_REQUIRE(req_tpl_arg.size() == 2);
+    BOOST_CHECK(req_tpl_arg[0].name == "X");
+    BOOST_CHECK(!req_tpl_arg[0].default_arg);
+
+    BOOST_CHECK(req_tpl_arg[1].name == "YZ");
+    BOOST_REQUIRE(req_tpl_arg[1].default_arg);
+    BOOST_CHECK(*req_tpl_arg[1].default_arg == "42");
+
 	return 0;
 }

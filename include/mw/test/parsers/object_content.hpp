@@ -27,40 +27,15 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
         mw::test::data::object_action,
-        (mw::test::data::location, location)
+        (mw::test::data::location, loc)
         (mw::test::data::action_t, action)
         (std::vector<mw::test::data::check_entry>, content)
 );
 
-/*
-
-//using plain adapt.
 BOOST_FUSION_ADAPT_STRUCT(
-        mw::test::data::using_decl,
-        (mw::test::data::location, loc)
-        (std::weak_ptr<mw::test::data::object>, obj)
-        (mw::test::data::using_action, action)
+        mw::test::data::object_content,
+        (mw::test::data::object_content::variant, data)
 );
-
-//using throw adapt.
-BOOST_FUSION_ADAPT_STRUCT(
-        mw::test::data::using_decl,
-        (mw::test::data::location,  location)
-        (std::weak_ptr<mw::test::data::object>, obj)
-        (mw::test::data::using_action,  action)
-        (mw::test::data::level_t,   level)
-        (boost::optional<mw::test::data::code_list>, content)
-);
-
-//using any/no throw adapt.
-BOOST_FUSION_ADAPT_STRUCT(
-        mw::test::data::using_decl,
-        (mw::test::data::location,  location)
-        (std::weak_ptr<mw::test::data::object>, obj)
-        (mw::test::data::using_action,  action)
-        (mw::test::data::level_t,   level)
-);
-*/
 
 namespace mw
 {
