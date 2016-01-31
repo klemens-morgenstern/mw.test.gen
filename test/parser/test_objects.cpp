@@ -15,53 +15,168 @@
 #include <mw/test/parsers/objects.hpp>
 #include <mw/test/parsers/comment.hpp>
 
+
+
+std::vector<mw::test::data::obj_id> req_id;
+boost::typeindex::type_index req_type;
+mw::test::data::location req_loc;
+std::string req_make_id;
+
+std::vector<mw::test::data::obj_id> req_inheritance;
+std::vector<mw::test::data::object_content> req_obj_cont;
+mw::test::data::code req_obj_tpl_cont;
+
+std::vector<mw::test::data::tpl_arg> req_tpl_arg;
+
+mw::test::data::object ret_object;
+mw::test::data::object_tpl ret_tpl_object;
+
+
+mw::test::data::doc_t pre_doc;
+mw::test::data::doc_t post_doc;
+
+// STUB the parser.cpp
+namespace mw
+{
+namespace test
+{
+
+void parser::post_pre_doc (const data::doc_t & doc) {pre_doc = doc;}
+void parser::post_post_doc(const data::doc_t & doc) {post_doc= doc;}
+
+data::object& parser::make_object(
+            const boost::typeindex::type_index & type,
+            const data::location & loc,
+            const std::string & id,
+            const std::vector<data::obj_id> & inheritance,
+            const std::vector<data::object_content> & obj_cont)
+{
+    req_type = type;
+    req_loc = loc;
+    req_make_id = id;
+    req_inheritance = inheritance;
+    req_obj_cont = obj_cont;
+    return ret_object;
+}
+
+data::object_tpl& parser::register_template(
+        const boost::typeindex::type_index & type,
+        const data::location & loc,
+        const std::string & id,
+        const std::vector<data::tpl_arg> & tpl_arg,
+        const std::vector<data::obj_id> & inheritance,
+        const data::code & obj_cont)
+{
+    req_type = type;
+    req_loc = loc;
+    req_make_id = id;
+    req_tpl_arg = tpl_arg;
+    req_inheritance = inheritance;
+    req_obj_tpl_cont = obj_cont;
+    return ret_tpl_object;
+}
+
+
+thread_local parser *_instance = nullptr;
+
+
+parser::parser()
+{
+    assert(_instance == nullptr);
+
+    _instance = this;
+}
+
+
+parser &parser::instance()
+{
+    assert(_instance != nullptr);
+    return *_instance;
+}
+
+
+data::object_p parser::get_object(const data::obj_id& in)
+{
+    req_id.push_back(in);
+    return nullptr;
+}
+
+
+
+
+
+} /* namespace test */
+} /* namespace mw */
+
+
 int test_main (int, char**)
 {
-	std::string s;
+    using std::cout;
+    using std::endl;
+    mw::test::parser parser;
 
-	namespace x3 = boost::spirit::x3;
-	using namespace mw::test::parsers;
-	using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
+    parser.include_stack.emplace(std::string(""));
 
-	namespace data = mw::test::ast;
+    std::string &s = parser.include_stack.top().buffer;
 
-	data::test_object to;
+    using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 
-	iterator beg { s.begin() };
-	iterator itr { s.begin() };
-	iterator end { s.end()   };
+    namespace x3 = boost::spirit::x3;
+    using namespace mw::test::parsers;
+
+    namespace data = mw::test::data;
+    std::string res;
+
+    auto &beg = parser.include_stack.top()._begin;
+    auto itr  = parser.include_stack.top()._begin;
+    auto &end = parser.include_stack.top()._end;
+
+
 	auto p = [&]()
 		{
-			to = data::test_object();
+	        ret_object      = data::object();
+	        ret_tpl_object  = data::object_tpl();
 			beg = iterator(s.begin());
 			itr = iterator(s.begin());
 			end = iterator(s.end());
-			return x3::phrase_parse(itr, end, test_object, skipper, to);
+			return x3::phrase_parse(itr, end, test_object, skipper);
 		};
 
-	s = "testclass thingy {};";
+    s = "testclass thingy {};";
 
 	BOOST_CHECK(!p());
 
-	s = "test class thingy {} ;";
+	s = "test_class thingy {} ;";
 
 	BOOST_CHECK(p());
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(to.id == "thingy");
+	BOOST_CHECK(req_make_id == "thingy");
+	cout << "req_make_id: '" << req_make_id << "'" << endl;
+
+	BOOST_CHECK(req_obj_cont.size() == 0);
+	cout << boost::core::demangle(req_type.name()) << endl,
+	BOOST_CHECK(req_type == boost::typeindex::type_id<data::test_class>());
 
 
-	BOOST_CHECK(to.content.size() == 0);
-	BOOST_CHECK(to.type == data::class_);
-
-
-	s = "classification ding : xyz<42>, zyx { execute {} };";
+	s = "///Stuff\n"
+	    "classification ding : xyz<42>, zyx { execute {} };";
 
 
 	BOOST_CHECK(p());
 	BOOST_CHECK(itr == end);
-	BOOST_CHECK(to.id == "ding");
-	BOOST_CHECK(to.content.size() == 1);
-	BOOST_CHECK(to.type == data::classification);
+	BOOST_CHECK(req_make_id == "ding");
+	BOOST_CHECK(req_obj_cont.size() == 1);
+    BOOST_CHECK(req_type == boost::typeindex::type_id<data::test_classification>());
+    BOOST_CHECK(pre_doc.head == "Stuff");
+    std::cout << "XYZ: '" << ret_object.doc.head << "'" << std::endl;
+
+
+    BOOST_REQUIRE(req_inheritance.size()             == 2);
+    BOOST_CHECK  (req_inheritance[0].name            == "xyz");
+    BOOST_REQUIRE(req_inheritance[0].tpl_args.size() == 1);
+    BOOST_CHECK  (req_inheritance[0].tpl_args[0]     == "42");
+    BOOST_CHECK  (req_inheritance[1].name            == "zyx");
+    BOOST_CHECK  (req_inheritance[1].tpl_args.empty());
 
 
 	return 0;
