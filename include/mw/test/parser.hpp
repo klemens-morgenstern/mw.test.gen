@@ -20,6 +20,12 @@ namespace mw
 namespace test
 {
 
+namespace data
+{
+struct use_file;
+struct group;
+}
+
 /*
  *
  */
@@ -48,8 +54,14 @@ struct parser
             const std::vector<data::obj_id> & inheritance,
             const data::code & obj_cont);
 
+    ///Helper function to add doc to an object.
     void post_pre_doc (const data::doc_t & doc);
+    ///Helper function to add doc to an object.
     void post_post_doc(const data::doc_t & doc);
+
+    void add_use_file(const data::use_file &uf);
+
+    void add_group(const data::group & grp);
 
     void include(const boost::filesystem::path & p);
 };

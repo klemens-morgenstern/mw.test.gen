@@ -33,8 +33,7 @@ namespace parsers
 x3::rule<class group, data::group> const group;
 
 auto const group_def =
-		lexeme["test"  >> skipper] >> code_location >>
-		lexeme["group" >> skipper] >>
+		lexeme["test_group"  >> skipper] >> code_location >>
 		 id >> -lit("=") >>
 		 "{" >>
 		(object_ref % ',') >>

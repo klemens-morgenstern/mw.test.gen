@@ -29,9 +29,9 @@ x3::rule<class main, ast::main> const main;
 
 auto const main_def =
 		*omit[
-			  	test_object[l([](auto &c){_val(c).test_objects.push_back(_attr(c));})]
-			  |	group      [l([](auto &c){_val(c).groups.push_back(_attr(c));})]
-			  | use_file   [l([](auto &c){_val(c).use_files.push_back(_attr(c));})]
+			  	test_object // no need to do anything, since objects are already constructed in the tule
+			  |	group      [l([](auto &c){parser::instance().add_group(std::move(x3::_val(c)));})]
+			  | use_file   [l([](auto &c){parser::instance().add_use_file(std::move(x3::_val(c)));})]
 			  ];
 
 

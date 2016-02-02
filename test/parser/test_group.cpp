@@ -81,7 +81,7 @@ int test_main (int, char**)
 			return x3::phrase_parse(itr, end, group, skipper, res);
 		};
 
-	s = "test group main = {test1, /*zeugs*/test2<x,y,z,42>};";
+	s = "test_group main = {test1, /*zeugs*/test2<x,y,z,42>};";
 
 	BOOST_CHECK(l());
 	BOOST_CHECK(itr == end);
