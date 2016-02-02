@@ -18,6 +18,9 @@ namespace mw
 namespace test
 {
 
+namespace util
+{
+
 void   set_error();
 void reset_error();
 bool   get_error();
@@ -111,7 +114,7 @@ inline std::ostream& note(const data::location & loc)  { return note(loc.file_na
 inline void print_error_location(const data::location & loc) {print_error_location(loc.file_name, loc.column);}
 
 
-
+}
 }
 }
 

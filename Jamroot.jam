@@ -24,7 +24,7 @@ project mw.test.gen :
 	;
 	
 lib mw.test : #mw/test/mwt_file.cpp 
-			 # mw/test/error_log.cpp 
+			  mw/test/util/error_log.cpp 
 			  #mw/test/template_instantiate.cpp 
 			  #mw/test/template_transform.cpp
 			  #mw/test/transform/object.cpp 

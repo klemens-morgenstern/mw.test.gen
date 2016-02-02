@@ -103,8 +103,6 @@ data::object_p parser::get_object(const data::obj_id& in)
 
 
 
-
-
 } /* namespace test */
 } /* namespace mw */
 

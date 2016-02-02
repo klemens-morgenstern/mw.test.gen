@@ -12,7 +12,8 @@ project parser :
 	;
 	
 
-lib parser : ../../src/mw/test/parser.cpp  ;
+lib parser : ../../src/mw/test/parser.cpp 
+			 ../../src/mw/test/util/error_log.cpp ;
 
 test-suite mw.test.parser
      : 

@@ -12,7 +12,7 @@
 #include <stack>
 #include <set>
 #include <mw/test/mwt_file.hpp>
-#include <mw/test/data/objects.hpp>
+#include <mw/test/data/main.hpp>
 
 
 namespace mw
@@ -35,10 +35,13 @@ struct parser
     std::set<boost::filesystem::path> already_parsed;
     std::stack<mwt_file> include_stack;
 
+    data::main main_data;
+
     mwt_file & current_file() {return include_stack.top();}
     static parser &instance();
 
     data::object_p get_object(const data::obj_id&);
+
     data::object& make_object(
                 const boost::typeindex::type_index & type,
                 const data::location & loc,
@@ -64,6 +67,10 @@ struct parser
     void add_group(const data::group & grp);
 
     void include(const boost::filesystem::path & p);
+private:
+
+
+
 };
 
 } /* namespace test */

@@ -6,13 +6,14 @@
  * Published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
  */
 
-#include <mw/test/error_log.hpp>
+#include <mw/test/util/error_log.hpp>
 
 namespace mw
 {
 namespace test
 {
-
+namespace util
+{
 static bool error_state = false;
 
 
@@ -43,5 +44,6 @@ bool warn_as_error()
 	return _warn_as_error;
 }
 
+}
 }
 }
