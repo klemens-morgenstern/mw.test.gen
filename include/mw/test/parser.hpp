@@ -32,11 +32,18 @@ struct group;
 struct parser
 {
     parser() ;
+
+    typedef mwt_file::iterator iterator;
+
     std::set<boost::filesystem::path> already_parsed;
     std::stack<mwt_file> include_stack;
 
+    //used for the template creation
+    data::doc_t pre_doc;
+
     data::main main_data;
 
+    mwt_file tpl_inst_file;
     mwt_file & current_file() {return include_stack.top();}
     static parser &instance();
 
@@ -52,7 +59,8 @@ struct parser
                 const data::location & loc,
                 const std::string & id,
                 const std::vector<data::obj_id> & inheritance,
-                const std::vector<data::object_content>  & obj_cont);
+                const std::vector<data::object_content>  & obj_cont,
+                const data::doc_t & doc);
 
     data::object_tpl& register_template(
             const boost::typeindex::type_index & type,
@@ -60,20 +68,20 @@ struct parser
             const std::string & id,
             const std::vector<data::tpl_arg> & tpl_arg,
             const std::vector<data::obj_id> & inheritance,
-            const data::code & obj_cont);
-
-    ///Helper function to add doc to an object.
-    void post_pre_doc (const data::doc_t & doc);
-    ///Helper function to add doc to an object.
-    void post_post_doc(const data::doc_t & doc);
+            const data::code & obj_cont,
+            const data::doc_t & doc);
 
     void add_use_file(const data::use_file &uf);
 
     void add_group(const data::group & grp);
 
-    void include(const boost::filesystem::path & p);
-private:
+    void include(const boost::filesystem::path & p, const data::location & loc = data::location());
 
+    void parse(const iterator & begin, const iterator & end);
+
+    void parse_file(const boost::filesystem::path & p);
+private:
+    std::vector<boost::filesystem::path> _include_paths;
 
 
 };

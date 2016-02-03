@@ -32,8 +32,7 @@ mw::test::data::object ret_object;
 mw::test::data::object_tpl ret_tpl_object;
 
 
-mw::test::data::doc_t pre_doc;
-mw::test::data::doc_t post_doc;
+mw::test::data::doc_t req_doc;
 
 // STUB the parser.cpp
 namespace mw
@@ -41,21 +40,21 @@ namespace mw
 namespace test
 {
 
-void parser::post_pre_doc (const data::doc_t & doc) {pre_doc = doc;}
-void parser::post_post_doc(const data::doc_t & doc) {post_doc= doc;}
 
 data::object& parser::make_object(
             const boost::typeindex::type_index & type,
             const data::location & loc,
             const std::string & id,
             const std::vector<data::obj_id> & inheritance,
-            const std::vector<data::object_content> & obj_cont)
+            const std::vector<data::object_content> & obj_cont,
+            const data::doc_t & doc)
 {
     req_type = type;
     req_loc = loc;
     req_make_id = id;
     req_inheritance = inheritance;
     req_obj_cont = obj_cont;
+    req_doc = doc;
     return ret_object;
 }
 
@@ -65,7 +64,8 @@ data::object_tpl& parser::register_template(
         const std::string & id,
         const std::vector<data::tpl_arg> & tpl_arg,
         const std::vector<data::obj_id> & inheritance,
-        const data::code & obj_cont)
+        const data::code & obj_cont,
+        const data::doc_t & doc)
 {
     req_type = type;
     req_loc = loc;
@@ -73,6 +73,7 @@ data::object_tpl& parser::register_template(
     req_tpl_arg = tpl_arg;
     req_inheritance = inheritance;
     req_obj_tpl_cont = obj_cont;
+    req_doc = doc;
     return ret_tpl_object;
 }
 
@@ -165,7 +166,7 @@ int test_main (int, char**)
 	BOOST_CHECK(req_make_id == "ding");
 	BOOST_CHECK(req_obj_cont.size() == 1);
     BOOST_CHECK(req_type == boost::typeindex::type_id<data::test_classification>());
-    BOOST_CHECK(pre_doc.head == "Stuff");
+    BOOST_CHECK(req_doc.head == "Stuff");
     std::cout << "XYZ: '" << ret_object.doc.head << "'" << std::endl;
 
 
@@ -191,7 +192,7 @@ int test_main (int, char**)
         };
 
     BOOST_CHECK(pl());
-    BOOST_CHECK(pre_doc.head == "Other Comment");
+    BOOST_CHECK(req_doc.head == "Other Comment");
     BOOST_CHECK(req_make_id == "some_tc");
     BOOST_CHECK(req_obj_tpl_cont.content == "...");
 

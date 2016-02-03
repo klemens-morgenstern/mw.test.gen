@@ -27,6 +27,12 @@ namespace mw
 namespace test
 {
 
+struct parse_failed : std::runtime_error
+{
+    using std::runtime_error::runtime_error;
+
+};
+
 struct incomplete_parse : std::runtime_error
 {
 	using std::runtime_error::runtime_error;
@@ -84,7 +90,7 @@ struct mwt_file
 	            static_cast<std::stringstream&>((std::stringstream() << boost::filesystem::fstream(file_name).rdbuf())).str()
 
 	            ) {}
-	mwt_file(const std::string & content) : buffer(content) {}
+	mwt_file(const std::string & content = "") : buffer(content) {}
 	mwt_file(std::string && content) : buffer(std::move(content)) {}
 };
 

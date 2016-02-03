@@ -9,10 +9,13 @@
 #include <cassert>
 #include <mw/test/parser.hpp>
 #include <mw/test/util/error_log.hpp>
+#include <mw/test/parsers/main.hpp>
+#include <mw/test/parsers/comment.hpp>
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <boost/fusion/tuple/tuple.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/uuid/sha1.hpp>
+#include <mw/test/util/id_replace.hpp>
 
 namespace mw
 {
@@ -289,7 +292,8 @@ data::object& parser::make_object(
             const data::location & loc,
             const std::string & id,
             const std::vector<data::obj_id> & inheritance,
-            const std::vector<data::object_content>  & obj_cont)
+            const std::vector<data::object_content>  & obj_cont,
+            const data::doc_t & doc)
 {
     auto itr = std::find_if(main_data.test_objects.begin(), main_data.test_objects.end(),
              [&](const data::object_p& p){return p->id == id;});
@@ -317,7 +321,7 @@ data::object& parser::make_object(
             p->other_content.emplace_back(c.as_code());
     }
 
-
+    p->doc = doc;
     main_data.test_objects.push_back(p);
     return *p;
 }
@@ -328,7 +332,8 @@ data::object_tpl& parser::register_template(
         const std::string & id,
         const std::vector<data::tpl_arg> & tpl_arg,
         const std::vector<data::obj_id> & inheritance,
-        const data::code & obj_cont)
+        const data::code & obj_cont,
+        const data::doc_t & doc)
 {
     auto itr = std::find_if(main_data.test_object_tpls.begin(), main_data.test_object_tpls.end(),
             [&](const data::object_tpl_p& p){return p->id == id;});
@@ -348,6 +353,7 @@ data::object_tpl& parser::register_template(
     p->tpl_args     = tpl_arg;
     p->inheritance  = inheritance;
     p->content      = obj_cont;
+    p->doc = doc;
 
     return *p;
 
@@ -362,7 +368,7 @@ std::vector<std::string> fill_up_template_args(const std::vector<std::string> & 
     {
         tpl_args.reserve(tpl->tpl_args.size());
 
-        int i = 0;
+        auto i = 0u;
         for (i = tpl_args.size(); i < tpl->tpl_args.size(); i++) //increment until the first default argument
         {
             auto & v = tpl->tpl_args[i].default_arg;
@@ -466,21 +472,126 @@ data::object_p parser::instanciate_template(
         const std::vector<std::string>& tpl_args, const data::object_tpl_p& tpl,
         const std::string& hash)
 {
+    using namespace std;
+    using namespace util;
+    stringstream product;
+    assert(tpl->tpl_args.size() == tpl_args.size()); //just to be sure.
+    vector<replacement> reps;
+    reps.resize(tpl_args.size());
+
+    transform(tpl_args.begin(), tpl_args.end(), tpl->tpl_args.begin(), reps.begin(), [](const std::string& rep, const data::tpl_arg& ta){return replacement{ta.name, rep};});
+
+    std::string new_id = tpl->id + "_" + hash;
+
+    product << data::get_object_name(tpl->type) << " " << new_id << "\n";
+    product << "      : ";
+    for (auto & i : tpl->inheritance)
+    {
+        if (&i != &tpl->inheritance.front()) //first one does not write ",\n"
+            product << ",\n        ";
+
+        product << util::id_replace(i.name, reps);
+        if (i.is_template())
+        {
+            product << '<';
+            for (auto & p : i.tpl_args)
+            {
+                if (&p != &i.tpl_args.back())
+                    product << ", ";
+
+                product << util::id_replace(p, reps);
+            }
+            product << '>';
+        }
+    }
+    product << "\n{\n";
+    product << util::id_replace(tpl->content.content, reps);
+    product << "\n};\n\n";
+
+    auto sz = tpl_inst_file.buffer.size();
+
+    tpl_inst_file.buffer += product.str();
+
+    include_stack.push(std::move(tpl_inst_file));
+
+    auto itr = tpl_inst_file.begin();
+    advance(itr, sz);
+    parse(itr, tpl_inst_file.end());
+
+    swap(include_stack.top(), tpl_inst_file);
+    include_stack.pop();
+
+    auto itr2 = find_if(main_data.test_objects.begin(), main_data.test_objects.end(), [&](const data::object_p & p){return p->id == new_id;});
+
+    assert(itr2 != main_data.test_objects.end());
+    return *itr2;
 }
 
 void parser::add_use_file(const data::use_file& uf)
 {
+    namespace fp = boost::filesystem;
+    auto p = fp::path(uf.filename);
+    if (p.extension() == ".mwt")
+        include(p, uf.loc);
+
+    main_data.use_files.push_back(uf);
+
 }
 
 void parser::add_group(const data::group& grp)
 {
+    main_data.groups.push_back(grp);
 }
 
 
 
-void parser::include(const boost::filesystem::path& p)
+void parser::include(const boost::filesystem::path& p_in, const data::location & loc)
 {
+    namespace fp = boost::filesystem;
+
+    fp::path p;
+    if (fp::exists(p))
+    {
+        p = p_in;
+    }
+    else
+    {
+        for (auto & pi : _include_paths)
+        {
+            auto p_r = pi / p_in;
+            if (fp::exists(p_r))
+                p = p_r;
+
+        }
+    }
+    if (p.empty()) //no valid path
+    {
+        util::error(loc) << "Include file not found: " << p_in << std::endl;
+        std::exit(1);
+    }
+    parse_file(p);
 }
+
+void parser::parse(const iterator & begin, const iterator & end)
+{
+    namespace x3 = boost::spirit::x3;
+    auto itr = begin;
+
+    auto res = x3::phrase_parse(itr, end, parsers::main, parsers::skipper);
+    if (!res)
+        throw parse_failed("");
+
+    if (itr != end)
+        throw incomplete_parse("");
+}
+
+void parser::parse_file(const boost::filesystem::path & p)
+{
+    include_stack.emplace(p);
+    auto & f = include_stack.top();
+    parse(f.begin(), f.end());
+}
+
 
 
 } /* namespace test */

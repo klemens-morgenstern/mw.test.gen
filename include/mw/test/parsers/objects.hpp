@@ -59,40 +59,35 @@ auto const make_object = [](auto & c)
         {
             auto &t = x3::_attr(c);
             using boost::fusion::at_c;
+            data::doc_t doc;
+            if (at_c<0>(t))
+                doc += *at_c<0>(t);
+            if (at_c<6>(t))
+                doc += *at_c<6>(t);
+
             x3::_val(c) = //used to add doc
                 parser::instance().make_object(
-                    at_c<0>(t), //type_index
-                    at_c<1>(t), //location
-                    at_c<2>(t), //id
-                   // at_c<3>(t), //tpl-decls
-                    at_c<3>(t), //inheritance
-                    at_c<4>(t) //object_content
+                    at_c<1>(t), //type_index
+                    at_c<2>(t), //location
+                    at_c<3>(t), //id
+                    at_c<4>(t), //inheritance
+                    at_c<5>(t), //object_content
+                    doc
                     );
-        };
-
-
-auto const post_pre_doc = [](auto & ctx)
-        {
-            parser::instance().post_pre_doc(_attr(ctx));
-        };
-
-auto const post_post_doc = [](auto & ctx)
-        {
-            parser::instance().post_post_doc(_attr(ctx));
         };
 
 x3::rule<class test_object, data::object&> const test_object;
 
 auto const test_object_def =
-        omit[-comment_pre_doc [post_pre_doc]] >>
-        (object_type
+        (-comment_pre_doc >>
+        object_type
 		>> code_location
 		>> id
 		>> inheritance
 		>> "{"
 		>> *object_content
-		>> lit("}"))[make_object] >> -lit(";") >>
-		omit[-comment_post_doc [post_post_doc]];
+		>> lit("}") >> -lit(";") >>
+		-comment_post_doc)[make_object];
 
 BOOST_SPIRIT_DEFINE(test_object);
 
@@ -100,14 +95,21 @@ auto const make_template = [](auto & c)
                 {
                     auto &t = x3::_attr(c);
                     using boost::fusion::at_c;
+                    data::doc_t doc;
+                    if (at_c<0>(t))
+                        doc += *at_c<0>(t);
+                    if (at_c<7>(t))
+                        doc += *at_c<7>(t);
+
                     x3::_val(c) = //used to add doc
                         parser::instance().register_template(
-                            at_c<0>(t), //type_index
-                            at_c<1>(t), //location-declare
-                            at_c<2>(t), //id
-                            at_c<3>(t), //tpl-decls
-                            at_c<4>(t), //inheritance
-                            at_c<5>(t) //object_content (in form of a code-section).
+                            at_c<1>(t), //type_index
+                            at_c<2>(t), //location-declare
+                            at_c<3>(t), //id
+                            at_c<4>(t), //tpl-decls
+                            at_c<5>(t), //inheritance
+                            at_c<6>(t), //object_content (in form of a code-section).
+                            doc
                             );
 
                 };
@@ -116,15 +118,15 @@ auto const make_template = [](auto & c)
 x3::rule<class test_template, data::object_tpl&> const test_template;
 
 auto const test_template_def =
-        omit[-comment_pre_doc [post_pre_doc]] >>
-        (object_type
+        (-comment_pre_doc  >>
+        object_type
         >> code_location
         >> id
         >> tpl_decl
         >> inheritance
         >> code_section
-        >> -lit(";"))[make_template] >>
-        omit[-comment_post_doc [post_post_doc]];
+        >> -lit(";") >>
+        -comment_post_doc)[make_template];
 ;
 
 BOOST_SPIRIT_DEFINE(test_template);

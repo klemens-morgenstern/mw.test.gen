@@ -14,7 +14,6 @@
 #include <mw/test/parsers/group.hpp>
 #include <mw/test/parsers/use_file.hpp>
 
-#include <mw/test/ast/main.hpp>
 #include <string>
 
 namespace mw
@@ -25,13 +24,13 @@ namespace parsers
 {
 
 
-x3::rule<class main, ast::main> const main;
+x3::rule<class main> const main;
 
 auto const main_def =
 		*omit[
 			  	test_object // no need to do anything, since objects are already constructed in the tule
-			  |	group      [l([](auto &c){parser::instance().add_group(std::move(x3::_val(c)));})]
-			  | use_file   [l([](auto &c){parser::instance().add_use_file(std::move(x3::_val(c)));})]
+			  |	group      [l([](auto &c){parser::instance().add_group(std::move(x3::_attr(c)));})]
+			  | use_file   [l([](auto &c){parser::instance().add_use_file(std::move(x3::_attr(c)));})]
 			  ];
 
 

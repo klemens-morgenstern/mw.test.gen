@@ -14,15 +14,15 @@ before_script:
   - sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
   - sudo ln -s /usr/bin/g++-5 /usr/bin/g++
   - sudo ln -s /usr/bin/gcov-5 /usr/bin/gcov
-#  - git clone https://github.com/boostorg/boost.git boost
-#  - cd boost
-#  - git submodule update --init --merge
-#  - cd tools/build
-#  - ./bootstrap.sh
-#  - sudo ./b2 
-#  - cd ../..
-#  - sudo b2 headers
-#  - cd .. 
+  - git clone https://github.com/boostorg/boost.git boost
+  - cd boost
+  - git submodule update --init --merge
+  - cd tools/build
+  - ./bootstrap.sh
+  - sudo ./b2 
+  - cd ../..
+  - sudo b2 headers
+  - cd ..
 script:
   - b2 cxxflags="--coverage" linkflags="--coverage" include="./boost" toolset=gcc
 after_success:
