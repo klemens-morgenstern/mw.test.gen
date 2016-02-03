@@ -6,7 +6,7 @@ before_script:
   - git submodule update --init --merge
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
-  - sudo apt-get install -qq g++-5
+  - sudo apt-get install -qq g++-5 libboost-all-dev
   - export CXX="g++-5" CC="gcc-5"
   - sudo rm /usr/bin/gcc
   - sudo rm /usr/bin/g++
