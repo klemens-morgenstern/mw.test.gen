@@ -228,15 +228,55 @@ inline data::object_p select_type(const boost::typeindex::type_index & type, con
         util::internal_error(__FILE__, __LINE__) << "Invalid value in object type " << type.pretty_name() << std::endl;
         exit(1);
     }
+    p->id = id;
+    p->loc = loc;
     return p;
 }
 
-
-
-
-data::object_p parser::get_object(const data::obj_id&)
+template<typename T>
+void assign_action(data::object & obj, const T &oc)
 {
+    using a = data::action_t;
 
+    switch (oc.action)
+    {
+    case a::evaluate:
+    {
+        if (obj.eval)
+        {
+            util::error(oc.loc)                  << "Redeclaration of evaluation for " << obj.id   << std::endl;
+            util::note(obj.eval->get_location()) << "Previously declared here."     << std::endl; //TODO: maybe add the type-name.
+            util::note(oc.loc)                   << "Ignoring the redefinition."    << std::endl;
+        }
+        else
+            obj.eval = oc;
+    }
+    break;
+    case a::execute:
+    {
+        if (obj.exec)
+        {
+            util::error(oc.loc)                  << "Redeclaration of execution for " << obj.id   << std::endl;
+            util::note(obj.exec->get_location()) << "Previously declared here."     << std::endl; //TODO: maybe add the type-name.
+            util::note(oc.loc)                   << "Ignoring the redefinition."    << std::endl;
+        }
+        else
+            obj.exec = oc;
+    }
+    break;
+    case a::initialize:
+    {
+        if (obj.init)
+        {
+            util::error(oc.loc)                  << "Redeclaration of intialization for " << obj.id   << std::endl;
+            util::note(obj.init->get_location()) << "Previously declared here."     << std::endl; //TODO: maybe add the type-name.
+            util::note(oc.loc)                   << "Ignoring the redefinition."    << std::endl;
+        }
+        else
+            obj.init = oc;
+    }
+    break;
+    }
 }
 
 
@@ -256,10 +296,28 @@ data::object& parser::make_object(
     {
         util::error(loc)   << "Redeclaration of " << id << std::endl;
         util::note((*itr)->loc) << "Previously declared here." << std::endl; //TODO: maybe add the type-name.
-        util::note(loc)    << "Ignoring the redifition." << std::endl;
+        util::note(loc)    << "Ignoring the redefinition." << std::endl;
         return **itr;
     }
 
+
+    auto p = select_type(type, id, inheritance, loc, *this);
+
+    for (auto & c : obj_cont)
+    {
+        if (c.is_action()) //might be execute/init/using
+            assign_action(*p, c.as_action());
+        else if (c.is_using())
+            assign_action(*p, c.as_using());
+        else if (c.is_functional())
+            p->other_content.emplace_back(c.as_functional());
+        else
+            p->other_content.emplace_back(c.as_code());
+    }
+
+
+    main_data.test_objects.push_back(p);
+    return *p;
 }
 
 data::object_tpl& parser::register_template(
@@ -293,6 +351,11 @@ data::object_tpl& parser::register_template(
     return *p;
 
 }
+
+data::object_p parser::get_object(const data::obj_id&)
+{
+}
+
 
 void parser::add_use_file(const data::use_file& uf)
 {
