@@ -6,6 +6,11 @@ local boost-inc 	= [ modules.peek user-config : boost-include ] ; #folder where 
 local boost-lib-loc = [ modules.peek user-config : boost-lib-loc ] ; #locatino of the libraries of boost
 local postfix = [ modules.peek user-config : boost-lib-postfix ] ; # the postfix to the libraries, e.g. -mgw-mt-1_60
 
+if ! $(postfix)
+{
+	postfix = " " ;
+}
+
 project mw.test.gen :
 	source-location src	
 	: requirements

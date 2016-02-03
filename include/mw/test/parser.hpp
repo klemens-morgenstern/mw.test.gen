@@ -42,6 +42,11 @@ struct parser
 
     data::object_p get_object(const data::obj_id&);
 
+    data::object_p instanciate_template(
+                const std::vector<std::string> & tpl_args,
+                const data::object_tpl_p & tpl,
+                const std::string & hash);
+
     data::object& make_object(
                 const boost::typeindex::type_index & type,
                 const data::location & loc,

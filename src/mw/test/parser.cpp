@@ -11,6 +11,8 @@
 #include <mw/test/util/error_log.hpp>
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <boost/fusion/tuple/tuple.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/uuid/sha1.hpp>
 
 namespace mw
 {
@@ -268,7 +270,7 @@ void assign_action(data::object & obj, const T &oc)
     {
         if (obj.init)
         {
-            util::error(oc.loc)                  << "Redeclaration of intialization for " << obj.id   << std::endl;
+            util::error(oc.loc)                  << "Redeclaration of initialization for " << obj.id   << std::endl;
             util::note(obj.init->get_location()) << "Previously declared here."     << std::endl; //TODO: maybe add the type-name.
             util::note(oc.loc)                   << "Ignoring the redefinition."    << std::endl;
         }
@@ -339,7 +341,6 @@ data::object_tpl& parser::register_template(
         return **itr;
     }
 
-
     auto p = std::make_shared<data::object_tpl>();
     p->id = id;
     p->loc          = loc;
@@ -352,10 +353,120 @@ data::object_tpl& parser::register_template(
 
 }
 
-data::object_p parser::get_object(const data::obj_id&)
+
+std::vector<std::string> fill_up_template_args(const std::vector<std::string> & ids, const data::object_tpl_p & tpl)
 {
+    auto tpl_args = ids;
+
+    if (tpl_args.size() < tpl->tpl_args.size()) //too few template arguments
+    {
+        tpl_args.reserve(tpl->tpl_args.size());
+
+        int i = 0;
+        for (i = tpl_args.size(); i < tpl->tpl_args.size(); i++) //increment until the first default argument
+        {
+            auto & v = tpl->tpl_args[i].default_arg;
+            if (v)
+                tpl_args.push_back(*v);
+            else //here goes the error, not enough (default-)arguments.
+            {
+                util::error(tpl->loc) << "Too few template arguments (" << tpl_args.size() <<
+                        ") provided for " << tpl->id << ", but " << i << "needed." << std::endl;
+                std::exit(1);
+            }
+        }
+    }
+    return tpl_args;
 }
 
+
+std::string make_template_name(const std::vector<std::string> & tpl_args)
+{
+    std::string nm = "<";
+
+    for (auto itr = tpl_args.begin(); itr != tpl_args.end();itr++)
+    {
+        if (itr != tpl_args.begin())
+            nm += ',';
+
+        nm += boost::algorithm::trim_copy(*itr);
+    }
+
+    return nm;
+}
+
+
+data::object_p parser::get_object(const data::obj_id& id)
+{
+    if (id.is_template()) //look for a template
+    {
+        auto itr = std::find_if(main_data.test_object_tpls.cbegin(), main_data.test_object_tpls.cend(), [&](const data::object_tpl_p & tpl){return tpl->id == id.name;});
+        if (itr != main_data.test_object_tpls.cend())
+        {
+            const auto &tpl = *itr;
+
+            if (id.tpl_args.size() > tpl->tpl_args.size()) //too many template arguments
+            {
+                util::error(tpl->loc) << id.tpl_args.size() << " template arguments provided for "
+                                      << tpl->id << ", but only takes " << tpl->tpl_args.size() << "." << std::endl;
+                std::exit(1);
+            }
+
+            auto tpl_args = fill_up_template_args(id.tpl_args, tpl);
+            auto par_str  = make_template_name(tpl_args);
+            using boost::uuids::detail::sha1;
+            sha1 s;
+            s.process_bytes(par_str.c_str(), par_str.size());
+            std::remove_reference_t<sha1::digest_type> digest;
+            s.get_digest(digest);
+
+            std::stringstream ss; ss << std::hex;
+            for (auto & i : digest)
+                ss << i;
+
+            auto hash = ss.str();
+
+            auto _id = id.name + hash;
+
+            //alright, look for the id with hash.
+            auto itr2 = std::find_if(main_data.test_objects.cbegin(), main_data.test_objects.cend(), [&](const data::object_p & obj){return obj->id == _id;});
+            if (itr2 != main_data.test_objects.cend())
+                return *itr2; //found it
+
+            return instanciate_template(tpl_args, *itr, hash);
+
+        }
+        else
+        {
+            //report the error, and exit.
+            util::error(id.loc) << "Requested object template ('" << id.name << "') not found." << std::endl;
+            util::print_error_location(id.loc);
+            exit(1);
+            return nullptr;//compatibility.
+        }
+    }
+    else //not a template. look the thingy up
+    {
+        auto itr = std::find_if(main_data.test_objects.cbegin(), main_data.test_objects.cend(), [&](const data::object_p & obj){return obj->id == id.name;});
+        if (itr != main_data.test_objects.cend())
+            return *itr; //found it
+        else
+        {
+            //report the error, and exit.
+            util::error(id.loc) << "Requested object ('" << id.name << "') not found." << std::endl;
+            util::print_error_location(id.loc);
+            exit(1);
+            return nullptr;//compatibility.
+        }
+
+    }
+}
+
+data::object_p parser::instanciate_template(
+        const std::vector<std::string>& tpl_args, const data::object_tpl_p& tpl,
+        const std::string& hash)
+{
+}
 
 void parser::add_use_file(const data::use_file& uf)
 {
@@ -364,6 +475,8 @@ void parser::add_use_file(const data::use_file& uf)
 void parser::add_group(const data::group& grp)
 {
 }
+
+
 
 void parser::include(const boost::filesystem::path& p)
 {
