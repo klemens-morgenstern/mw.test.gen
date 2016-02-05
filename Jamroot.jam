@@ -16,11 +16,12 @@ project mw.test.gen :
 	: requirements
 #	<include>./libs/spirit/include
 	<include>./libs/mw.test.data/include
+	<include>./libs/cereal/include
 	<include>$(boost-inc)
 	<include>./include
 	<toolset>gcc:<cxxflags>-std=gnu++1y
 	<linkflags>-L$(boost-lib-loc)
-	<toolset>gcc:<cxxflags>-ftemplate-depth=256
+	<toolset>gcc:<cxxflags>-ftemplate-depth=512
 	<linkflags>-lboost_program_options$(postfix)
 	<linkflags>-lboost_filesystem$(postfix)
 	<linkflags>-lboost_system$(postfix)
@@ -28,11 +29,10 @@ project mw.test.gen :
 	<link>shared
 	;
 	
-lib mw.test : #mw/test/mwt_file.cpp 
-			  mw/test/util/error_log.cpp 
-			  #mw/test/template_instantiate.cpp 
-			  #mw/test/template_transform.cpp
-			  #mw/test/transform/object.cpp 
-			  ;	
+lib parser : mw/test/util/error_log.cpp mw/test/parser.cpp ;
+
+exe test : main.cpp parser ;
+
+install bin : test ;
 	
 build-project test ;	

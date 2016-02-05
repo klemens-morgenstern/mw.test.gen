@@ -295,10 +295,10 @@ data::object& parser::make_object(
             const std::vector<data::object_content>  & obj_cont,
             const data::doc_t & doc)
 {
-    auto itr = std::find_if(main_data.test_objects.begin(), main_data.test_objects.end(),
+    auto itr = std::find_if(_main_data.test_objects.begin(), _main_data.test_objects.end(),
              [&](const data::object_p& p){return p->id == id;});
 
-    if (itr != main_data.test_objects.end())//template with that id was already declared.
+    if (itr != _main_data.test_objects.end())//template with that id was already declared.
     {
         util::error(loc)   << "Redeclaration of " << id << std::endl;
         util::note((*itr)->loc) << "Previously declared here." << std::endl; //TODO: maybe add the type-name.
@@ -322,7 +322,7 @@ data::object& parser::make_object(
     }
 
     p->doc = doc;
-    main_data.test_objects.push_back(p);
+    _main_data.test_objects.push_back(p);
     return *p;
 }
 
@@ -335,10 +335,10 @@ data::object_tpl& parser::register_template(
         const data::code & obj_cont,
         const data::doc_t & doc)
 {
-    auto itr = std::find_if(main_data.test_object_tpls.begin(), main_data.test_object_tpls.end(),
+    auto itr = std::find_if(_main_data.test_object_tpls.begin(), _main_data.test_object_tpls.end(),
             [&](const data::object_tpl_p& p){return p->id == id;});
 
-    if (itr != main_data.test_object_tpls.end())//template with that id was already declared.
+    if (itr != _main_data.test_object_tpls.end())//template with that id was already declared.
     {
         util::error(loc)  << "Redeclaration of template " << id << std::endl;
         util::note((*itr)->loc) << "Previously declared here." << std::endl;
@@ -406,8 +406,8 @@ data::object_p parser::get_object(const data::obj_id& id)
 {
     if (id.is_template()) //look for a template
     {
-        auto itr = std::find_if(main_data.test_object_tpls.cbegin(), main_data.test_object_tpls.cend(), [&](const data::object_tpl_p & tpl){return tpl->id == id.name;});
-        if (itr != main_data.test_object_tpls.cend())
+        auto itr = std::find_if(_main_data.test_object_tpls.cbegin(), _main_data.test_object_tpls.cend(), [&](const data::object_tpl_p & tpl){return tpl->id == id.name;});
+        if (itr != _main_data.test_object_tpls.cend())
         {
             const auto &tpl = *itr;
 
@@ -435,8 +435,8 @@ data::object_p parser::get_object(const data::obj_id& id)
             auto _id = id.name + hash;
 
             //alright, look for the id with hash.
-            auto itr2 = std::find_if(main_data.test_objects.cbegin(), main_data.test_objects.cend(), [&](const data::object_p & obj){return obj->id == _id;});
-            if (itr2 != main_data.test_objects.cend())
+            auto itr2 = std::find_if(_main_data.test_objects.cbegin(), _main_data.test_objects.cend(), [&](const data::object_p & obj){return obj->id == _id;});
+            if (itr2 != _main_data.test_objects.cend())
                 return *itr2; //found it
 
             return instanciate_template(tpl_args, *itr, hash);
@@ -453,8 +453,8 @@ data::object_p parser::get_object(const data::obj_id& id)
     }
     else //not a template. look the thingy up
     {
-        auto itr = std::find_if(main_data.test_objects.cbegin(), main_data.test_objects.cend(), [&](const data::object_p & obj){return obj->id == id.name;});
-        if (itr != main_data.test_objects.cend())
+        auto itr = std::find_if(_main_data.test_objects.cbegin(), _main_data.test_objects.cend(), [&](const data::object_p & obj){return obj->id == id.name;});
+        if (itr != _main_data.test_objects.cend())
             return *itr; //found it
         else
         {
@@ -508,22 +508,22 @@ data::object_p parser::instanciate_template(
     product << util::id_replace(tpl->content.content, reps);
     product << "\n};\n\n";
 
-    auto sz = tpl_inst_file.buffer.size();
+    auto sz = _tpl_inst_file.buffer.size();
 
-    tpl_inst_file.buffer += product.str();
+    _tpl_inst_file.buffer += product.str();
 
-    include_stack.push(std::move(tpl_inst_file));
+    _include_stack.push(std::move(_tpl_inst_file));
 
-    auto itr = tpl_inst_file.begin();
+    auto itr = _tpl_inst_file.begin();
     advance(itr, sz);
-    parse(itr, tpl_inst_file.end());
+    parse(itr, _tpl_inst_file.end());
 
-    swap(include_stack.top(), tpl_inst_file);
-    include_stack.pop();
+    swap(_include_stack.top(), _tpl_inst_file);
+    _include_stack.pop();
 
-    auto itr2 = find_if(main_data.test_objects.begin(), main_data.test_objects.end(), [&](const data::object_p & p){return p->id == new_id;});
+    auto itr2 = find_if(_main_data.test_objects.begin(), _main_data.test_objects.end(), [&](const data::object_p & p){return p->id == new_id;});
 
-    assert(itr2 != main_data.test_objects.end());
+    assert(itr2 != _main_data.test_objects.end());
     return *itr2;
 }
 
@@ -534,13 +534,13 @@ void parser::add_use_file(const data::use_file& uf)
     if (p.extension() == ".mwt")
         include(p, uf.loc);
 
-    main_data.use_files.push_back(uf);
+    _main_data.use_files.push_back(uf);
 
 }
 
 void parser::add_group(const data::group& grp)
 {
-    main_data.groups.push_back(grp);
+    _main_data.groups.push_back(grp);
 }
 
 
@@ -569,10 +569,16 @@ void parser::include(const boost::filesystem::path& p_in, const data::location &
         util::error(loc) << "Include file not found: " << p_in << std::endl;
         std::exit(1);
     }
-    parse_file(p);
+    //ok, now check if the file is already parsed.
+    if (_already_parsed.count(p) == 0)
+    {
+        parse_file(p);
+        _already_parsed.emplace(p);
+    }
+
 }
 
-void parser::parse(const iterator & begin, const iterator & end)
+data::main parser::parse(const iterator & begin, const iterator & end)
 {
     namespace x3 = boost::spirit::x3;
     auto itr = begin;
@@ -583,16 +589,29 @@ void parser::parse(const iterator & begin, const iterator & end)
 
     if (itr != end)
         throw incomplete_parse("");
+
+    return std::move(_main_data);
 }
 
-void parser::parse_file(const boost::filesystem::path & p)
+data::main parser::parse_file(const boost::filesystem::path & p)
 {
-    include_stack.emplace(p);
-    auto & f = include_stack.top();
-    parse(f.begin(), f.end());
+    _include_stack.emplace(p);
+    auto & f = _include_stack.top();
+    return parse(f.begin(), f.end());
 }
 
+void parser::write_template_inst() const
+{
+    namespace fs = boost::filesystem;
+    auto &p = _tpl_inst_file.file_name;
+    if (!p.empty())
+    {
+        fs::create_directories(p.parent_path());
+        fs::fstream fstr(p);
 
+        fstr << _tpl_inst_file.buffer;
+    }
+}
 
 } /* namespace test */
 } /* namespace mw */

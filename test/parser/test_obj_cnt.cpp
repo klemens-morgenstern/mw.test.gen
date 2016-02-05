@@ -57,9 +57,9 @@ int test_main (int, char**)
 {
     mw::test::parser parser;
 
-    parser.include_stack.emplace(std::string(""));
+    parser._include_stack.emplace(std::string(""));
 
-    std::string &s = parser.include_stack.top().buffer;
+    std::string &s = parser._include_stack.top().buffer;
 
     using iterator = boost::spirit::line_pos_iterator<typename std::string::const_iterator>;
 
@@ -68,9 +68,9 @@ int test_main (int, char**)
 
     namespace data = mw::test::data;
 
-    auto &beg = parser.include_stack.top()._begin;
-    auto itr  = parser.include_stack.top()._begin;
-    auto &end = parser.include_stack.top()._end;
+    auto &beg = parser._include_stack.top()._begin;
+    auto itr  = parser._include_stack.top()._begin;
+    auto &end = parser._include_stack.top()._end;
 
     namespace x3 = boost::spirit::x3;
     using namespace mw::test::parsers;

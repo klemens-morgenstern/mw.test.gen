@@ -6,30 +6,27 @@ project parser :
 	<include>$(boost-inc)
 	<include>../../include
 	<toolset>gcc:<cxxflags>-std=gnu++1y
-	<toolset>gcc:<cxxflags>-ftemplate-depth=512
 	<linkflags>-LF:/boost/lib
 	<link>shared
+	<define>UNIT_TEST
 	;
 	
-
-lib parser : ../../src/mw/test/parser.cpp 
-			 ../../src/mw/test/util/error_log.cpp ;
 
 test-suite mw.test.parser
      : 
     [ run test_id.cpp  		]
 	[ run test_comment.cpp 	]    
-	[ run test_file.cpp parser 	]   
+	[ run test_file.cpp /mw.test.gen//parser 	]   
 	[ run test_utility.cpp  ]  
-	[ run test_tpl.cpp 	 parser	]
-	[ run test_code.cpp  parser	] 
+	[ run test_tpl.cpp 	 /mw.test.gen//parser	]
+	[ run test_code.cpp  /mw.test.gen//parser	] 
 	[ run test_opers.cpp ]
 	[ run test_actions.cpp	]
 	[ run test_obj_cnt.cpp	]
 	[ run test_objects.cpp	]
-	[ run test_functional.cpp parser ]
+	[ run test_functional.cpp  /mw.test.gen//parser ]
 	[ run test_group.cpp ]
-	[ run test_expressions.cpp parser ]
+	[ run test_expressions.cpp /mw.test.gen//parser ]
      ; 	
 		
 		

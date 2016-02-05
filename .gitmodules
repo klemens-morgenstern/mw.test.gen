@@ -1,3 +1,6 @@
 [submodule "libs/mw.test.data"]
 	path = libs/mw.test.data
 	url = https://github.com/MorgWal/mw.test.data.git
+[submodule "libs/ceral"]
+	path = libs/ceral
+	url = https://github.com/klemens-morgenstern/cereal.git

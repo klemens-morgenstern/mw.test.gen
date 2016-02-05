@@ -14,7 +14,6 @@
 #include <mw/test/mwt_file.hpp>
 #include <mw/test/data/main.hpp>
 
-
 namespace mw
 {
 namespace test
@@ -29,22 +28,27 @@ struct group;
 /*
  *
  */
-struct parser
+class parser final
 {
+    data::main _main_data;
+    std::vector<boost::filesystem::path> _include_paths;
+    std::set<boost::filesystem::path> _already_parsed;
+#ifdef UNIT_TEST
+public:
+#endif
+    std::stack<mwt_file> _include_stack;
+    mwt_file _tpl_inst_file;
+public:
     parser() ;
+
+    void set_include_paths(const std::vector<boost::filesystem::path> &include_paths)
+            { _include_paths = include_paths; }
 
     typedef mwt_file::iterator iterator;
 
-    std::set<boost::filesystem::path> already_parsed;
-    std::stack<mwt_file> include_stack;
 
-    //used for the template creation
-    data::doc_t pre_doc;
-
-    data::main main_data;
-
-    mwt_file tpl_inst_file;
-    mwt_file & current_file() {return include_stack.top();}
+    void set_tpl_inst_file(const boost::filesystem::path & p){_tpl_inst_file.file_name = p;}
+    mwt_file & current_file() {return _include_stack.top();}
     static parser &instance();
 
     data::object_p get_object(const data::obj_id&);
@@ -77,13 +81,10 @@ struct parser
 
     void include(const boost::filesystem::path & p, const data::location & loc = data::location());
 
-    void parse(const iterator & begin, const iterator & end);
+    data::main parse(const iterator & begin, const iterator & end);
+    data::main parse_file(const boost::filesystem::path & p);
 
-    void parse_file(const boost::filesystem::path & p);
-private:
-    std::vector<boost::filesystem::path> _include_paths;
-
-
+    void write_template_inst() const;
 };
 
 } /* namespace test */

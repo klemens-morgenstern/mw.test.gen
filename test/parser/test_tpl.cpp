@@ -17,13 +17,13 @@ int test_main (int, char**)
 
     mw::test::parser parser;
 
-    parser.include_stack.emplace(std::string(""));
+    parser._include_stack.emplace(std::string(""));
 
-    std::string &input = parser.include_stack.top().buffer;
+    std::string &input = parser._include_stack.top().buffer;
 
-    auto &beg = parser.include_stack.top()._begin;
-    auto itr  = parser.include_stack.top()._begin;
-    auto &end = parser.include_stack.top()._end;
+    auto &beg = parser._include_stack.top()._begin;
+    auto itr  = parser._include_stack.top()._begin;
+    auto &end = parser._include_stack.top()._end;
 
 	std::string result;
 
