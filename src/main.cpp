@@ -31,7 +31,7 @@ int main(int argc, char **argv)
         ("input-file,i",    po::value< vector<string> >(),  "input file")
         ("template-inst,T", po::value<string>(),            "template instance file")
         ("makefile,M",      po::value<string>(),            "write makefile")
-        ("backend,B",       po::value<string>(),            "test backend")
+        ("backend,B",       po::value<string>(),            "test backend [boost, cmock, mw, mw++]")
         ("data-file,D",     po::value<string>(),            "serialized test data [.json, .bin, .xml]")
         ("output-dir,O",    po::value<string>(),            "output directory")
    ;

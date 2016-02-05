@@ -31,7 +31,7 @@ project mw.test.gen :
 	
 lib parser : mw/test/util/error_log.cpp mw/test/parser.cpp ;
 
-exe test : main.cpp parser ;
+exe mw-test-gen : main.cpp parser ;
 
 install bin : test ;
 	

@@ -1,6 +1,6 @@
 import testing ;
 
-project parser :
+project parsers :
 	source-location .	
 	: requirements
 	<include>$(boost-inc)
@@ -12,7 +12,7 @@ project parser :
 	;
 	
 
-test-suite mw.test.parser
+test-suite mw.test.parsers
      : 
     [ run test_id.cpp  		]
 	[ run test_comment.cpp 	]    
